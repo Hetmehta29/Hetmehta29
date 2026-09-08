@@ -30,7 +30,7 @@
 .product-card__size {
   position: relative;
   min-width: 1.375rem;
-  padding: 2px 4px;
+  padding: 2px 5px;
   border-radius: 2px;
   font-size: 10px;
   line-height: 1.4;
@@ -38,14 +38,22 @@
   letter-spacing: 0.02em;
   text-align: center;
   color: rgb(var(--text-color));
-  background: rgb(var(--background) / 0.85);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
+  /* Opaque, with a hairline ring and a soft drop shadow. A translucent chip
+     disappears against pale product photography, and a dark one would disappear
+     against the black tees - an opaque chip that carries its own edge reads on
+     both. Colours come from the card's scheme, so this follows the scheme. */
+  background: rgb(var(--background));
+  box-shadow:
+    0 0 0 1px rgb(var(--text-color) / 0.16),
+    0 1px 3px rgb(0 0 0 / 0.18);
 }
 
 .product-card__size--unavailable {
-  color: rgb(var(--text-color) / 0.35);
-  background: rgb(var(--background) / 0.6);
+  color: rgb(var(--text-color) / 0.42);
+  background: rgb(var(--background) / 0.92);
+  box-shadow:
+    0 0 0 1px rgb(var(--text-color) / 0.10),
+    0 1px 2px rgb(0 0 0 / 0.12);
 }
 
 /* diagonal "not available" strike, drawn corner to corner so it scales with the pill */
