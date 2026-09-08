@@ -8,8 +8,6 @@
    Sits at the bottom of the product image with the inline-end padding kept
    clear of the quick-add button, so the sizes and the quick-add read side by
    side rather than stacking or overlapping.
-
-   Paste this at the very END of assets/theme.css.
    ========================================================================== */
 
 .product-card__size-availability {

@@ -1,0 +1,64 @@
+{%- doc -%}
+This component is used to render the quick buy content. It is important to note that this snippet must always be
+included inside a product template (you can find an example in the "main-product.liquid" section). The reason is that
+we want to re-use the settings of the merchant on their product page (which info they want to make it visible). To do
+that, we need to re-use the whole product page, and extract the quick-buy part (rendered here).
+
+@param {object} product - the product to render
+@param {object} [section] - the section is implicitly available. Here, the section is always a "product" template section, so you can access all the information from the section
+{%- enddoc -%}
+
+{%- capture product_form_id -%}product-form-quick-buy-{{ product.id }}-{{ section.id }}{%- endcapture -%}
+
+<template id="quick-buy-content">
+  <product-rerender id="quick-buy-modal-content" observe-form="{{ product_form_id }}">
+    <div class="quick-buy">
+      {% render 'product-gallery', product: product, product_form_id: product_form_id, desktop_layout: 'carousel', desktop_carousel_controls: 'lines', class: 'md-max:hidden' %}
+
+      <div class="v-stack gap-6">
+        <div class="h-stack gap-6 md:hidden">
+          {%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+
+          {%- if featured_media != blank -%}
+            {{- featured_media | image_url: width: featured_media.width | image_tag: loading: 'lazy', sizes: '100px', widths: '100,200,300,400', class: 'quick-buy__product-image' -}}
+          {%- endif -%}
+
+          <div class="v-stack gap-4">
+            <div class="v-stack gap-2">
+              <p class="h6">{{ product.title }}</p>
+              {%- render 'price-list', variant: product.selected_or_first_available_variant, context: 'card' -%}
+            </div>
+
+            <a href="{{ product.selected_or_first_available_variant.url }}" class="link justify-self-start">{{ 'product.general.view_details' | t }}</a>
+          </div>
+        </div>
+
+        <hr class="divider md:hidden">
+
+        <div class="quick-buy__info">
+          {%- comment -%}
+            Render the theme's native variant picker directly.
+
+            The product template selects sizes with the custom "size-picker" block, which
+            'product-info' filters out below (allow_blocks only permits 'variant_picker'), leaving
+            the modal with buy buttons and no way to choose a size. The custom block cannot simply
+            be allowed through: quick-buy-modal lifts only this template's markup and appends it to
+            document.body, so that block's section-scoped styles and its scripts never travel with
+            it. The native picker's CSS and JS are in theme.css / theme.js, which load on every
+            page, so it works here. Rendered before 'product-info' to sit above the buy buttons.
+          {%- endcomment -%}
+          {%- render 'variant-picker',
+              product: product,
+              form_id: product_form_id,
+              context: 'quick_buy',
+              hide_sold_out_variants: false,
+              separate_options: false,
+              selector_style: 'block'
+          -%}
+
+          {%- render 'product-info', product: product, product_form_id: product_form_id, context: 'quick_buy', allow_blocks: '@app,vendor,title,sku,badges,price,payment_terms,rating,separator,variant_picker,product_variations,line_item_property,inventory,buy_buttons,volume_pricing' -%}
+        </div>
+      </div>
+    </div>
+  </product-rerender>
+</template>
