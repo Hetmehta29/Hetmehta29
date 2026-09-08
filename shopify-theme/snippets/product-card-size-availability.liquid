@@ -1,0 +1,64 @@
+{%- doc -%}
+Renders a compact, display-only list of a product's sizes on the product card, so a customer can see
+what is in stock before opening the product page. Sold-out sizes are greyed out and crossed through
+with a diagonal line.
+
+This is deliberately NOT interactive. The pills are inert (pointer-events: none in the stylesheet) so
+they never compete with the card's own link or with the quick-add button, both of which keep their
+existing behaviour. It sits at the bottom of the product image, clear of the quick-add button pinned
+to the bottom-right, so the two read side by side.
+
+@param {object} product - the product to render the sizes for
+{%- enddoc -%}
+
+{%- liquid
+  assign size_option = nil
+  assign size_label_list = 'general.label.size' | t | split: ','
+
+  for size_label in size_label_list
+    assign size_label_stripped = size_label | strip
+
+    if product.options_by_name[size_label_stripped] != blank
+      assign size_option = product.options_by_name[size_label_stripped]
+      break
+    endif
+  endfor
+-%}
+
+{%- if size_option != blank -%}
+  {%- liquid
+    # Build a delimited lookup of the size values that can actually be bought. Each value is wrapped
+    # in pipes so a short size can never match inside a longer one - without this, "S" would match
+    # inside "XS" and a sold-out size would render as in stock.
+    assign size_index = size_option.position | default: 1 | minus: 1
+    assign in_stock_sizes = '|'
+
+    for variant in product.variants
+      if variant.available
+        assign in_stock_sizes = in_stock_sizes | append: variant.options[size_index] | append: '|'
+      endif
+    endfor
+  -%}
+
+  <ul class="product-card__size-availability" aria-label="{{ size_option.name }}">
+    {%- for option_value in size_option.values -%}
+      {%- liquid
+        assign value_name = option_value.name | default: option_value
+        assign delimited_value = value_name | prepend: '|' | append: '|'
+        assign is_available = false
+
+        if in_stock_sizes contains delimited_value
+          assign is_available = true
+        endif
+      -%}
+
+      <li class="product-card__size {% unless is_available %}product-card__size--unavailable{% endunless %}">
+        {{- value_name -}}
+
+        {%- unless is_available -%}
+          <span class="sr-only"> — {{ 'product.general.sold_out_badge' | t }}</span>
+        {%- endunless -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+{%- endif -%}

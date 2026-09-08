@@ -1,0 +1,99 @@
+/* ==========================================================================
+   Bluprint · Product card size availability
+   --------------------------------------------------------------------------
+   Display-only size row on the product card, so a customer can see what is in
+   stock before opening the product page. Sold-out sizes are greyed out and
+   crossed with a diagonal line.
+
+   Sits at the bottom of the product image with the inline-end padding kept
+   clear of the quick-add button, so the sizes and the quick-add read side by
+   side rather than stacking or overlapping.
+
+   Paste this at the very END of assets/theme.css.
+   ========================================================================== */
+
+.product-card__size-availability {
+  z-index: 2;
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin: 0;
+  padding: max(0.75rem, var(--product-card-inner-padding));
+  /* leave room for the quick-add button pinned to the bottom-inline-end */
+  padding-inline-end: 3rem;
+  list-style: none;
+  /* inert: the card link and quick-add button own every interaction here */
+  pointer-events: none;
+}
+
+.product-card__size {
+  position: relative;
+  min-width: 1.375rem;
+  padding: 2px 4px;
+  border-radius: 2px;
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: center;
+  color: rgb(var(--text-color));
+  background: rgb(var(--background) / 0.85);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.product-card__size--unavailable {
+  color: rgb(var(--text-color) / 0.35);
+  background: rgb(var(--background) / 0.6);
+}
+
+/* diagonal "not available" strike, drawn corner to corner so it scales with the pill */
+.product-card__size--unavailable::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top right,
+    transparent calc(50% - 0.5px),
+    currentColor calc(50% - 0.5px),
+    currentColor calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}
+
+/* On pointer devices the quick-add button slides up full width on hover, so fade
+   the sizes out as it arrives rather than letting the two overlap. Mirrors the
+   theme's own quick-buy reveal selectors. */
+@media screen and (pointer: fine) {
+  .product-card__size-availability {
+    transition: opacity 0.15s ease-in-out;
+  }
+
+  .product-card--info-inside:hover .product-card__size-availability,
+  .product-card--info-outside .product-card__figure:hover .product-card__size-availability,
+  .product-card:focus-within .product-card__size-availability {
+    opacity: 0;
+  }
+}
+
+/* Hide in the dense layouts, matching how the theme hides the quick-add there. */
+@media screen and (max-width: 699px) {
+  .product-list[mobile-items-per-row="3"] .product-card__size-availability {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 700px) {
+  .product-list[desktop-layout="thumbnails"] .product-card__size-availability {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-card__size-availability {
+    transition: none;
+  }
+}
