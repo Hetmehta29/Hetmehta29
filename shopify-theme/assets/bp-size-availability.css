@@ -17,11 +17,16 @@
   inset-inline: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
+  gap: 2px;
   margin: 0;
   padding: max(0.75rem, var(--product-card-inner-padding));
-  /* leave room for the quick-add button pinned to the bottom-inline-end */
-  padding-inline-end: 3rem;
+  /* Tighter inline padding than the card's own, so a full size run (S to 2XL)
+     stays on one line in a two-up mobile grid - at the card's normal padding it
+     lands within a pixel of the wrap threshold on a 390px phone and wraps on a
+     360px one. The end padding tracks the quick-add button (its padding plus
+     its icon) so the pills can never slide underneath it. */
+  padding-inline-start: 0.625rem;
+  padding-inline-end: calc(max(1rem, var(--product-card-inner-padding)) + 1.5rem);
   list-style: none;
   /* inert: the card link and quick-add button own every interaction here */
   pointer-events: none;
@@ -29,8 +34,8 @@
 
 .product-card__size {
   position: relative;
-  min-width: 1.375rem;
-  padding: 2px 5px;
+  min-width: 1.25rem;
+  padding: 2px 4px;
   border-radius: 2px;
   font-size: 10px;
   line-height: 1.4;
@@ -95,6 +100,19 @@
 @media screen and (min-width: 700px) {
   .product-list[desktop-layout="thumbnails"] .product-card__size-availability {
     display: none;
+  }
+}
+
+/* Narrow phones: tighten once more so the run still holds on one line. */
+@media screen and (max-width: 379px) {
+  .product-card__size-availability {
+    padding-inline-start: 0.5rem;
+    gap: 1px;
+  }
+
+  .product-card__size {
+    min-width: 1.125rem;
+    padding-inline: 3px;
   }
 }
 
