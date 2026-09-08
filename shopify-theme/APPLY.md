@@ -155,13 +155,16 @@ only. The BP block's own description anticipates this: *"Keep or hide the theme'
 picker."*
 
 ```css
-/* product page only — the quick-add modal is appended to <body>, outside this section */
-#shopify-section-template--main .product-info__block-item[data-block-type="variant-picker"] {
+/* Product page only. When the quick-add modal opens, theme.js moves it to document.body:
+     if (this.shouldAppendToBody && this.parentElement !== document.body) document.body.append(this);
+   so the modal's copy is NOT inside a .shopify-section wrapper and stays visible. */
+.shopify-section .product-info__block-item[data-block-type="variant-picker"] {
   display: none;
 }
 ```
 
-Confirm the section id from the rendered page before using that selector.
+No section id needed — this works as-is. (`product-info.liquid` emits the attribute as
+`data-block-type="{{ block.type | replace: '_', '-' }}"`, hence `variant-picker` with a hyphen.)
 
 ### Option B — keep the BP picker in the modal
 
