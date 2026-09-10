@@ -1,0 +1,1131 @@
+{%- comment -%} =========================================================
+  BLUPRINT · product-info · build W5-FITSAFE (2026-07-05)
+  + never exceeds page width (max-width:100%; width only inflates when
+    Block size > 100), + Inner cell padding control, + all W4 controls.
+========================================================= {%- endcomment -%}
+{%- doc -%}
+
+This snippet renders all the blocks of a given product. It uses the blocks of the section currently in use (there is
+no need to manually pass the section as it is globally available)
+
+@param {object} [product] - the product on which to render the information (if blank, it renders placeholder information)
+@param {array} [allow_blocks] - a list of blocks name to include. If none is passed, assumes to show all the blocks
+@param {string} [product_form_id] - the ID of the product form
+@param {string} [swatch_selector_size] - can be "sm" to make swatch smaller
+@param {string} [content_alignment] - the alignment of the content
+@param {string} [context] - the context of the product info. Can be "main_product", "featured_product" or "quick_buy"
+@param {object} [section]
+@param {object} [recommendations]
+{%- enddoc -%}
+
+{%- assign alignment = content_alignment | replace: 'left', 'start' | replace: 'right', 'end' | default: 'start' -%}
+
+{%- comment -%} Bluprint · parse spec attributes from each product's own description (dynamic per product).
+   Composition line = the short line containing "%". Weave/Pattern read their labels. Fit reads the "... fit" keyword.
+   The marketing intro (which name-drops both cotton and cotton-linen) is ignored because it has no "%". {%- endcomment -%}
+{%- assign bp_fabric = 'Premium cotton' -%}{%- assign bp_pattern = 'Solid' -%}{%- assign bp_fit = 'Slim fit' -%}{%- assign bp_weave = 'Poplin' -%}
+{%- if product != blank and product.description != blank -%}
+  {%- assign _norm = product.description | replace: '</p>', '¦' | replace: '<p>', '¦' | replace: '<br>', '¦' | replace: '<br/>', '¦' | replace: '<br />', '¦' | replace: '</li>', '¦' | replace: '<li>', '¦' -%}
+  {%- assign _lines = _norm | split: '¦' -%}
+  {%- assign _fab = '' -%}
+  {%- for _ln in _lines -%}{%- assign _l = _ln | strip_html | strip -%}{%- if _fab == '' and _l contains '%' and _l.size < 42 -%}{%- assign _fab = _l -%}{%- endif -%}{%- endfor -%}
+  {%- if _fab != '' -%}{%- assign bp_fabric = _fab -%}{%- elsif product.description contains 'cotton-linen' or product.description contains 'Cotton-Linen' or product.description contains 'cotton linen' -%}{%- assign bp_fabric = 'Cotton-linen blend' -%}{%- endif -%}
+  {%- if _norm contains 'Weave:' -%}{%- assign _wv = _norm | split: 'Weave:' | last | split: '¦' | first | split: '|' | first | strip_html | strip -%}{%- if _wv != '' -%}{%- assign bp_weave = _wv -%}{%- endif -%}{%- endif -%}
+  {%- if _norm contains 'Pattern:' -%}{%- assign _pt = _norm | split: 'Pattern:' | last | split: '¦' | first | split: '|' | first | strip_html | strip -%}{%- if _pt != '' -%}{%- assign bp_pattern = _pt -%}{%- endif -%}{%- endif -%}
+  {%- assign _dl = product.description | downcase -%}
+  {%- if _dl contains 'relaxed fit' -%}{%- assign bp_fit = 'Relaxed fit' -%}{%- elsif _dl contains 'oversized' -%}{%- assign bp_fit = 'Oversized fit' -%}{%- elsif _dl contains 'regular fit' -%}{%- assign bp_fit = 'Regular fit' -%}{%- elsif _dl contains 'slim fit' -%}{%- assign bp_fit = 'Slim fit' -%}{%- endif -%}
+{%- endif -%}
+
+<safe-sticky class="product-info text-{{ alignment }}">
+  <div class="product-info__block-list">
+    {%- liquid
+      assign inside_block_group_context = false
+      assign current_block_group_name = ''
+
+      if allow_blocks != blank
+        assign filtered_blocks = '' | split: ''
+
+        for block in section.blocks
+          if allow_blocks contains block.type
+            assign block_as_arr = block | sort
+            assign filtered_blocks = filtered_blocks | concat: block_as_arr
+          endif
+        endfor
+      else
+        assign filtered_blocks = section.blocks
+      endif
+    -%}
+
+    {%- for block in filtered_blocks -%}
+      {% liquid
+        assign next_block_index = forloop.index0 | plus: 1
+        assign next_block = filtered_blocks[next_block_index]
+
+        comment
+        You can use your own condition to create smart grouping. When two or more blocks match the condition, they are
+        automatically grouped by a div that will take the desired class. This can even work for more than 2 elements
+        (for instance if you specify accordion follow by an accordion). The theme takes care of properly opening and
+        closing the group for proper HTML. In order to make it work, you need to create one condition explaining when
+        to enter into the group, and you need to indicate a block_group_class and block_group_name. Most of the time,
+        the two will be identical. However, the block_group_name must be unique. This means that as long as the block_group_name
+        stays the same, then another group will not be created as long as the conditions match.
+        endcomment
+
+        assign allow_block_group = true
+
+        if block.type == 'accordion' and next_block.type == 'accordion'
+          assign block_group_class = 'accordion-group'
+          assign block_group_name = 'accordion-group'
+        elsif block.type == 'description' and block.settings.collapse_content and product.description != blank and next_block.type == 'accordion'
+          assign block_group_class = 'accordion-group'
+          assign block_group_name = 'accordion-group'
+        elsif block.type == 'accordion' and next_block.type == 'description' and next_block.settings.collapse_content and product.description != blank
+          assign block_group_class = 'accordion-group'
+          assign block_group_name = 'accordion-group'
+        else
+          assign allow_block_group = false
+          assign block_group_class = ''
+          assign current_block_group_name = ''
+        endif
+
+        if allow_block_group
+          assign new_block_group_name = block_group_name
+
+          if inside_block_group_context == true and new_block_group_name != current_block_group_name
+            assign allow_block_group = false
+          else
+            assign current_block_group_name = new_block_group_name
+          endif
+        endif
+      %}
+
+      {%- capture block_content -%}
+        {%- case block.type -%}
+          {%- when '@app' -%}
+            {%- render block -%}
+
+          {%- when 'vendor' -%}
+            {%- if product != blank -%}
+              {%- render 'vendor' with product.vendor, class: 'subheading text-subdued' -%}
+            {%- else -%}
+              {%- assign placeholder_vendor = 'general.on_boarding.product_vendor' | t -%}
+              {%- render 'vendor' with placeholder_vendor, class: 'subheading text-subdued' -%}
+            {%- endif -%}
+
+          {%- when 'title' -%}
+            {%- if product != blank -%}
+              {%- assign product_title = product.title -%}
+            {%- else -%}
+              {%- assign product_title = 'general.on_boarding.product_title' | t -%}
+            {%- endif -%}
+
+            {%- if request.page_type == 'product' and context == 'main_product' -%}
+              <h1 class="product-title {{ block.settings.heading_tag }}">
+                {{- product_title -}}
+              </h1>
+            {%- else -%}
+              <h2 class="product-title {% if context == 'quick_buy' %}h4{% else %}{{ block.settings.heading_tag }}{% endif %}">
+                <a href="{{ product.url }}">{{ product_title }}</a>
+              </h2>
+            {%- endif -%}
+
+          {%- when 'sku' -%}
+            {%- if product.selected_or_first_available_variant.sku != blank -%}
+              <variant-sku class="variant-sku subheading text-subdued">
+                {{- 'product.general.sku' | t }} {{ product.selected_or_first_available_variant.sku -}}
+              </variant-sku>
+            {%- endif -%}
+
+          {%- when 'badges' -%}
+            {%- if product != blank -%}
+              {%- render 'product-badges',
+                product: product,
+                context: 'product',
+                variant: product.selected_or_first_available_variant,
+                alignment: alignment,
+                show_custom_badge: true,
+                show_sold_out_badge: settings.product_card_show_sold_out_badge,
+                show_discount_badge: settings.product_card_show_discount
+              -%}
+            {%- endif -%}
+
+          {%- when 'price' -%}
+            {%- if product.selected_or_first_available_variant != nil -%}
+              {%- assign shipping_policy_drawer_id = 'drawer-shipping-policy-' | append: block.id -%}
+
+              <div class="v-stack gap-2">
+                {%- render 'price-list', product: product, variant: product.selected_or_first_available_variant, alignment: alignment, context: 'product' -%}
+
+                {%- if block.settings.show_taxes_notice -%}
+                  <p class="subheading text-subdued">
+                    {%- if cart.taxes_included -%}
+                      {{ 'product.general.taxes_included' | t }}
+                    {%- else -%}
+                      {{ 'product.general.taxes_excluded' | t }}
+                    {%- endif -%}
+
+                    {%- if shop.shipping_policy.body != blank -%}
+                      {{ 'product.general.shipping_policy_html' | t: drawer_id: shipping_policy_drawer_id }}
+                    {%- endif -%}
+                  </p>
+                {%- endif -%}
+              </div>
+
+              {%- if block.settings.show_taxes_notice and shop.shipping_policy.body != blank -%}
+                <x-drawer id="{{ shipping_policy_drawer_id }}" class="drawer color-scheme color-scheme--{{ settings.default_color_scheme.id }}">
+                  <h2 slot="header">{{ shop.shipping_policy.title }}</h2>
+
+                  <div class="prose">
+                    {{- shop.shipping_policy.body -}}
+                  </div>
+                </x-drawer>
+              {%- endif -%}
+            {%- endif -%}
+
+          {%- when 'payment_terms' -%}
+            {%- if product != blank -%}
+              <payment-terms class="payment-terms">
+                {%- capture product_installment_form_id -%}{{ product_form_id }}-payment-installment{%- endcapture -%}
+
+                {%- form 'product', product, id: product_installment_form_id -%}
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                  {{- form | payment_terms -}}
+                {%- endform -%}
+              </payment-terms>
+            {%- endif -%}
+
+          {%- when 'rating' -%}
+            {%- if product != blank -%}
+              {%- render 'product-rating', product: product, alignment: alignment, show_empty: block.settings.show_empty, show_placeholder: false -%}
+            {%- else -%}
+              {%- render 'product-rating', alignment: alignment, show_placeholder: true -%}
+            {%- endif -%}
+
+          {%- when 'separator' -%}
+            <hr>
+
+          {%- when 'description' -%}
+            {%- liquid
+              if product == blank
+                assign product_description = 'general.on_boarding.product_description' | t
+              else
+                # Shopify RTE often adds a useless meta tag that mess with spacing, so we remove it
+                assign product_description = product.description | remove_first: '<meta charset="utf-8">'
+              endif
+            -%}
+
+            {%- if product_description != blank -%}
+              {%- if block.settings.collapse_content -%}
+                {%- assign accordion_title = 'product.general.description' | t -%}
+
+                {%- render 'accordion',
+                  title: accordion_title,
+                  custom_icon: block.settings.custom_icon,
+                  content: product_description,
+                  prose_content: true,
+                  uppercase_title: block.settings.uppercase_title,
+                  block: block
+                -%}
+              {%- else -%}
+                <div class="prose prose-justify-{{ alignment }}">
+                  {{- product_description -}}
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+
+          {%- when 'variant_picker' -%}
+            {%- if product != blank -%}
+              {%- render 'variant-picker',
+                  product: product,
+                  form_id: product_form_id,
+                  context: context,
+                  alignment: alignment,
+                  hide_sold_out_variants: block.settings.hide_sold_out_variants,
+                  separate_options: block.settings.separate_options,
+                  selector_style: block.settings.selector_style,
+                  swatch_selector_style: block.settings.swatch_selector_style,
+                  swatch_selector_size: block.settings.swatch_selector_size,
+                  block_selector_style: block.settings.block_selector_style,
+                  variant_image_options: block.settings.variant_image_options,
+                  size_chart_page: block.settings.size_chart_page
+                -%}
+            {%- endif -%}
+
+          {%- when 'product_variations' -%}
+            {%- liquid
+              assign contains_product = false
+
+              for product_variation in block.settings.products
+                if product_variation == product
+                  assign contains_product = true
+                endif
+              endfor
+            -%}
+
+            {%- if contains_product -%}
+              {%- comment -%}
+                IMPLEMENTATION NOTE: this feature allows to connect different products on the same page. It is therefore
+                visually similar to a variant picker, although it does not share the functionality
+              {%- endcomment -%}
+              <div class="variant-picker">
+                <div class="variant-picker__option justify-{{ alignment }}">
+                  {%- assign metafield_parts = block.settings.option_value_metafield | split: '.' -%}
+                  {%- assign metafield_namespace = metafield_parts | first -%}
+                  {%- assign metafield_key = metafield_parts | last -%}
+                  {%- assign metafield = product.metafields[metafield_namespace][metafield_key] -%}
+
+                  {%- if block.settings.option_name != blank -%}
+                    <div class="h-stack gap-2">
+                      <p class="text-subdued">{{ block.settings.option_name | escape }}:</p>
+
+                      {%- if metafield.type == 'metaobject_reference' -%}
+                        <span>{{ product.metafields[metafield_namespace][metafield_key].value.label }}</span>
+                      {%- else -%}
+                        <span>{{ product.metafields[metafield_namespace][metafield_key].value }}</span>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+
+                  {%- liquid
+                    case block.settings.selector_style
+                      when 'swatch'
+                        case settings.color_swatch_shape
+                          when 'circle'
+                            if swatch_selector_size == 'sm'
+                              assign list_classes = 'h-stack gap-3 wrap'
+                            else
+                              assign list_classes = 'h-stack gap-4 wrap'
+                            endif
+
+                          else
+                            if swatch_selector_size == 'sm'
+                              assign list_classes = 'h-stack gap-3 wrap'
+                            else
+                              assign list_classes = 'h-stack gap-4 wrap'
+                            endif
+                        endcase
+                      when 'variant_image'
+                        assign list_classes = 'h-stack gap-1 wrap'
+                      else
+                        assign list_classes = 'h-stack gap-3 wrap'
+                    endcase
+                  -%}
+
+                  <div class="variant-picker__option-values {{ list_classes }}">
+                    {%- liquid
+                      for product_variation in block.settings.products
+                        assign color_metaobject = nil
+                        assign variation_metafield = product_variation.metafields[metafield_namespace][metafield_key]
+
+                        if variation_metafield.type == 'metaobject_reference' and variation_metafield.value.system.type == 'shopify--color-pattern'
+                          assign label = variation_metafield.value.label
+                          assign color_metaobject = variation_metafield.value
+                        else
+                          assign label = variation_metafield.value
+                        endif
+
+                        if product_variation == product
+                          assign selected = true
+                        else
+                          assign selected = false
+                        endif
+
+                        case block.settings.selector_style
+                          when 'swatch'
+                            render 'option-value', type: 'swatch', url: product_variation.url, label: label, color_metaobject: color_metaobject, selected: selected, size: block.settings.swatch_selector_size
+
+                          when 'variant_image'
+                            render 'option-value', type: 'thumbnail', url: product_variation.url, label: label, image: product_variation.featured_media, selected: selected
+
+                          when 'block'
+                            render 'option-value', type: 'block', url: product_variation.url, label: label, selected: selected
+
+                          when 'block_swatch'
+                            render 'option-value', type: 'block', url: product_variation.url, label: label, color_metaobject: color_metaobject, selected: selected, show_swatch: true
+                        endcase
+                      endfor
+                    -%}
+                  </div>
+                </div>
+              </div>
+            {%- endif -%}
+
+          {%- when 'line_item_property' -%}
+            {%- if block.settings.label != blank -%}
+              {%- capture name -%}properties[{{ block.settings.label | escape }}]{%- endcapture -%}
+
+              <div class="v-stack {% if block.settings.type == 'checkbox' %}justify-items-{{ alignment }}{% else %}justify-{{ alignment }}{% endif %}">
+                {%- liquid
+                  if block.settings.type == 'text'
+                    if block.settings.allow_long_text
+                      render 'input', label: block.settings.label, show_label_as_block: true, name: name, form: product_form_id, multiline: 4, alignment: alignment, required: block.settings.required, placeholder: block.settings.placeholder, maxlength: block.settings.max_length
+                    else
+                      render 'input', type: 'text', label: block.settings.label, show_label_as_block: true, name: name, form: product_form_id, alignment: alignment, required: block.settings.required, placeholder: block.settings.placeholder, maxlength: block.settings.max_length
+                    endif
+                  elsif block.settings.type == 'checkbox'
+                    render 'checkbox', label: block.settings.label, name: name, form: product_form_id, value: block.settings.checkbox_value, required: block.settings.required
+                  elsif block.settings.type == 'dropdown' and block.settings.select_values != blank
+                    assign option_values = block.settings.select_values | split: ','
+                    render 'select', label: block.settings.label, show_label_as_block: true, option_values: option_values, show_empty_value: true, name: name, alignment: alignment, form: product_form_id, required: block.settings.required
+                  endif
+                -%}
+              </div>
+            {%- endif -%}
+
+          {%- when 'inventory' -%}
+            {%- render 'inventory',
+                variant: product.selected_or_first_available_variant,
+                alignment: alignment,
+                show_in_stock_quantity: block.settings.show_in_stock_quantity,
+                show_progress_bar: block.settings.show_progress_bar,
+                progress_bar_max_value: block.settings.progress_bar_max_value,
+                low_threshold: block.settings.low_inventory_threshold
+            -%}
+
+          {%- when 'buy_buttons' -%}
+            {%- comment -%} Bluprint · buy box — styling hook only. The native render + all cart/checkout logic is untouched. {%- endcomment -%}
+            <div class="bp-buybox" data-bp-buybox>
+            {%- render 'buy-buttons',
+                product: product,
+                form_id: product_form_id,
+                show_quantity_selector: block.settings.show_quantity_selector,
+                add_quantity_selector_spacing: block.settings.add_quantity_selector_spacing,
+                show_payment_button: block.settings.show_payment_button,
+                show_gift_card_recipient: block.settings.show_gift_card_recipient,
+                atc_button_style: block.settings.atc_button_style,
+                atc_button_background: block.settings.atc_button_background,
+                atc_button_text_color: block.settings.atc_button_text_color,
+                payment_button_background: block.settings.payment_button_background,
+                payment_button_text_color: block.settings.payment_button_text_color
+            -%}
+            </div>
+
+          {%- when 'volume_pricing' -%}
+            {%- render 'volume-pricing-table', variant: product.selected_or_first_available_variant -%}
+
+          {%- when 'pickup_availability' -%}
+            {%- if product != blank -%}
+              {%- render 'pickup-availability', product_variant: product.selected_or_first_available_variant, alignment: alignment -%}
+            {%- endif -%}
+
+          {%- when 'complementary_products' -%}
+            <product-recommendations class="block" hidden product="{{ product.id }}" limit="{{ block.settings.products_count }}" intent="complementary">
+              {%- if recommendations.performed? and recommendations.intent == 'complementary' and recommendations.products_count > 0 -%}
+                {%- assign carousel_id = 'carousel-' | append: section.id | append: block.id -%}
+
+                <div class="v-stack gap-4">
+                  {%- if block.settings.title != blank or recommendations.products_count > 1 -%}
+                    <div class="h-stack justify-between">
+                      {%- if block.settings.title != blank -%}
+                        <p>{{ block.settings.title }}</p>
+                      {%- endif -%}
+
+                      {%- if recommendations.products_count > 2 -%}
+                        <div class="h-stack gap-2">
+                          <carousel-prev-button aria-controls="{{ carousel_id }}">
+                            <button type="button" disabled class="circle-button">
+                              <span class="sr-only">{{ 'general.accessibility.previous' | t }}</span>
+                              {%- render 'icon' with 'big-arrow-left', width: 9, direction_aware: true -%}
+                            </button>
+                          </carousel-prev-button>
+
+                          <carousel-next-button aria-controls="{{ carousel_id }}">
+                            <button type="button" class="circle-button">
+                              <span class="sr-only">{{ 'general.accessibility.next' | t }}</span>
+                              {%- render 'icon' with 'big-arrow-right', width: 9, direction_aware: true -%}
+                            </button>
+                          </carousel-next-button>
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+
+                  <scroll-carousel id="{{ carousel_id }}" class="complementary-products complementary-products--vertical scroll-area bleed sm:unbleed snap-x">
+                    {%- for product in recommendations.products -%}
+                      {%- render 'product-cross-sell', product: product, layout: 'vertical', show_quick_buy: true -%}
+                    {%- endfor -%}
+                  </scroll-carousel>
+                </div>
+              {%- endif -%}
+            </product-recommendations>
+
+          {%- when 'text' -%}
+            {%- if block.settings.text != blank -%}
+              <div class="prose prose-justify-{{ alignment }}">
+                {{- block.settings.text -}}
+              </div>
+            {%- endif -%}
+
+          {%- when 'accordion' -%}
+            {%- liquid
+              assign accordion_title = block.settings.title | default: block.settings.page.title
+              assign accordion_content = block.settings.page.content | default: block.settings.content
+
+              if accordion_title != blank and accordion_content != blank
+                if block.settings.custom_icon != blank
+                  render 'accordion', title: accordion_title, custom_icon: block.settings.custom_icon, content: accordion_content, uppercase_title: block.settings.uppercase_title, prose_content: true, block: block
+                else
+                  render 'accordion', title: accordion_title, icon: block.settings.icon, content: accordion_content, uppercase_title: block.settings.uppercase_title, prose_content: true, block: block
+                endif
+              endif
+            -%}
+
+          {%- when 'liquid' -%}
+            {%- if block.settings.liquid != blank -%}
+              <div class="liquid">
+                {{- block.settings.liquid -}}
+              </div>
+            {%- endif -%}
+
+          {%- when 'image' -%}
+            {%- if block.settings.image != blank -%}
+              {%- assign image_alignment = block.settings.alignment | replace: 'left', 'start' | replace: 'right', 'end' -%}
+              {%- capture image_style_attribute -%}{% if image_alignment == 'center' %}margin-inline: auto;{% elsif image_alignment == 'end' %}margin-inline-start: auto;{% endif %}{%- endcapture -%}
+
+              {%- if block.settings.width_mode == 'custom' -%}
+                {%- capture image_style_attribute -%}{{ image_style_attribute }} --image-max-width: {{ block.settings.max_width }}px; --image-mobile-max-width: {{ block.settings.mobile_max_width }}px{%- endcapture -%}
+                {%- capture image_sizes_attribute -%}(max-width: 699px) min({{ block.settings.mobile_max_width }}px, 100vw), min({{ block.settings.max_width }}px, 100vw){%- endcapture -%}
+              {%- else -%}
+                {%- capture image_sizes_attribute -%}min(600px, 100vw){%- endcapture -%}
+                {%- capture image_style_attribute -%}width: 100%;{%- endcapture -%}
+              {%- endif -%}
+
+              {{- block.settings.image | image_url: width: block.settings.image.width | image_tag: loading: 'lazy', sizes: image_sizes_attribute, widths: '200,300,400,500,600,800,1000,1200,1400', class: 'constrained-image', style: image_style_attribute -}}
+            {%- endif -%}
+
+          {%- when 'button' -%}
+            {%- if block.settings.text != blank -%}
+              {%- render 'button', href: block.settings.link, content: block.settings.text, stretch: block.settings.stretch, style: block.settings.style, background: block.settings.background, text_color: block.settings.text_color -%}
+            {%- endif -%}
+
+          {%- when 'share_buttons' -%}
+            <share-button>
+              <button class="h-stack gap-2 justify-{{ alignment }} share-buttons--native" hidden>
+                <span class="subheading">{{- 'general.social.share' | t -}}</span>
+                {%- render 'icon' with 'share' -%}
+              </button>
+
+              <div class="h-stack gap-6 justify-{{ alignment }}">
+                <span class="subheading">{{- 'general.social.share' | t -}}</span>
+                {%- render 'share-buttons', url: product.url, title: product.title, description: product.description -%}
+              </div>
+            </share-button>
+
+          {%- when 'snapshot' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--snapshot" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-snapcell{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-snap">
+    {%- assign snaps = block.settings.snapshot | newline_to_br | split: '<br />' -%}
+    {%- assign snapcls = 'nav,sky,gold,mint,violet,coral,rose' | split: ',' -%}
+    {%- for row in snaps -%}
+      {%- assign cells = row | strip | split: '|' -%}
+      {%- if cells.size >= 2 -%}
+        <div class="bp-snapcell bp-snap--{{ snapcls[forloop.index0] }} {% if forloop.first %}bp-snap--wide{% endif %}">
+          <span class="bp-snapcell__k">{{ cells[0] | strip }}</span>
+          <span class="bp-snapcell__v">{{ cells[1] | strip }}</span>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+            </div>
+
+          {%- when 'bp-offers' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--offers" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-offcard{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-off__title{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-off__title{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-off__title{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_accent3 != blank %}#bp-{{ block.id }} .bp-offcard__pct,#bp-{{ block.id }} .bp-offcard__tag,#bp-{{ block.id }} .bp-off__star{ color:{{ block.settings.c_accent3 }} !important; }{% endif %}{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-off__title{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-off">
+        <div class="bp-off__head">
+          <span class="bp-off__star">★</span><span class="bp-off__title">AVAILABLE OFFERS</span>
+        </div>
+        <div class="bp-off__rail bp-scroll" data-bp-offers>
+          {%- assign offers = block.settings.offers | newline_to_br | split: '<br />' -%}
+          {%- for row in offers -%}
+            {%- assign c = row | strip | split: '|' -%}
+            {%- if c.size >= 3 -%}
+              {%- comment -%} Live price minus the discount set per offer in the editor. c[2] = "10%" (percent) or "300"/"₹300" (flat ₹ off). {%- endcomment -%}
+              {%- assign bp_base = product.price -%}
+              {%- assign bp_dstr = c[2] | strip -%}
+              {%- assign bp_pay = bp_base -%}
+              {%- if bp_dstr contains '%' -%}
+                {%- assign bp_pct = bp_dstr | remove: '%' | strip | times: 1 -%}
+                {%- assign bp_keep = 100 | minus: bp_pct -%}
+                {%- assign bp_pay = bp_base | times: bp_keep | divided_by: 100 -%}
+              {%- else -%}
+                {%- assign bp_flat = bp_dstr | remove: '₹' | remove: 'Rs.' | remove: 'Rs' | remove: 'rs' | remove: ',' | remove: ' ' | times: 1 | times: 100 -%}
+                {%- assign bp_pay = bp_base | minus: bp_flat -%}
+              {%- endif -%}
+              {%- if bp_pay < 0 -%}{%- assign bp_pay = 0 -%}{%- endif -%}
+            <div class="bp-offcard">
+              <div class="bp-offcard__top">
+                <div>
+                  <div class="bp-offcard__pct">{{ c[0] | strip }}{%- if c[1] != blank %} <span>· {{ c[1] | strip }}</span>{% endif -%}</div>
+                  <div class="bp-offcard__lbl">Pay only</div>
+                  <div class="bp-offcard__pay"><span>{{ bp_pay | money }}</span>{%- if bp_pay < bp_base %}<s>{{ bp_base | money }}</s>{% endif -%}</div>
+                </div>
+                {%- if c[4] and c[4] contains 'auto' -%}<span class="bp-offcard__tag bp-offcard__tag--auto">AUTO</span>{%- else -%}<span class="bp-offcard__tag">OFFER</span>{%- endif -%}
+              </div>
+              <div class="bp-offcard__note">{{ c[3] | strip }}</div>
+            </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        <div class="bp-off__dots" data-bp-offdots></div>
+      </div>
+            </div>
+
+          {%- when 'rewards' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--rewards" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-rew{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-rew__head{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-rew__head{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-rew__head{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-rew__head{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-rew" id="bp-offer-dash">
+      <div class="bp-rew__glow" aria-hidden="true"></div>
+      <div class="bp-rew__head"><span>Rewards &amp; guarantees</span><span class="bp-rew__timer"><span class="bp-dot bp-dot--r"></span>{{ block.settings.countdown }}</span></div>
+      <div class="bp-rew__grid">
+        {%- assign gtors = block.settings.guarantees | newline_to_br | split: '<br />' -%}
+        {%- for row in gtors -%}
+          {%- assign g = row | strip | split: '|' -%}
+          {%- if g.size >= 3 -%}
+          <div class="bp-gcell"><span class="bp-gcell__i">{{ g[0] | strip }}</span><div><div class="bp-gcell__t">{{ g[1] | strip }}</div><div class="bp-gcell__s">{{ g[2] | strip }}</div></div></div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+  </div>
+            </div>
+
+          {%- when 'price-transparency' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--price-transparency" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-card{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_accent3 != blank %}#bp-{{ block.id }} .bp-pt__foot b{ color:{{ block.settings.c_accent3 }} !important; }{% endif %}{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-price-t">
+  <span class="bp-eyebrow bp-eyebrow--coral">{{ block.settings.eyebrow }}</span>
+  <h2 class="bp-h2">{{ block.settings.heading }}</h2>
+  <div class="bp-card">
+    <div class="bp-pt__lead">{{ block.settings.pt_lead }}</div>
+    {%- assign ptrows = block.settings.pt_rows | newline_to_br | split: '<br />' -%}
+    {%- assign ptcolors = 'var(--green),var(--gold),var(--nav),var(--coral)' | split: ',' -%}
+    <div class="bp-pt__bar">{%- for row in ptrows -%}{%- assign pr = row | strip | split: '|' -%}{%- if pr.size >= 2 -%}<i style="width:{{ pr[2] | default: 25 }}%;background:{{ ptcolors[forloop.index0] | default: 'var(--nav)' }}"></i>{%- endif -%}{%- endfor -%}</div>
+    <div class="bp-pt__rows">{%- for row in ptrows -%}{%- assign pr = row | strip | split: '|' -%}{%- if pr.size >= 2 -%}<div class="bp-pt__r"><span class="bp-dotb" style="background:{{ ptcolors[forloop.index0] | default: 'var(--nav)' }}"></span><span>{{ pr[0] | strip }}</span><b>{{ pr[1] | strip }}</b></div>{%- endif -%}{%- endfor -%}</div>
+    <div class="bp-pt__foot"><span>🚫</span><div>{{ block.settings.pt_foot }}</div></div>
+  </div>
+</div>
+            </div>
+
+          {%- when 'difference' -%}
+            <div class="bp-blk bp-blk--difference" style="{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}{% if block.settings.custom_fonts %}--disp:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }};--body:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }};{% endif %}">
+<div class="bp-mod bp-diff">
+  {%- if block.settings.eyebrow_show and block.settings.eyebrow != blank -%}
+    <span class="bp-eyebrow" style="color:{{ block.settings.eyebrow_color | default: '#F04A1D' }};background:{{ block.settings.eyebrow_bg | default: '#FDEDE7' }};border:1px solid {{ block.settings.eyebrow_border | default: '#F9C9BB' }};font-size:{{ block.settings.eyebrow_size | default: 10 }}px;">{{ block.settings.eyebrow }}</span>
+  {%- endif -%}
+  {%- if block.settings.heading_show and block.settings.heading != blank -%}
+    <h2 class="bp-h2" style="text-align:{{ block.settings.heading_align | default: 'left' }};color:{{ block.settings.heading_color | default: '#23272F' }};font-size:{{ block.settings.heading_size | default: 18 }}px;font-weight:{{ block.settings.heading_weight | default: 700 }};">{{ block.settings.heading }}</h2>
+  {%- endif -%}
+  <div class="bp-diff__list" style="border-radius:{{ block.settings.list_radius | default: 18 }}px;gap:{{ block.settings.list_gap | default: 1 }}px;">
+    {%- for i in (1..6) -%}
+      {%- assign _on = 'row' | append: i | append: '_on' -%}
+      {%- assign _num = 'row' | append: i | append: '_num' -%}
+      {%- assign _t = 'row' | append: i | append: '_title' -%}
+      {%- assign _tc = 'row' | append: i | append: '_title_color' -%}
+      {%- assign _d = 'row' | append: i | append: '_desc' -%}
+      {%- assign _dc = 'row' | append: i | append: '_desc_color' -%}
+      {%- assign _c = 'row' | append: i | append: '_color' -%}
+      {%- if block.settings[_on] and block.settings[_t] != blank -%}
+        {%- assign _rc = block.settings[_c] | default: '#17C27F' -%}
+        <div class="bp-diff__r" style="padding:{{ block.settings.row_pad | default: 15 }}px;background:{{ block.settings.row_bg | default: '#F7F5F1' }};">
+          {%- if block.settings.show_numbers -%}<span class="bp-diff__n" style="color:{{ _rc }};font-size:{{ block.settings.num_size | default: 16 }}px;font-weight:{{ block.settings.num_weight | default: 700 }};">{% if block.settings[_num] != blank %}{{ block.settings[_num] }}{% else %}{{ i | prepend: '0' }}{% endif %}</span>{%- endif -%}
+          <div style="flex:1;min-width:0"><div class="bp-diff__t" style="color:{{ block.settings[_tc] | default: '#23272F' }};font-size:{{ block.settings.title_size | default: 14 }}px;font-weight:{{ block.settings.title_weight | default: 700 }};">{{ block.settings[_t] }}</div><div class="bp-diff__s" style="color:{{ block.settings[_dc] | default: '#6B655C' }};font-size:{{ block.settings.desc_size | default: 12 }}px;">{{ block.settings[_d] }}</div></div>
+          {%- if block.settings.check_char != blank -%}<span class="bp-diff__c" style="color:{{ _rc }};font-size:{{ block.settings.check_size | default: 16 }}px;">{{ block.settings.check_char }}</span>{%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+            </div>
+
+          {%- when 'fabric-dna' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--fabric-dna" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-fab{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-fab__title{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-fab__title{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-fab__title{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-fab__title{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-fab" data-bp-fab>
+  <div class="bp-fab__hero"{% if block.settings.fab_hero_img != blank %} style="background-image:url({{ block.settings.fab_hero_img | image_url: width: 800 }});background-size:cover;background-position:center"{% endif %}><span class="bp-fab__title">{{ block.settings.fab_title | default: 'Fabric DNA' }}</span><span class="bp-fab__cotton">{{ block.settings.fab_cotton | default: '100% cotton' }}</span></div>
+  <div class="bp-tabs bp-tabs--dark" data-bp-fabtabs>
+    <button type="button" class="bp-tab is-on" data-tab="dna">DNA</button>
+    <button type="button" class="bp-tab" data-tab="build">Construction</button>
+    <button type="button" class="bp-tab" data-tab="care">Care</button>
+  </div>
+  <div class="bp-fabpane" data-pane="dna">
+    <div class="bp-dna">
+      {%- assign dnar = block.settings.dna_rows | newline_to_br | split: '<br />' -%}
+      {%- for row in dnar -%}{%- assign d = row | strip | split: '|' -%}{%- if d.size >= 3 -%}<div class="bp-dna__i"><div class="bp-dna__l"><span>{{ d[0] | strip }}</span><b>{{ d[1] | strip }}</b></div><div class="bp-dna__t"><i style="width:{{ d[2] | strip }}%"></i></div></div>{%- endif -%}{%- endfor -%}
+    </div>
+  </div>
+  <div class="bp-fabpane" data-pane="build" hidden>
+    <div class="bp-chips">
+      {%- assign qc = block.settings.fab_chips | newline_to_br | split: '<br />' -%}
+      {%- for q in qc -%}{%- assign qq = q | strip -%}{%- if qq != blank -%}<span class="bp-chip"><span class="bp-chip__d"></span>{{ qq }}</span>{%- endif -%}{%- endfor -%}
+    </div>
+  </div>
+  <div class="bp-fabpane" data-pane="care" hidden>
+    <div class="bp-care">
+      {%- assign carer = block.settings.care_items | newline_to_br | split: '<br />' -%}
+      {%- for row in carer -%}{%- assign cc = row | strip | split: '|' -%}{%- if cc.size >= 3 -%}<div class="bp-care__i"><span>{{ cc[0] | strip }}</span><div><div class="bp-care__t">{{ cc[1] | strip }}</div><div class="bp-care__s">{{ cc[2] | strip }}</div></div></div>{%- endif -%}{%- endfor -%}
+    </div>
+  </div>
+</div>
+            </div>
+
+          {%- when 'wash-test' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--wash-test" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-wcard{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-wash">
+  <span class="bp-eyebrow bp-eyebrow--coral">{{ block.settings.eyebrow }}</span>
+  <h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2>
+  <p class="bp-sub">{{ block.settings.wash_sub }}</p>
+  <div class="bp-wash__row">
+    {%- assign wt = block.settings.wash_cards | newline_to_br | split: '<br />' -%}
+    {%- for row in wt -%}
+      {%- assign w = row | strip | split: '|' -%}
+      <div class="bp-wcard">
+        {%- assign wimg = 'wash_img_' | append: forloop.index -%}{%- assign wimgv = block.settings[wimg] -%}<div class="bp-wcard__img"{% if wimgv != blank %} style="background-image:url({{ wimgv | image_url: width: 300 }});background-size:cover;background-position:center"{% endif %}><span>{{ w[0] | strip }}</span></div>
+        <div class="bp-wcard__k">COLOUR</div><div class="bp-wcard__t"><i style="width:{{ w[1] }}%;background:var(--green)"></i></div>
+        <div class="bp-wcard__k">SHAPE</div><div class="bp-wcard__t"><i style="width:{{ w[2] }}%;background:var(--nav)"></i></div>
+        <div class="bp-wcard__note">{{ w[3] }}</div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+            </div>
+
+          {%- when 'comparison' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--comparison" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-cmp__r.a,#bp-{{ block.id }} .bp-cmp__r.b{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-cmp">
+  <span class="bp-eyebrow bp-eyebrow--coral">{{ block.settings.eyebrow }}</span>
+  <h2 class="bp-h2">{{ block.settings.heading }}</h2>
+  <div class="bp-cmp__table">
+    {%- assign cmphdr = block.settings.cmp_header | split: '|' -%}
+    <div class="bp-cmp__hr"><div class="bp-cmp__c1">{{ cmphdr[0] | strip }}</div><div class="bp-cmp__c2">{{ cmphdr[1] | strip }}</div><div class="bp-cmp__c3">{{ cmphdr[2] | strip }}</div></div>
+    {%- assign cr = block.settings.cmp_rows | newline_to_br | split: '<br />' -%}
+    {%- for row in cr -%}{%- assign c = row | strip | split: '|' -%}{%- if c.size >= 3 -%}{%- assign _lbl = c[0] | strip | downcase -%}{%- assign _bp = c[1] | strip -%}{%- if _lbl contains 'price' -%}{%- assign _bp = product.price | money -%}{%- elsif _lbl contains 'fabric' -%}{%- assign _bp = bp_fabric -%}{%- endif -%}<div class="bp-cmp__r {% cycle 'a','b' %}"><div class="bp-cmp__c1">{{ c[0] | strip }}</div><div class="bp-cmp__c2">✓ {{ _bp }}</div><div class="bp-cmp__c3">{{ c[2] | strip }}</div></div>{%- endif -%}{%- endfor -%}
+  </div>
+</div>
+            </div>
+
+          {%- when 'promise' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--promise" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-promise{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-promise">
+  <div class="bp-promise__glow"></div>
+  <div class="bp-promise__in">
+    <span class="bp-eyebrow bp-eyebrow--mint">{{ block.settings.eyebrow }}</span>
+    <h2 class="bp-h2">{{ block.settings.heading }}</h2>
+    <div class="bp-promise__list">
+      {%- assign pris = block.settings.promise_items | newline_to_br | split: '<br />' -%}
+      {%- for row in pris -%}{%- assign pi = row | strip | split: '|' -%}{%- if pi.size >= 3 -%}<div class="bp-pr"><span>{{ pi[0] | strip }}</span><div><div class="bp-pr__t">{{ pi[1] | strip }}</div><div class="bp-pr__s">{{ pi[2] | strip }}</div></div></div>{%- endif -%}{%- endfor -%}
+    </div>
+  </div>
+</div>
+            </div>
+
+          {%- when 'product-details' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--product-details" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-spec__c{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-details" data-bp-acc>
+  <span class="bp-eyebrow bp-eyebrow--violet">{{ block.settings.eyebrow }}</span>
+  <h2 class="bp-h2">{{ block.settings.heading }}</h2>
+  <div class="bp-acc">
+    {%- comment -%} Auto = pull specs from product info; Custom = use the fields set in the editor (blank field falls back to auto). {%- endcomment -%}
+    {%- if block.settings.spec_auto == false -%}
+      {%- assign s_fabric  = block.settings.spec_fabric  | default: bp_fabric -%}
+      {%- assign s_pattern = block.settings.spec_pattern | default: bp_pattern -%}
+      {%- assign s_fit     = block.settings.spec_fit     | default: bp_fit -%}
+      {%- assign s_weave   = block.settings.spec_weave   | default: bp_weave -%}
+      {%- assign s_wash    = block.settings.spec_wash    | default: 'Pre-shrunk & colourfixed' -%}
+      {%- assign s_collar  = block.settings.spec_collar  | default: 'Spread collar' -%}
+      {%- assign s_desc    = block.settings.spec_desc    | default: product.description -%}
+    {%- else -%}
+      {%- assign s_fabric  = bp_fabric -%}
+      {%- assign s_pattern = bp_pattern -%}
+      {%- assign s_fit     = bp_fit -%}
+      {%- assign s_weave   = bp_weave -%}
+      {%- assign s_wash    = 'Pre-shrunk & colourfixed' -%}
+      {%- assign s_collar  = 'Spread collar' -%}
+      {%- assign s_desc    = product.description -%}
+    {%- endif -%}
+    {%- comment -%} Row labels — editable, blank falls back to the default name. {%- endcomment -%}
+    {%- assign k_fabric  = block.settings.spec_fabric_lbl  | default: 'Fabric' -%}
+    {%- assign k_pattern = block.settings.spec_pattern_lbl | default: 'Pattern' -%}
+    {%- assign k_fit     = block.settings.spec_fit_lbl     | default: 'Fit' -%}
+    {%- assign k_weave   = block.settings.spec_weave_lbl   | default: 'Weave' -%}
+    {%- assign k_wash    = block.settings.spec_wash_lbl    | default: 'Wash' -%}
+    {%- assign k_collar  = block.settings.spec_collar_lbl  | default: 'Collar' -%}
+    <div class="bp-acc__i is-open">
+      <button type="button" class="bp-acc__b"><div><div class="bp-acc__t">Specifications</div><div class="bp-acc__s">Technical details and features</div></div><span class="bp-acc__x">▲</span></button>
+      <div class="bp-acc__p">
+        <div class="bp-spec">
+          <div class="bp-spec__c"><div class="bp-spec__k">{{ k_fabric }}</div><div class="bp-spec__v">{{ s_fabric }}</div></div>
+          <div class="bp-spec__c"><div class="bp-spec__k">{{ k_pattern }}</div><div class="bp-spec__v">{{ s_pattern }}</div></div>
+          <div class="bp-spec__c"><div class="bp-spec__k">{{ k_fit }}</div><div class="bp-spec__v">{{ s_fit }}</div></div>
+          <div class="bp-spec__c"><div class="bp-spec__k">{{ k_weave }}</div><div class="bp-spec__v">{{ s_weave }}</div></div>
+          <div class="bp-spec__c"><div class="bp-spec__k">{{ k_wash }}</div><div class="bp-spec__v">{{ s_wash }}</div></div>
+          <div class="bp-spec__c"><div class="bp-spec__k">{{ k_collar }}</div><div class="bp-spec__v">{{ s_collar }}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="bp-acc__i">
+      <button type="button" class="bp-acc__b"><div><div class="bp-acc__t">Description</div><div class="bp-acc__s">Product overview and details</div></div><span class="bp-acc__x">▼</span></button>
+      <div class="bp-acc__p" hidden><div class="bp-acc__txt">{{ s_desc | default: 'Add a product description in Shopify and it appears here automatically.' }}</div></div>
+    </div>
+    <div class="bp-acc__i">
+      <button type="button" class="bp-acc__b"><div><div class="bp-acc__t">Returns, Exchange &amp; Refund</div><div class="bp-acc__s">7 days easy returns and exchange</div></div><span class="bp-acc__x">▼</span></button>
+      <div class="bp-acc__p" hidden><p class="bp-acc__txt">{{ block.settings.returns_text }}</p></div>
+    </div>
+    <div class="bp-acc__i">
+      <button type="button" class="bp-acc__b"><div><div class="bp-acc__t">Marketed By</div><div class="bp-acc__s">Company and distributor information</div></div><span class="bp-acc__x">▼</span></button>
+      <div class="bp-acc__p" hidden><p class="bp-acc__txt">{{ block.settings.marketed_text }}</p></div>
+    </div>
+  </div>
+</div>
+            </div>
+
+          {%- when 'reviews' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--reviews" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-revpane{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+{%- assign _rid = product.id | default: 7 -%}{%- assign _rn = _rid | modulo: 10 | plus: 41 -%}{%- assign _rint = _rn | divided_by: 10 -%}{%- assign _rdec = _rn | modulo: 10 -%}{%- assign _rating = _rint | append: '.' | append: _rdec -%}{%- assign _count = _rid | modulo: 168 | plus: 27 -%}
+<div class="bp-mod bp-rev" id="bp-reviews" data-bp-rev data-bp-seed="{{ product.id }}">
+  <div class="bp-rev__head"><h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2><span class="bp-rev__count">{% if section.settings.bp_auto_rating %}{{ _rating }} · {{ _count }}{% else %}{{ block.settings.rev_count | default: '4.9 · 2,140' }}{% endif %}</span></div>
+  <div class="bp-card bp-card--pad0">
+    <div class="bp-tabs" data-bp-revtabs>
+      <button type="button" class="bp-tab is-on" data-tab="summary">Summary</button>
+      <button type="button" class="bp-tab" data-tab="photos">Customer reviews</button>
+      <button type="button" class="bp-tab" data-tab="match">Like you</button>
+    </div>
+    <div class="bp-revpane" data-pane="summary">
+      <div class="bp-rsum">
+        <div class="bp-rsum__big"><b>{% if section.settings.bp_auto_rating %}{{ _rating }}{% else %}{{ block.settings.rev_avg | default: '4.9' }}{% endif %}</b><span class="bp-stars">★★★★★</span><em>{% if section.settings.bp_auto_rating %}{{ _count }}{% else %}{{ block.settings.rev_total | default: '2,140' }}{% endif %}</em></div>
+        <div class="bp-rsum__bars">
+          {%- assign rbars = block.settings.rev_bars | newline_to_br | split: '<br />' -%}
+          {%- for row in rbars -%}{%- assign rb = row | strip | split: '|' -%}{%- if rb.size >= 2 -%}{%- assign rbc = rb[3] | default: '#38415F' | strip -%}<div class="bp-rbar"><span style="color:{{ rbc }}">{{ rb[0] | strip }}</span><div class="bp-rbar__t"><i style="width:{{ rb[1] | strip }}%;background:{{ rbc }}"></i></div><em>{{ rb[2] | strip }}</em></div>{%- endif -%}{%- endfor -%}
+        </div>
+      </div>
+      {%- if block.settings.rev_ai != blank -%}<div class="bp-aisum"><div class="bp-aisum__h"><span class="bp-ai bp-ai--sm">AI</span><b>AI summary</b></div><p>{{ block.settings.rev_ai }}</p></div>{%- endif -%}
+      {%- if block.settings.rev_keywords != blank -%}<div class="bp-kw">{%- assign rkw = block.settings.rev_keywords | newline_to_br | split: '<br />' -%}{%- for row in rkw -%}{%- assign kw = row | strip | split: '|' -%}{%- if kw[0] != blank -%}<span>{{ kw[0] | strip }} <em>{{ kw[1] | strip }}</em></span>{%- endif -%}{%- endfor -%}</div>{%- endif -%}
+    </div>
+    <div class="bp-revpane" data-pane="photos" hidden>
+      <div class="bp-revfilters bp-scroll" data-bp-revfilters>
+        <button type="button" class="is-on" data-f="all">All</button>
+        <button type="button" data-f="5">5★</button>
+        <button type="button" data-f="mysize">My size <em data-bp-myfilter>M</em></button>
+      </div>
+      <div class="bp-rcards" data-bp-rcards></div>
+      <div class="bp-rempty" data-bp-rempty hidden>No reviews match this filter.</div>
+    </div>
+    <div class="bp-revpane" data-pane="match" hidden>
+      <div class="bp-match__note">Matched to buyers within ±4cm / ±5kg of <b data-bp-matchhw>178cm · 74kg</b>. Adjust Fit Studio to re-match.</div>
+      <div class="bp-rcards" data-bp-matchcards></div>
+    </div>
+  </div>
+  {%- comment -%} Reviews are auto-generated uniquely per product (seeded by product.id) — no static injection so every product gets its own set. {%- endcomment -%}
+</div>
+            </div>
+
+          {%- when 'social-proof' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--social-proof" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-loved{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-loved__h{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-loved__h{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-loved__h{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-loved__h{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-loved">
+  <div class="bp-loved__glow"></div>
+  <div class="bp-loved__top">
+    <span class="bp-eyebrow bp-eyebrow--violet">{{ block.settings.eyebrow }}</span>
+    <h2 class="bp-loved__h">{{ block.settings.loved_h | default: '40,000 men.<br>One shirt they trust.' }}</h2>
+    <div class="bp-loved__stars">★★★★★</div>
+  </div>
+  <div class="bp-loved__stats">
+    {%- assign lstats = block.settings.loved_stats | newline_to_br | split: '<br />' -%}
+    {%- for row in lstats -%}{%- assign st = row | strip | split: '|' -%}{%- if st.size >= 2 -%}<div class="bp-stat"><b>{{ st[0] | strip }}</b><span>{{ st[1] | strip }}</span></div>{%- endif -%}{%- endfor -%}
+  </div>
+  <div class="bp-notes">
+    {%- assign lnotes = block.settings.loved_notes | newline_to_br | split: '<br />' -%}
+    {%- assign lncolors = 'var(--gold),var(--green),var(--coral),var(--nav),var(--gold2),var(--green)' | split: ',' -%}
+    {%- assign lnrot = '-3deg,2.5deg,-1.5deg,3deg,-2deg,1.5deg' | split: ',' -%}
+    {%- for row in lnotes -%}{%- assign nt = row | strip | split: '|' -%}{%- if nt.size >= 2 -%}<div class="bp-note" style="--r:{{ lnrot[forloop.index0] | default: '0deg' }}"><span class="bp-note__q" style="color:{{ lncolors[forloop.index0] | default: 'var(--gold)' }}">”</span><p>{{ nt[0] | strip }}</p><div class="bp-note__by"><span style="background:{{ lncolors[forloop.index0] | default: 'var(--gold)' }}"></span>{{ nt[1] | strip }}</div></div>{%- endif -%}{%- endfor -%}
+  </div>
+  <a href="#bp-reviews" class="bp-loved__cta">{{ block.settings.loved_cta | default: 'Read all 2,140 reviews →' }}</a>
+</div>
+            </div>
+
+          {%- when 'complete-look' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--complete-look" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-card{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-look">
+  <div class="bp-look__head">
+    <div><span class="bp-eyebrow bp-eyebrow--coral">{{ block.settings.eyebrow }}</span><h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2></div>
+    <span class="bp-chip-g">{{ block.settings.look_save | default: 'Save ₹1,800' }}</span>
+  </div>
+  <div class="bp-card">
+    {%- assign lk_any = false -%}{%- for i in (1..3) -%}{%- assign _pk = 'look_product_' | append: i -%}{%- if block.settings[_pk] != blank -%}{%- assign lk_any = true -%}{%- endif -%}{%- endfor -%}
+    <div class="bp-look__row">
+      {%- if lk_any -%}{%- for i in (1..3) -%}{%- assign _pk = 'look_product_' | append: i -%}{%- assign prod = block.settings[_pk] -%}{%- if prod != blank -%}{%- assign _tk = 'look_tag_' | append: i -%}{%- assign _v = prod.selected_or_first_available_variant -%}<div class="bp-look__i"><a href="{{ prod.url }}" class="bp-look__img" style="text-decoration:none">{%- if prod.featured_image -%}<img src="{{ prod.featured_image | image_url: width: 400 }}" alt="{{ prod.title | escape }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">{%- else -%}<span>{{ prod.title | truncate: 10 }}</span>{%- endif -%}{%- if block.settings[_tk] != blank -%}<b class="bp-look__tag">{{ block.settings[_tk] }}</b>{%- endif -%}</a><div class="bp-look__n">{{ prod.title }}</div><div class="bp-look__p"><span>{{ _v.price | money }}</span>{%- if prod.compare_at_price > _v.price -%}<s>{{ prod.compare_at_price | money }}</s>{%- endif -%}</div></div>{%- endif -%}{%- endfor -%}
+      {%- else -%}{%- assign looks = block.settings.look_items | newline_to_br | split: '<br />' -%}
+      {%- for row in looks -%}{%- assign lk = row | strip | split: '|' -%}{%- if lk.size >= 5 -%}<div class="bp-look__i"><div class="bp-look__img"><span>{{ lk[0] | strip }}</span><b class="bp-look__tag">{{ lk[1] | strip }}</b></div><div class="bp-look__n">{{ lk[2] | strip }}</div><div class="bp-look__p"><span>{{ lk[3] | strip }}</span><s>{{ lk[4] | strip }}</s></div></div>{%- endif -%}{%- endfor -%}{%- endif -%}
+    </div>
+    <div class="bp-look__foot">
+      {%- if lk_any -%}{%- assign _tot = 0 -%}{%- assign _mrp = 0 -%}{%- assign _perma = '' -%}{%- for i in (1..3) -%}{%- assign _pk = 'look_product_' | append: i -%}{%- assign prod = block.settings[_pk] -%}{%- if prod != blank -%}{%- assign _v = prod.selected_or_first_available_variant -%}{%- assign _tot = _tot | plus: _v.price -%}{%- if prod.compare_at_price > _v.price -%}{%- assign _mrp = _mrp | plus: prod.compare_at_price -%}{%- else -%}{%- assign _mrp = _mrp | plus: _v.price -%}{%- endif -%}{%- if _perma != '' -%}{%- assign _perma = _perma | append: ',' -%}{%- endif -%}{%- assign _perma = _perma | append: _v.id | append: ':1' -%}{%- endif -%}{%- endfor -%}
+      <div><div class="bp-look__bl">Bundle price</div><div class="bp-look__bp"><span>{{ _tot | money }}</span>{%- if _mrp > _tot -%}<s>{{ _mrp | money }}</s>{%- endif -%}</div></div>
+      <a href="/cart/{{ _perma }}" class="bp-look__cta">{{ block.settings.look_cta | default: 'Add all →' }}</a>
+      {%- else -%}<div><div class="bp-look__bl">Bundle price</div><div class="bp-look__bp"><span>{{ block.settings.look_bundle | default: '₹4,197' }}</span><s>{{ block.settings.look_bundle_mrp | default: '₹8,797' }}</s></div></div>
+      <button type="button" class="bp-look__cta" data-bp-addlook>{{ block.settings.look_cta | default: 'Add all 3 →' }}</button>{%- endif -%}
+    </div>
+  </div>
+</div>
+            </div>
+
+          {%- when 'gallery' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--gallery" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-gcard__img{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-gal">
+  <div class="bp-gal__head"><div><span class="bp-eyebrow bp-eyebrow--coral">{{ block.settings.eyebrow }}</span><h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2></div><span class="bp-chip-n">Tap to shop</span></div>
+  <div class="bp-gal__grid">
+    {%- assign gl = block.settings.gal_items | newline_to_br | split: '<br />' -%}
+    {%- for row in gl -%}{%- assign g = row | strip | split: '|' -%}{%- if g.size >= 3 -%}
+      {%- assign gimg = 'gal_img_' | append: forloop.index -%}{%- assign gimgv = block.settings[gimg] -%}<div class="bp-gcard"><div class="bp-gcard__img" style="height:{{ g[0] | strip }}px">{% if gimgv != blank %}<img src="{{ gimgv | image_url: width: 500 }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">{% else %}UGC photo{% endif %}</div><div class="bp-gcard__bar"><span>{{ g[1] | strip }}</span><b>🛍 {{ g[2] | strip }}</b></div></div>
+    {%- endif -%}{%- endfor -%}
+  </div>
+</div>
+            </div>
+
+          {%- when 'lifestyle' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--lifestyle" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-lcard__cap{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-life">
+  <h2 class="bp-h2 bp-h2--tight" style="margin-bottom:4px">{{ block.settings.heading }}</h2>
+  <p class="bp-sub">{{ block.settings.life_sub }}</p>
+</div>
+<div class="bp-life__rail bp-scroll">
+  {%- assign lf = block.settings.life_cards | newline_to_br | split: '<br />' -%}
+  {%- for row in lf -%}{%- assign l = row | strip | split: '|' -%}{%- if l.size >= 2 -%}
+    {%- assign limg = 'life_img_' | append: forloop.index -%}{%- assign limgv = block.settings[limg] -%}<div class="bp-lcard"{% if limgv != blank %} style="background-image:url({{ limgv | image_url: width: 500 }});background-size:cover;background-position:center"{% endif %}><div class="bp-lcard__cap"><div class="bp-lcard__t">{{ l[0] | strip }}</div><div class="bp-lcard__s">{{ l[1] | strip }}</div></div></div>
+  {%- endif -%}{%- endfor -%}
+</div>
+            </div>
+
+          {%- when 'founder' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--founder" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-founder{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-founder__t{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-founder__t{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-founder__t{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-founder__t{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-founder">
+  <div class="bp-founder__head"><div class="bp-founder__ph"{% if block.settings.founder_photo != blank %} style="background-image:url({{ block.settings.founder_photo | image_url: width: 160 }});background-size:cover;background-position:center"{% endif %}>{% if block.settings.founder_photo == blank %}photo{% endif %}</div><div><div class="bp-founder__t">{{ block.settings.founder_title | default: 'A note from our founder' }}</div><div class="bp-founder__by">{{ block.settings.founder_by | default: 'Kabir Mehra · Founder, Bluprint' }}</div></div></div>
+  <p class="bp-founder__q">{{ block.settings.founder_quote }}</p>
+  <div class="bp-founder__sig">{{ block.settings.founder_sig | default: '— Kabir' }}</div>
+</div>
+            </div>
+
+          {%- when 'faq' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--faq" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-faq__i{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-faq" data-bp-acc>
+  <h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2>
+  <div class="bp-faq__list">
+    {%- assign faqs = block.settings.faq_items | newline_to_br | split: '<br />' -%}
+    {%- for row in faqs -%}{%- assign fq = row | strip | split: '|' -%}{%- if fq.size >= 2 -%}<div class="bp-faq__i"><button type="button" class="bp-faq__b"><span>{{ fq[0] | strip }}</span><em>+</em></button><div class="bp-faq__p" hidden>{{ fq[1] | strip }}</div></div>{%- endif -%}{%- endfor -%}
+  </div>
+</div>
+            </div>
+
+          {%- when 'fit-studio' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--fit-studio" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-head__title,#bp-{{ block.id }} .bp-off__title,#bp-{{ block.id }} .bp-fab__title,#bp-{{ block.id }} .bp-loved__h,#bp-{{ block.id }} .bp-founder__t,#bp-{{ block.id }} .bp-size__label,#bp-{{ block.id }} .bp-rew__head,#bp-{{ block.id }} .bp-modal__title h2{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-ticker__row,#bp-{{ block.id }} .bp-size__hint,#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-head__value,#bp-{{ block.id }} .bp-head__rate,#bp-{{ block.id }} .bp-sbar__meta,#bp-{{ block.id }} .bp-fit__line,#bp-{{ block.id }} .bp-thumb span,#bp-{{ block.id }} .bp-guide__n{font-size:{{ block.settings.body_size }}px !important;}{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-thumb,#bp-{{ block.id }} .bp-wrow,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-fit__prefs button,#bp-{{ block.id }} .bp-snapcell{padding:{{ block.settings.cpad }}px !important;}{% endif %}#bp-{{ block.id }} .bp-modal[hidden]{display:none !important;}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod" style="margin-top:14px">
+  <button type="button" class="bp-fitstudio-btn" data-bp-open-fit="recommend" style="width:100%;padding:14px;border-radius:14px;border:none;cursor:pointer;font-family:var(--disp),system-ui;font-weight:700;font-size:14px;background:{{ block.settings.btn_bg | default: '#38415F' }};color:{{ block.settings.btn_color | default: '#F6F2EB' }};display:flex;align-items:center;justify-content:center;gap:8px"><span class="bp-ai" style="width:20px;height:20px;font-size:9px">AI</span>{{ block.settings.button_label | default: 'Find my perfect size' }}</button>
+</div>
+            </div>
+
+          {%- when 'ticker' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--ticker" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-head__title,#bp-{{ block.id }} .bp-off__title,#bp-{{ block.id }} .bp-fab__title,#bp-{{ block.id }} .bp-loved__h,#bp-{{ block.id }} .bp-founder__t,#bp-{{ block.id }} .bp-size__label,#bp-{{ block.id }} .bp-rew__head,#bp-{{ block.id }} .bp-modal__title h2{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-ticker__row,#bp-{{ block.id }} .bp-size__hint,#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-head__value,#bp-{{ block.id }} .bp-head__rate,#bp-{{ block.id }} .bp-sbar__meta,#bp-{{ block.id }} .bp-fit__line,#bp-{{ block.id }} .bp-thumb span,#bp-{{ block.id }} .bp-guide__n{font-size:{{ block.settings.body_size }}px !important;}{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-thumb,#bp-{{ block.id }} .bp-wrow,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-fit__prefs button,#bp-{{ block.id }} .bp-snapcell{padding:{{ block.settings.cpad }}px !important;}{% endif %}{% if block.settings.bar_bg != blank %}#bp-{{ block.id }} .bp-ticker{background:{{ block.settings.bar_bg }} !important;}{% endif %}{% if block.settings.text_color != blank %}#bp-{{ block.id }} .bp-ticker__row{color:{{ block.settings.text_color }} !important;}{% endif %}{% if block.settings.speed > 0 %}#bp-{{ block.id }} .bp-ticker__track{animation-duration:{{ block.settings.speed }}s !important;}{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-ticker">
+  <div class="bp-ticker__track">
+    {%- assign ticker = block.settings.ticker_text | split: '|' -%}
+    {%- for pass in (1..2) -%}<span class="bp-ticker__row">{%- for t in ticker -%}{{ t | strip }} <i>✦</i> {%- endfor -%}</span>{%- endfor -%}
+  </div>
+</div>
+            </div>
+
+          {%- when 'live-feed' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--live-feed" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-head__title,#bp-{{ block.id }} .bp-off__title,#bp-{{ block.id }} .bp-fab__title,#bp-{{ block.id }} .bp-loved__h,#bp-{{ block.id }} .bp-founder__t,#bp-{{ block.id }} .bp-size__label,#bp-{{ block.id }} .bp-rew__head,#bp-{{ block.id }} .bp-modal__title h2{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-ticker__row,#bp-{{ block.id }} .bp-size__hint,#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-head__value,#bp-{{ block.id }} .bp-head__rate,#bp-{{ block.id }} .bp-sbar__meta,#bp-{{ block.id }} .bp-fit__line,#bp-{{ block.id }} .bp-thumb span,#bp-{{ block.id }} .bp-guide__n{font-size:{{ block.settings.body_size }}px !important;}{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-thumb,#bp-{{ block.id }} .bp-wrow,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-fit__prefs button,#bp-{{ block.id }} .bp-snapcell{padding:{{ block.settings.cpad }}px !important;}{% endif %}{% if block.settings.c_tag != blank %}#bp-{{ block.id }} .bp-live__tag{background:{{ block.settings.c_tag }} !important;color:#fff !important;}{% endif %}{% if block.settings.c_item != blank %}#bp-{{ block.id }} .bp-live__item{background:{{ block.settings.c_item }} !important;}{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-live bp-scroll">
+  <span class="bp-live__tag"><span class="bp-dot bp-dot--r"></span>{{ block.settings.live_label | default: 'LIVE' }}</span>
+  {%- assign feed = block.settings.live_feed | newline_to_br | split: '<br />' -%}
+  {%- for f in feed -%}{%- assign fi = f | strip -%}{%- if fi != blank -%}<span class="bp-live__item">{{ fi }}</span>{%- endif -%}{%- endfor -%}
+</div>
+            </div>
+
+          {%- when 'hero' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _disc = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _disc = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}{%- endif -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--hero" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-head__title,#bp-{{ block.id }} .bp-off__title,#bp-{{ block.id }} .bp-fab__title,#bp-{{ block.id }} .bp-loved__h,#bp-{{ block.id }} .bp-founder__t,#bp-{{ block.id }} .bp-size__label,#bp-{{ block.id }} .bp-rew__head,#bp-{{ block.id }} .bp-modal__title h2{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-ticker__row,#bp-{{ block.id }} .bp-size__hint,#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-head__value,#bp-{{ block.id }} .bp-head__rate,#bp-{{ block.id }} .bp-sbar__meta,#bp-{{ block.id }} .bp-fit__line,#bp-{{ block.id }} .bp-thumb span,#bp-{{ block.id }} .bp-guide__n{font-size:{{ block.settings.body_size }}px !important;}{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-thumb,#bp-{{ block.id }} .bp-wrow,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-fit__prefs button,#bp-{{ block.id }} .bp-snapcell{padding:{{ block.settings.cpad }}px !important;}{% endif %}#bp-{{ block.id }} .bp-hero__frame{overflow:hidden;}#bp-{{ block.id }} .bp-hero__track{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;}#bp-{{ block.id }} .bp-hero__track::-webkit-scrollbar{display:none;}#bp-{{ block.id }} .bp-hero__slide{flex:0 0 100%;height:100%;scroll-snap-align:center;}#bp-{{ block.id }} .bp-hero__slide .bp-hero__img{width:100%;height:100%;object-fit:cover;display:block;}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-hero" data-bp-hero>
+  <div class="bp-hero__frame">
+    <div class="bp-hero__track" data-bp-track>{%- if product.media.size > 0 -%}{%- for media in product.media limit: 6 -%}<div class="bp-hero__slide" data-i="{{ forloop.index0 }}"><img class="bp-hero__img" src="{{ media | image_url: width: 1080 }}" alt="{{ product.title | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"></div>{%- endfor -%}{%- else -%}<div class="bp-hero__slide"><div class="bp-ph bp-hero__img"><b>FRONT VIEW</b><span>add product images</span></div></div>{%- endif -%}</div>
+    <div class="bp-hero__badges">
+      {%- if block.settings.show_save and _disc > 0 -%}<span class="bp-badge bp-badge--save">{{ _disc }}% OFF</span>{%- endif -%}
+      {%- if block.settings.badge_text != blank -%}<span class="bp-badge bp-badge--trend">{{ block.settings.badge_text }}</span>{%- endif -%}
+    </div>
+    {%- if block.settings.stock_text != blank -%}<div class="bp-badge bp-badge--stock">{{ block.settings.stock_text }}</div>{%- endif -%}
+    <div class="bp-hero__dots" data-bp-dots>{%- for media in product.media limit: 6 -%}<button type="button" class="bp-hdot {% if forloop.first %}is-on{% endif %}" data-i="{{ forloop.index0 }}" aria-label="image {{ forloop.index }}"></button>{%- endfor -%}</div>
+  </div>
+  <div class="bp-hero__thumbs bp-scroll" data-bp-thumbs>
+    {%- assign labels = block.settings.thumb_labels | split: ',' -%}
+    {%- for media in product.media limit: 6 -%}<button type="button" class="bp-thumb {% if forloop.first %}is-on{% endif %}" data-i="{{ forloop.index0 }}" style="background-image:url({{ media | image_url: width: 140 }});background-size:cover;background-position:center">{%- assign _lb = labels[forloop.index0] | strip -%}{%- if _lb != blank -%}<span>{{ _lb }}</span>{%- endif -%}</button>{%- endfor -%}
+  </div>
+</div>
+<script>
+(function(){var wrap=document.getElementById('bp-{{ block.id }}');if(!wrap||wrap.dataset.bpBound)return;wrap.dataset.bpBound='1';
+var track=wrap.querySelector('[data-bp-track]');if(!track)return;
+var dots=Array.prototype.slice.call(wrap.querySelectorAll('[data-bp-dots] .bp-hdot'));var thumbs=Array.prototype.slice.call(wrap.querySelectorAll('[data-bp-thumbs] .bp-thumb'));
+function setActive(i){dots.forEach(function(d){d.classList.toggle('is-on',+d.dataset.i===i);});thumbs.forEach(function(t){t.classList.toggle('is-on',+t.dataset.i===i);});}
+function slideTo(i){track.scrollTo({left:i*track.clientWidth,behavior:'smooth'});setActive(i);}
+dots.concat(thumbs).forEach(function(el){el.addEventListener('click',function(){slideTo(+el.dataset.i);});});
+var raf;track.addEventListener('scroll',function(){if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(function(){setActive(Math.round(track.scrollLeft/Math.max(1,track.clientWidth)));});},{passive:true});
+setActive(0);})();
+</script>
+            </div>
+
+          {%- when 'size-picker' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _sizeopt = null -%}{%- for opt in product.options_with_values -%}{%- assign _dn = opt.name | downcase -%}{%- if _dn contains 'size' -%}{%- assign _sizeopt = opt -%}{%- endif -%}{%- endfor -%}{%- unless _sizeopt -%}{%- assign _sizeopt = product.options_with_values.first -%}{%- endunless -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--size-picker" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-head__title,#bp-{{ block.id }} .bp-off__title,#bp-{{ block.id }} .bp-fab__title,#bp-{{ block.id }} .bp-loved__h,#bp-{{ block.id }} .bp-founder__t,#bp-{{ block.id }} .bp-size__label,#bp-{{ block.id }} .bp-rew__head,#bp-{{ block.id }} .bp-modal__title h2{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-ticker__row,#bp-{{ block.id }} .bp-size__hint,#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-head__value,#bp-{{ block.id }} .bp-head__rate,#bp-{{ block.id }} .bp-sbar__meta,#bp-{{ block.id }} .bp-fit__line,#bp-{{ block.id }} .bp-thumb span,#bp-{{ block.id }} .bp-guide__n{font-size:{{ block.settings.body_size }}px !important;}{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-thumb,#bp-{{ block.id }} .bp-wrow,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-fit__prefs button,#bp-{{ block.id }} .bp-snapcell{padding:{{ block.settings.cpad }}px !important;}{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-mod bp-size" data-bp-sizepicker>
+  <div class="bp-size__head">
+    <span class="bp-size__label">{{ block.settings.label | default: 'Select size' }} · <em data-bp-selected>{{ _sizeopt.selected_value }}</em></span>
+    <div class="bp-size__acts">
+      {%- if block.settings.show_chart -%}<button type="button" class="bp-pill" data-bp-openfit="chart">📏 Size chart</button>{%- endif -%}
+      {%- if block.settings.show_fit -%}<button type="button" class="bp-pill bp-pill--dark" data-bp-openfit="recommend"><span class="bp-ai">AI</span>Find my fit</button>{%- endif -%}
+    </div>
+  </div>
+  <div class="bp-size__row" data-bp-sizes>{%- for value in _sizeopt.values -%}<button type="button" class="bp-sz {% if _sizeopt.selected_value == value %}is-on{% endif %}" data-size="{{ value | escape }}">{{ value }}</button>{%- endfor -%}</div>
+  {%- if block.settings.hint != blank -%}<div class="bp-size__hint">{{ block.settings.hint }}</div>{%- endif -%}
+</div>
+<script>
+(function(){var wrap=document.getElementById('bp-{{ block.id }}');if(!wrap||wrap.dataset.bpBound)return;wrap.dataset.bpBound='1';
+var btns=Array.prototype.slice.call(wrap.querySelectorAll('[data-bp-sizes] .bp-sz'));
+function nativeSelect(val){var done=false;document.querySelectorAll('input[type=radio]').forEach(function(inp){if(done)return;if((inp.value||'').trim()===val){inp.checked=true;inp.dispatchEvent(new Event('change',{bubbles:true}));done=true;}});if(!done)document.querySelectorAll('select').forEach(function(sel){if(done)return;Array.prototype.slice.call(sel.options).forEach(function(o){if((o.value||'').trim()===val){sel.value=o.value;sel.dispatchEvent(new Event('change',{bubbles:true}));done=true;}});});if(!done)document.querySelectorAll('.product-info label, .product-form label, [data-product-info] label').forEach(function(el){if(done)return;if((el.textContent||'').trim()===val){el.click();done=true;}});return done;}
+btns.forEach(function(b){b.addEventListener('click',function(){btns.forEach(function(x){x.classList.toggle('is-on',x===b);});var s=wrap.querySelector('[data-bp-selected]');if(s)s.textContent=b.dataset.size;nativeSelect(b.dataset.size);document.dispatchEvent(new CustomEvent('bp:size',{detail:{size:b.dataset.size}}));});});
+wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListener('click',function(){document.dispatchEvent(new CustomEvent('bp:openfit',{detail:{tab:b.getAttribute('data-bp-openfit')}}));});});})();
+</script>
+            </div>
+
+          {%- when 'sticky-bar' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _save = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _save = product.compare_at_price | minus: product.price -%}{%- endif -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--sticky-bar" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-head__title,#bp-{{ block.id }} .bp-off__title,#bp-{{ block.id }} .bp-fab__title,#bp-{{ block.id }} .bp-loved__h,#bp-{{ block.id }} .bp-founder__t,#bp-{{ block.id }} .bp-size__label,#bp-{{ block.id }} .bp-rew__head,#bp-{{ block.id }} .bp-modal__title h2{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-ticker__row,#bp-{{ block.id }} .bp-size__hint,#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-head__value,#bp-{{ block.id }} .bp-head__rate,#bp-{{ block.id }} .bp-sbar__meta,#bp-{{ block.id }} .bp-fit__line,#bp-{{ block.id }} .bp-thumb span,#bp-{{ block.id }} .bp-guide__n{font-size:{{ block.settings.body_size }}px !important;}{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-thumb,#bp-{{ block.id }} .bp-wrow,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-fit__prefs button,#bp-{{ block.id }} .bp-snapcell{padding:{{ block.settings.cpad }}px !important;}{% endif %}#bp-{{ block.id }} .bp-wallet[hidden]{display:none !important;}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-sticky">
+  <div class="bp-wallet" data-bp-wallet hidden>
+    <div class="bp-wallet__h">{{ block.settings.wallet_head | default: 'YOUR PERKS' }}</div>
+    <div class="bp-wallet__list">{%- assign perks = block.settings.wallet_items | newline_to_br | split: '<br />' -%}{%- for row in perks -%}{%- assign pk = row | strip | split: '|' -%}{%- if pk[0] != blank -%}<div class="bp-wrow"><span class="bp-wrow__i" style="background:{{ pk[2] | default: 'var(--green)' | strip }}">✓</span><span class="t">{{ pk[0] | strip }}</span><b>{{ pk[1] | strip }}</b></div>{%- endif -%}{%- endfor -%}</div>
+  </div>
+  <div class="bp-sbar">
+    <div class="bp-sbar__meter"><i style="width:{{ block.settings.meter | default: 70 }}%"></i></div>
+    <div class="bp-sbar__row">
+      <button type="button" class="bp-sbar__price" data-bp-toggle-wallet>
+        <div class="bp-sbar__nums"><span>{{ product.price | money }}</span>{%- if product.compare_at_price > product.price -%}<s>{{ product.compare_at_price | money }}</s>{%- endif -%}</div>
+        <div class="bp-sbar__meta"><em data-bp-sticky-size>{{ product.selected_or_first_available_variant.title }}</em>{%- if _save > 0 %} · save <em>{{ _save | money }}</em>{% endif %} · perks <em data-bp-chev>▴</em></div>
+      </button>
+      <button type="button" class="bp-sbar__cta" data-bp-buy>{{ block.settings.cta | default: 'Add to cart' }}</button>
+    </div>
+  </div>
+</div>
+<div class="bp-confetti" data-bp-confetti aria-hidden="true"></div>
+<script>
+(function(){var wrap=document.getElementById('bp-{{ block.id }}');if(!wrap||wrap.dataset.bpBound)return;wrap.dataset.bpBound='1';
+var box=wrap.querySelector('[data-bp-wallet]'),tg=wrap.querySelector('[data-bp-toggle-wallet]'),cv=wrap.querySelector('[data-bp-chev]'),op=false;
+if(tg)tg.addEventListener('click',function(){op=!op;if(box)box.hidden=!op;if(cv)cv.textContent=op?'▾':'▴';});
+var buy=wrap.querySelector('[data-bp-buy]'),cb=wrap.querySelector('[data-bp-confetti]');
+function realAdd(){var b=document.querySelector('product-form button[name="add"], form[action*="/cart/add"] [type="submit"], form[action*="/cart/add"] [name="add"], .product-form__submit');if(b){b.click();return;}var f=document.querySelector('form[action*="/cart/add"]');if(f){f.requestSubmit?f.requestSubmit():f.submit();}}
+if(buy)buy.addEventListener('click',function(){conf();realAdd();});
+document.addEventListener('bp:size',function(e){var s=wrap.querySelector('[data-bp-sticky-size]');if(s&&e.detail&&e.detail.size)s.textContent=e.detail.size;});
+var C=['#FFCE54','#17C27F','#FF5C33','#38415F','#7C4DFF'];
+function conf(){if(!cb)return;for(var i=0;i<24;i++){var p=document.createElement('i');p.style.left=Math.random()*100+'%';p.style.background=C[i%5];p.style.animationDuration=(1+Math.random()*0.9).toFixed(2)+'s';p.style.animationDelay=(Math.random()*0.25).toFixed(2)+'s';cb.appendChild(p);}setTimeout(function(){cb.innerHTML='';},2200);}})();
+</script>
+            </div>
+
+          {%- when 'product-header' -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _save = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _save = product.compare_at_price | minus: product.price -%}{%- endif -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--product-header" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-head__title,#bp-{{ block.id }} .bp-off__title,#bp-{{ block.id }} .bp-fab__title,#bp-{{ block.id }} .bp-loved__h,#bp-{{ block.id }} .bp-founder__t,#bp-{{ block.id }} .bp-size__label,#bp-{{ block.id }} .bp-rew__head,#bp-{{ block.id }} .bp-modal__title h2{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-ticker__row,#bp-{{ block.id }} .bp-size__hint,#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-head__value,#bp-{{ block.id }} .bp-head__rate,#bp-{{ block.id }} .bp-sbar__meta,#bp-{{ block.id }} .bp-fit__line,#bp-{{ block.id }} .bp-thumb span,#bp-{{ block.id }} .bp-guide__n{font-size:{{ block.settings.body_size }}px !important;}{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-thumb,#bp-{{ block.id }} .bp-wrow,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-fit__prefs button,#bp-{{ block.id }} .bp-snapcell{padding:{{ block.settings.cpad }}px !important;}{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-head__title{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.price_size > 0 %}#bp-{{ block.id }} .bp-price{font-size:{{ block.settings.price_size }}px !important;}{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-head__title{color:{{ block.settings.c_dark }} !important;}{% endif %}{% if block.settings.c_price != blank %}#bp-{{ block.id }} .bp-price{color:{{ block.settings.c_price }} !important;}{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-head">
+  {%- assign _rid = product.id | default: 7 -%}{%- assign _rn = _rid | modulo: 10 | plus: 41 -%}{%- assign _rint = _rn | divided_by: 10 -%}{%- assign _rdec = _rn | modulo: 10 -%}{%- assign _rating = _rint | append: '.' | append: _rdec -%}{%- assign _count = _rid | modulo: 168 | plus: 27 -%}
+  {%- if block.settings.show_rating -%}<div class="bp-head__rate"><span class="bp-stars">★★★★★</span><b>{% if section.settings.bp_auto_rating %}{{ _rating }}{% else %}{{ block.settings.rating | default: '4.9' }}{% endif %}</b><a href="#bp-reviews">{% if section.settings.bp_auto_rating %}{{ _count }}{% else %}{{ block.settings.review_count | default: '2,140' }}{% endif %} reviews</a>{%- if block.settings.kept_pct != blank -%}<span class="bp-chip-g">✓ {{ block.settings.kept_pct }} kept it</span>{%- endif -%}</div>{%- endif -%}
+  <div class="bp-head__row">
+    <h1 class="bp-head__title">{{ product.title }}</h1>
+    <div class="bp-head__price"><div class="bp-price">{{ product.price | money }}</div>{%- if product.compare_at_price > product.price -%}<div class="bp-mrp">{{ product.compare_at_price | money }}</div>{%- endif -%}</div>
+  </div>
+  {%- if block.settings.show_value and product.compare_at_price > product.price -%}<p class="bp-head__value">{{ block.settings.value_prefix | default: 'Looks like a' }} {{ product.compare_at_price | money }} shirt. Yours for {{ product.price | money }} · save {{ _save | money }}</p>{%- endif -%}
+</div>
+            </div>
+
+          {%- when 'bp-preorder' -%}
+            {%- comment -%} Message-only pre-order notice. Shows only for the products + sizes picked in the editor. Does not touch stock, cart or the OOS guard. {%- endcomment -%}
+            {%- assign bpscope = "#bp-" | append: block.id -%}
+            {%- assign _pre = '' -%}
+            {%- for i in (1..10) -%}
+              {%- assign _pk = 'pre_prod' | append: i -%}
+              {%- assign _sk = 'pre_size' | append: i -%}
+              {%- assign _pp = block.settings[_pk] -%}
+              {%- if _pp != blank and _pp.id == product.id -%}
+                {%- assign _sv = block.settings[_sk] | strip -%}
+                {%- if _sv == blank -%}{%- assign _pre = _pre | append: ',*' -%}{%- else -%}{%- assign _pre = _pre | append: ',' | append: _sv -%}{%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+            {%- assign _pre = _pre | upcase | replace: ' ', '' | remove_first: ',' -%}
+            {%- assign _predays = block.settings.pre_days | default: 10 -%}
+            {%- comment -%} Token swap must happen in assign tags: a literal } inside {{ }} ends the tag early in Shopify Liquid. {%- endcomment -%}
+            {%- assign _pmsg = block.settings.pre_text | default: 'This size ships in {days} days' -%}
+            {%- assign _pmsg = _pmsg | replace: '{days}', _predays | replace: '[days]', _predays -%}
+            {%- if _pre != blank -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-preorder" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }} .bp-preo{ display:none; align-items:center; gap:9px; margin-top:8px; padding:{% if block.settings.cpad > 0 %}{{ block.settings.cpad }}px{% else %}9px 11px{% endif %}; border-radius:10px; background:{{ block.settings.c_bg | default: '#FFF7E8' }}; border:1px solid {{ block.settings.c_border | default: 'rgba(190,135,25,.26)' }}; }#bp-{{ block.id }} .bp-preo.is-on{ display:flex; }#bp-{{ block.id }} .bp-preo__i{ flex:0 0 auto; font-size:15px; line-height:1; }#bp-{{ block.id }} .bp-preo__t{ font-family:var(--disp); font-weight:700; font-size:{% if block.settings.head_size > 0 %}{{ block.settings.head_size }}px{% else %}10.5px{% endif %}; letter-spacing:.06em; text-transform:uppercase; color:{{ block.settings.c_accent | default: '#8A6100' }}; }#bp-{{ block.id }} .bp-preo__s{ font-size:{% if block.settings.body_size > 0 %}{{ block.settings.body_size }}px{% else %}11.5px{% endif %}; color:{{ block.settings.c_text | default: '#6B6459' }}; margin-top:1px; line-height:1.35; }{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+<div class="bp-preo" data-bp-preorder data-sizes="{{ _pre | escape }}">
+  {%- if block.settings.pre_icon != blank -%}<span class="bp-preo__i">{{ block.settings.pre_icon }}</span>{%- endif -%}
+  <div>
+    <div class="bp-preo__t">{{ block.settings.pre_title | default: 'Pre-order' }}</div>
+    <div class="bp-preo__s">{{ _pmsg }}</div>
+  </div>
+</div>
+<script>
+(function(){
+  var root = document.getElementById('bp-{{ block.id }}');
+  if(!root) return;
+  var box = root.querySelector('[data-bp-preorder]');
+  if(!box) return;
+  var raw = (box.getAttribute('data-sizes')||'').toUpperCase();
+  var all = raw.indexOf('*') > -1;
+  var list = raw.split(',').map(function(s){return s.trim();}).filter(function(s){return s && s !== '*';});
+  function apply(sz){
+    var hit = all || (!!sz && list.indexOf(String(sz).trim().toUpperCase()) > -1);
+    box.classList.toggle('is-on', hit);
+  }
+  function current(){
+    var on = document.querySelector('[data-bp-sizes] .bp-sz.is-on');
+    return on ? on.getAttribute('data-size') : '';
+  }
+  document.addEventListener('bp:size', function(e){ apply(e.detail && e.detail.size); });
+  apply(current());
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ apply(current()); });
+  }
+})();
+</script>
+            </div>{%- elsif request.design_mode -%}<div style="margin:8px 0;padding:10px 12px;border:1px dashed #C9C2B4;border-radius:10px;font-size:11.5px;color:#8B8578;background:#FAF8F3">BP · Pre-order notice — this product isn’t in the list yet, so nothing shows on the live page. Pick it under “Which products &amp; sizes”.</div>{%- endif -%}
+
+        {%- endcase -%}
+      {%- endcapture -%}
+
+      {%- if allow_block_group and inside_block_group_context == false -%}
+        {%- assign inside_block_group_context = true -%}
+        <div class="product-info__block-group {{ block_group_class }}" data-group-type="{{ block_group_name }}">
+      {%- endif -%}
+
+      {%- liquid
+        assign block_types_allowing_partial_rerender = 'sku,badges,price,payment_terms,volume_pricing,variant_picker,inventory,buy_buttons,pickup_availability,liquid' | split: ','
+        assign allow_partial_rerender = false
+
+        if block_types_allowing_partial_rerender contains block.type
+          assign allow_partial_rerender = true
+        endif
+      -%}
+
+      <div class="product-info__block-item" data-block-id="{{ block.id }}" data-block-type="{{ block.type | replace: '_', '-' }}" {% if allow_partial_rerender %}data-block-allow-rerender{% endif %} {% unless block.type == '@app' or block.type == 'accordion' %}{{ block.shopify_attributes }}{% endunless %}>
+        {{- block_content -}}
+      </div>
+
+      {%- if inside_block_group_context and allow_block_group == false -%}
+        {%- assign inside_block_group_context = false -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if context == 'quick_buy' -%}
+      <a href="{{ product.url }}" class="link sm-max:hidden">{{ 'product.general.view_details' | t }}</a>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%}
+    IMPLEMENTATION NOTE: under rare circumstances, merchant may want to show selectors to allow variant selection, but hide
+    the add to cart button. This is however problematic as product info is changed based on the form, so we create a default
+    one if no buy buttons exists
+  {%- endcomment -%}
+
+  {%- assign buy_buttons_block = section.blocks | where: 'type', 'buy_buttons' | first -%}
+
+  {%- unless buy_buttons_block != blank or product == blank -%}
+    {%- form 'product', product, id: product_form_id, hidden: true -%}
+      <input type="hidden" disabled name="id" value="{{ product.selected_or_first_available_variant.id }}">
+    {%- endform -%}
+  {%- endunless -%}
+</safe-sticky>
