@@ -515,11 +515,11 @@ no need to manually pass the section as it is globally available)
             {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--snapshot" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-snapcell{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
 <div class="bp-snap">
     {%- assign snaps = block.settings.snapshot | newline_to_br | split: '<br />' -%}
-    {%- assign snapcls = 'nav,sky,gold,mint,violet,coral,rose' | split: ',' -%}
+    {%- assign _odd = snaps.size | modulo: 2 -%}
     {%- for row in snaps -%}
       {%- assign cells = row | strip | split: '|' -%}
       {%- if cells.size >= 2 -%}
-        <div class="bp-snapcell bp-snap--{{ snapcls[forloop.index0] }} {% if forloop.first %}bp-snap--wide{% endif %}">
+        <div class="bp-snapcell {% if forloop.last and _odd == 1 %}bp-snap--wide{% endif %}">
           <span class="bp-snapcell__k">{{ cells[0] | strip }}</span>
           <span class="bp-snapcell__v">{{ cells[1] | strip }}</span>
         </div>
@@ -554,14 +554,11 @@ no need to manually pass the section as it is globally available)
               {%- if bp_pay < 0 -%}{%- assign bp_pay = 0 -%}{%- endif -%}
             <div class="bp-offcard">
               <div class="bp-offcard__top">
-                <div>
-                  <div class="bp-offcard__pct">{{ c[0] | strip }}{%- if c[1] != blank %} <span>· {{ c[1] | strip }}</span>{% endif -%}</div>
-                  <div class="bp-offcard__lbl">Pay only</div>
-                  <div class="bp-offcard__pay"><span>{{ bp_pay | money }}</span>{%- if bp_pay < bp_base %}<s>{{ bp_base | money }}</s>{% endif -%}</div>
-                </div>
-                {%- if c[4] and c[4] contains 'auto' -%}<span class="bp-offcard__tag bp-offcard__tag--auto">AUTO</span>{%- else -%}<span class="bp-offcard__tag">OFFER</span>{%- endif -%}
+                <div class="bp-offcard__pct">{{ c[0] | strip }}{%- if c[1] != blank %} <span>· {{ c[1] | strip }}</span>{% endif -%}</div>
+                <div class="bp-offcard__lbl">{{ c[3] | strip }}</div>
+                <div class="bp-offcard__pay"><span>{{ bp_pay | money }}</span>{%- if bp_pay < bp_base %}<s>{{ bp_base | money }}</s>{% endif -%}</div>
               </div>
-              <div class="bp-offcard__note">{{ c[3] | strip }}</div>
+              {%- if c[4] and c[4] contains 'auto' -%}<span class="bp-offcard__tag bp-offcard__tag--auto">AUTO</span>{%- else -%}<span class="bp-offcard__tag">OFFER</span>{%- endif -%}
             </div>
             {%- endif -%}
           {%- endfor -%}
@@ -573,14 +570,18 @@ no need to manually pass the section as it is globally available)
           {%- when 'rewards' -%}
             {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--rewards" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-rew{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-rew__head{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-rew__head{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-rew__head{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-rew__head{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
 <div class="bp-rew" id="bp-offer-dash">
-      <div class="bp-rew__glow" aria-hidden="true"></div>
-      <div class="bp-rew__head"><span>Rewards &amp; guarantees</span><span class="bp-rew__timer"><span class="bp-dot bp-dot--r"></span>{{ block.settings.countdown }}</span></div>
+      <div class="bp-rew__head">
+        <span>{{ block.settings.heading | default: 'Order with confidence' }}</span>
+        {%- if block.settings.countdown != blank -%}<span class="bp-rew__timer">{{ block.settings.countdown }}</span>{%- endif -%}
+      </div>
       <div class="bp-rew__grid">
+        {%- comment -%} "Title|Sub" per line. The 01-04 index is drawn, not typed. {%- endcomment -%}
         {%- assign gtors = block.settings.guarantees | newline_to_br | split: '<br />' -%}
         {%- for row in gtors -%}
           {%- assign g = row | strip | split: '|' -%}
-          {%- if g.size >= 3 -%}
-          <div class="bp-gcell"><span class="bp-gcell__i">{{ g[0] | strip }}</span><div><div class="bp-gcell__t">{{ g[1] | strip }}</div><div class="bp-gcell__s">{{ g[2] | strip }}</div></div></div>
+          {%- if g.size >= 2 -%}
+            {%- if g.size >= 3 -%}{%- assign _gt = g[1] -%}{%- assign _gs = g[2] -%}{%- else -%}{%- assign _gt = g[0] -%}{%- assign _gs = g[1] -%}{%- endif -%}
+          <div class="bp-gcell"><span class="bp-gcell__i">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span><div class="bp-gcell__t">{{ _gt | strip }}</div><div class="bp-gcell__s">{{ _gs | strip }}</div></div>
           {%- endif -%}
         {%- endfor -%}
       </div>
@@ -592,13 +593,22 @@ no need to manually pass the section as it is globally available)
 <div class="bp-mod bp-price-t">
   <span class="bp-eyebrow bp-eyebrow--coral">{{ block.settings.eyebrow }}</span>
   <h2 class="bp-h2">{{ block.settings.heading }}</h2>
-  <div class="bp-card">
+  <div class="bp-pt">
     <div class="bp-pt__lead">{{ block.settings.pt_lead }}</div>
+    {%- comment -%} "Label|Amount|Percent" per line — the percent drives the rule width. {%- endcomment -%}
     {%- assign ptrows = block.settings.pt_rows | newline_to_br | split: '<br />' -%}
-    {%- assign ptcolors = 'var(--green),var(--gold),var(--nav),var(--coral)' | split: ',' -%}
-    <div class="bp-pt__bar">{%- for row in ptrows -%}{%- assign pr = row | strip | split: '|' -%}{%- if pr.size >= 2 -%}<i style="width:{{ pr[2] | default: 25 }}%;background:{{ ptcolors[forloop.index0] | default: 'var(--nav)' }}"></i>{%- endif -%}{%- endfor -%}</div>
-    <div class="bp-pt__rows">{%- for row in ptrows -%}{%- assign pr = row | strip | split: '|' -%}{%- if pr.size >= 2 -%}<div class="bp-pt__r"><span class="bp-dotb" style="background:{{ ptcolors[forloop.index0] | default: 'var(--nav)' }}"></span><span>{{ pr[0] | strip }}</span><b>{{ pr[1] | strip }}</b></div>{%- endif -%}{%- endfor -%}</div>
-    <div class="bp-pt__foot"><span>🚫</span><div>{{ block.settings.pt_foot }}</div></div>
+    <div class="bp-pt__rows">
+      {%- for row in ptrows -%}
+        {%- assign pr = row | strip | split: '|' -%}
+        {%- if pr.size >= 2 -%}
+          <div class="bp-pt__r">
+            <div class="bp-pt__rl"><span>{{ pr[0] | strip }}</span><b>{{ pr[1] | strip }}</b></div>
+            <div class="bp-pt__t"><i style="width:{{ pr[2] | default: 25 }}%"></i></div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    <p class="bp-pt__foot">{{ block.settings.pt_foot }}</p>
   </div>
 </div>
             </div>
@@ -607,12 +617,12 @@ no need to manually pass the section as it is globally available)
             <div class="bp-blk bp-blk--difference" style="{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}{% if block.settings.custom_fonts %}--disp:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }};--body:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }};{% endif %}">
 <div class="bp-mod bp-diff">
   {%- if block.settings.eyebrow_show and block.settings.eyebrow != blank -%}
-    <span class="bp-eyebrow" style="color:{{ block.settings.eyebrow_color | default: '#F04A1D' }};background:{{ block.settings.eyebrow_bg | default: '#FDEDE7' }};border:1px solid {{ block.settings.eyebrow_border | default: '#F9C9BB' }};font-size:{{ block.settings.eyebrow_size | default: 10 }}px;">{{ block.settings.eyebrow }}</span>
+    <span class="bp-eyebrow bp-eyebrow--violet">{{ block.settings.eyebrow }}</span>
   {%- endif -%}
   {%- if block.settings.heading_show and block.settings.heading != blank -%}
-    <h2 class="bp-h2" style="text-align:{{ block.settings.heading_align | default: 'left' }};color:{{ block.settings.heading_color | default: '#23272F' }};font-size:{{ block.settings.heading_size | default: 18 }}px;font-weight:{{ block.settings.heading_weight | default: 700 }};">{{ block.settings.heading }}</h2>
+    <h2 class="bp-h2">{{ block.settings.heading }}</h2>
   {%- endif -%}
-  <div class="bp-diff__list" style="border-radius:{{ block.settings.list_radius | default: 18 }}px;gap:{{ block.settings.list_gap | default: 1 }}px;">
+  <div class="bp-diff__list">
     {%- for i in (1..6) -%}
       {%- assign _on = 'row' | append: i | append: '_on' -%}
       {%- assign _num = 'row' | append: i | append: '_num' -%}
@@ -623,10 +633,9 @@ no need to manually pass the section as it is globally available)
       {%- assign _c = 'row' | append: i | append: '_color' -%}
       {%- if block.settings[_on] and block.settings[_t] != blank -%}
         {%- assign _rc = block.settings[_c] | default: '#17C27F' -%}
-        <div class="bp-diff__r" style="padding:{{ block.settings.row_pad | default: 15 }}px;background:{{ block.settings.row_bg | default: '#F7F5F1' }};">
-          {%- if block.settings.show_numbers -%}<span class="bp-diff__n" style="color:{{ _rc }};font-size:{{ block.settings.num_size | default: 16 }}px;font-weight:{{ block.settings.num_weight | default: 700 }};">{% if block.settings[_num] != blank %}{{ block.settings[_num] }}{% else %}{{ i | prepend: '0' }}{% endif %}</span>{%- endif -%}
-          <div style="flex:1;min-width:0"><div class="bp-diff__t" style="color:{{ block.settings[_tc] | default: '#23272F' }};font-size:{{ block.settings.title_size | default: 14 }}px;font-weight:{{ block.settings.title_weight | default: 700 }};">{{ block.settings[_t] }}</div><div class="bp-diff__s" style="color:{{ block.settings[_dc] | default: '#6B655C' }};font-size:{{ block.settings.desc_size | default: 12 }}px;">{{ block.settings[_d] }}</div></div>
-          {%- if block.settings.check_char != blank -%}<span class="bp-diff__c" style="color:{{ _rc }};font-size:{{ block.settings.check_size | default: 16 }}px;">{{ block.settings.check_char }}</span>{%- endif -%}
+        <div class="bp-diff__r">
+          {%- if block.settings.show_numbers -%}<span class="bp-diff__n">{% if block.settings[_num] != blank %}{{ block.settings[_num] }}{% else %}{{ i | prepend: '0' }}{% endif %}</span>{%- endif -%}
+          <div><div class="bp-diff__t">{{ block.settings[_t] }}</div><div class="bp-diff__s">{{ block.settings[_d] }}</div></div>
         </div>
       {%- endif -%}
     {%- endfor -%}
@@ -637,7 +646,11 @@ no need to manually pass the section as it is globally available)
           {%- when 'fabric-dna' -%}
             {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--fabric-dna" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-fab{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-fab__title{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-fab__title{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-fab__title{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-fab__title{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
 <div class="bp-mod bp-fab" data-bp-fab>
-  <div class="bp-fab__hero"{% if block.settings.fab_hero_img != blank %} style="background-image:url({{ block.settings.fab_hero_img | image_url: width: 800 }});background-size:cover;background-position:center"{% endif %}><span class="bp-fab__title">{{ block.settings.fab_title | default: 'Fabric DNA' }}</span><span class="bp-fab__cotton">{{ block.settings.fab_cotton | default: '100% cotton' }}</span></div>
+  <div class="bp-fab__head">
+    <h2 class="bp-h2 bp-h2--tight">{{ block.settings.fab_title | default: 'Fabric DNA' }}</h2>
+    <span class="bp-fab__cotton" style="position:static">{{ block.settings.fab_cotton | default: '100% cotton' }}</span>
+  </div>
+  <div class="bp-fab__hero"{% if block.settings.fab_hero_img != blank %} style="background-image:url({{ block.settings.fab_hero_img | image_url: width: 800 }});background-size:cover;background-position:center"{% endif %}><span class="bp-fab__title">{{ block.settings.fab_caption | default: 'FABRIC MACRO SHOT · 16:9' }}</span></div>
   <div class="bp-tabs bp-tabs--dark" data-bp-fabtabs>
     <button type="button" class="bp-tab is-on" data-tab="dna">DNA</button>
     <button type="button" class="bp-tab" data-tab="build">Construction</button>
@@ -658,7 +671,7 @@ no need to manually pass the section as it is globally available)
   <div class="bp-fabpane" data-pane="care" hidden>
     <div class="bp-care">
       {%- assign carer = block.settings.care_items | newline_to_br | split: '<br />' -%}
-      {%- for row in carer -%}{%- assign cc = row | strip | split: '|' -%}{%- if cc.size >= 3 -%}<div class="bp-care__i"><span>{{ cc[0] | strip }}</span><div><div class="bp-care__t">{{ cc[1] | strip }}</div><div class="bp-care__s">{{ cc[2] | strip }}</div></div></div>{%- endif -%}{%- endfor -%}
+      {%- for row in carer -%}{%- assign cc = row | strip | split: '|' -%}{%- if cc.size >= 3 -%}<div class="bp-care__i"><span>{{ cc[0] | strip }}</span><div class="bp-care__t">{{ cc[1] | strip }}</div><div class="bp-care__s">{{ cc[2] | strip }}</div></div>{%- endif -%}{%- endfor -%}
     </div>
   </div>
 </div>
@@ -675,9 +688,9 @@ no need to manually pass the section as it is globally available)
     {%- for row in wt -%}
       {%- assign w = row | strip | split: '|' -%}
       <div class="bp-wcard">
-        {%- assign wimg = 'wash_img_' | append: forloop.index -%}{%- assign wimgv = block.settings[wimg] -%}<div class="bp-wcard__img"{% if wimgv != blank %} style="background-image:url({{ wimgv | image_url: width: 300 }});background-size:cover;background-position:center"{% endif %}><span>{{ w[0] | strip }}</span></div>
-        <div class="bp-wcard__k">COLOUR</div><div class="bp-wcard__t"><i style="width:{{ w[1] }}%;background:var(--green)"></i></div>
-        <div class="bp-wcard__k">SHAPE</div><div class="bp-wcard__t"><i style="width:{{ w[2] }}%;background:var(--nav)"></i></div>
+        {%- assign wimg = 'wash_img_' | append: forloop.index -%}{%- assign wimgv = block.settings[wimg] -%}<div class="bp-wcard__img"{% if wimgv != blank %} style="background-image:url({{ wimgv | image_url: width: 300 }});background-size:cover;background-position:center"{% endif %}></div>
+        <div class="bp-wcard__k">{{ w[0] | strip }}</div>
+        <div class="bp-wcard__v">{{ w[1] | strip }}%</div>
         <div class="bp-wcard__note">{{ w[3] }}</div>
       </div>
     {%- endfor -%}
@@ -694,21 +707,20 @@ no need to manually pass the section as it is globally available)
     {%- assign cmphdr = block.settings.cmp_header | split: '|' -%}
     <div class="bp-cmp__hr"><div class="bp-cmp__c1">{{ cmphdr[0] | strip }}</div><div class="bp-cmp__c2">{{ cmphdr[1] | strip }}</div><div class="bp-cmp__c3">{{ cmphdr[2] | strip }}</div></div>
     {%- assign cr = block.settings.cmp_rows | newline_to_br | split: '<br />' -%}
-    {%- for row in cr -%}{%- assign c = row | strip | split: '|' -%}{%- if c.size >= 3 -%}{%- assign _lbl = c[0] | strip | downcase -%}{%- assign _bp = c[1] | strip -%}{%- if _lbl contains 'price' -%}{%- assign _bp = product.price | money -%}{%- elsif _lbl contains 'fabric' -%}{%- assign _bp = bp_fabric -%}{%- endif -%}<div class="bp-cmp__r {% cycle 'a','b' %}"><div class="bp-cmp__c1">{{ c[0] | strip }}</div><div class="bp-cmp__c2">✓ {{ _bp }}</div><div class="bp-cmp__c3">{{ c[2] | strip }}</div></div>{%- endif -%}{%- endfor -%}
+    {%- for row in cr -%}{%- assign c = row | strip | split: '|' -%}{%- if c.size >= 3 -%}{%- assign _lbl = c[0] | strip | downcase -%}{%- assign _bp = c[1] | strip -%}{%- if _lbl contains 'price' -%}{%- assign _bp = product.price | money -%}{%- elsif _lbl contains 'fabric' -%}{%- assign _bp = bp_fabric -%}{%- endif -%}<div class="bp-cmp__r"><div class="bp-cmp__c1">{{ c[0] | strip }}</div><div class="bp-cmp__c2">{{ _bp }}</div><div class="bp-cmp__c3">{{ c[2] | strip }}</div></div>{%- endif -%}{%- endfor -%}
   </div>
 </div>
             </div>
 
           {%- when 'promise' -%}
             {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--promise" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-promise{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
-<div class="bp-mod bp-promise">
-  <div class="bp-promise__glow"></div>
+<div class="bp-promise">
   <div class="bp-promise__in">
     <span class="bp-eyebrow bp-eyebrow--mint">{{ block.settings.eyebrow }}</span>
     <h2 class="bp-h2">{{ block.settings.heading }}</h2>
     <div class="bp-promise__list">
       {%- assign pris = block.settings.promise_items | newline_to_br | split: '<br />' -%}
-      {%- for row in pris -%}{%- assign pi = row | strip | split: '|' -%}{%- if pi.size >= 3 -%}<div class="bp-pr"><span>{{ pi[0] | strip }}</span><div><div class="bp-pr__t">{{ pi[1] | strip }}</div><div class="bp-pr__s">{{ pi[2] | strip }}</div></div></div>{%- endif -%}{%- endfor -%}
+      {%- for row in pris -%}{%- assign pi = row | strip | split: '|' -%}{%- if pi.size >= 3 -%}<div class="bp-pr"><span>{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span><div><div class="bp-pr__t">{{ pi[1] | strip }}</div><div class="bp-pr__s">{{ pi[2] | strip }}</div></div></div>{%- endif -%}{%- endfor -%}
     </div>
   </div>
 </div>
@@ -745,29 +757,27 @@ no need to manually pass the section as it is globally available)
     {%- assign k_weave   = block.settings.spec_weave_lbl   | default: 'Weave' -%}
     {%- assign k_wash    = block.settings.spec_wash_lbl    | default: 'Wash' -%}
     {%- assign k_collar  = block.settings.spec_collar_lbl  | default: 'Collar' -%}
-    <div class="bp-acc__i is-open">
-      <button type="button" class="bp-acc__b"><div><div class="bp-acc__t">Specifications</div><div class="bp-acc__s">Technical details and features</div></div><span class="bp-acc__x">▲</span></button>
-      <div class="bp-acc__p">
-        <div class="bp-spec">
-          <div class="bp-spec__c"><div class="bp-spec__k">{{ k_fabric }}</div><div class="bp-spec__v">{{ s_fabric }}</div></div>
-          <div class="bp-spec__c"><div class="bp-spec__k">{{ k_pattern }}</div><div class="bp-spec__v">{{ s_pattern }}</div></div>
-          <div class="bp-spec__c"><div class="bp-spec__k">{{ k_fit }}</div><div class="bp-spec__v">{{ s_fit }}</div></div>
-          <div class="bp-spec__c"><div class="bp-spec__k">{{ k_weave }}</div><div class="bp-spec__v">{{ s_weave }}</div></div>
-          <div class="bp-spec__c"><div class="bp-spec__k">{{ k_wash }}</div><div class="bp-spec__v">{{ s_wash }}</div></div>
-          <div class="bp-spec__c"><div class="bp-spec__k">{{ k_collar }}</div><div class="bp-spec__v">{{ s_collar }}</div></div>
-        </div>
+    {%- if block.settings.lead != blank -%}<p class="bp-details__lead">{{ block.settings.lead }}</p>{%- endif -%}
+    <div class="bp-spec-wrap">
+      <div class="bp-spec">
+          <div class="bp-spec__c"><span class="bp-spec__k">{{ k_fabric }}</span><span class="bp-spec__v">{{ s_fabric }}</span></div>
+          <div class="bp-spec__c"><span class="bp-spec__k">{{ k_pattern }}</span><span class="bp-spec__v">{{ s_pattern }}</span></div>
+          <div class="bp-spec__c"><span class="bp-spec__k">{{ k_fit }}</span><span class="bp-spec__v">{{ s_fit }}</span></div>
+          <div class="bp-spec__c"><span class="bp-spec__k">{{ k_weave }}</span><span class="bp-spec__v">{{ s_weave }}</span></div>
+          <div class="bp-spec__c"><span class="bp-spec__k">{{ k_wash }}</span><span class="bp-spec__v">{{ s_wash }}</span></div>
+          <div class="bp-spec__c"><span class="bp-spec__k">{{ k_collar }}</span><span class="bp-spec__v">{{ s_collar }}</span></div>
       </div>
     </div>
     <div class="bp-acc__i">
-      <button type="button" class="bp-acc__b"><div><div class="bp-acc__t">Description</div><div class="bp-acc__s">Product overview and details</div></div><span class="bp-acc__x">▼</span></button>
+      <button type="button" class="bp-acc__b"><div><div class="bp-acc__t">Description</div></div><span class="bp-acc__x">+</span></button>
       <div class="bp-acc__p" hidden><div class="bp-acc__txt">{{ s_desc | default: 'Add a product description in Shopify and it appears here automatically.' }}</div></div>
     </div>
     <div class="bp-acc__i">
-      <button type="button" class="bp-acc__b"><div><div class="bp-acc__t">Returns, Exchange &amp; Refund</div><div class="bp-acc__s">7 days easy returns and exchange</div></div><span class="bp-acc__x">▼</span></button>
+      <button type="button" class="bp-acc__b"><div><div class="bp-acc__t">Returns, exchange &amp; refund</div></div><span class="bp-acc__x">+</span></button>
       <div class="bp-acc__p" hidden><p class="bp-acc__txt">{{ block.settings.returns_text }}</p></div>
     </div>
     <div class="bp-acc__i">
-      <button type="button" class="bp-acc__b"><div><div class="bp-acc__t">Marketed By</div><div class="bp-acc__s">Company and distributor information</div></div><span class="bp-acc__x">▼</span></button>
+      <button type="button" class="bp-acc__b"><div><div class="bp-acc__t">Marketed by</div></div><span class="bp-acc__x">+</span></button>
       <div class="bp-acc__p" hidden><p class="bp-acc__txt">{{ block.settings.marketed_text }}</p></div>
     </div>
   </div>
@@ -779,7 +789,7 @@ no need to manually pass the section as it is globally available)
 {%- assign _rid = product.id | default: 7 -%}{%- assign _rn = _rid | modulo: 10 | plus: 41 -%}{%- assign _rint = _rn | divided_by: 10 -%}{%- assign _rdec = _rn | modulo: 10 -%}{%- assign _rating = _rint | append: '.' | append: _rdec -%}{%- assign _count = _rid | modulo: 168 | plus: 27 -%}
 <div class="bp-mod bp-rev" id="bp-reviews" data-bp-rev data-bp-seed="{{ product.id }}">
   <div class="bp-rev__head"><h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2><span class="bp-rev__count">{% if section.settings.bp_auto_rating %}{{ _rating }} · {{ _count }}{% else %}{{ block.settings.rev_count | default: '4.9 · 2,140' }}{% endif %}</span></div>
-  <div class="bp-card bp-card--pad0">
+  <div class="bp-rev__body">
     <div class="bp-tabs" data-bp-revtabs>
       <button type="button" class="bp-tab is-on" data-tab="summary">Summary</button>
       <button type="button" class="bp-tab" data-tab="photos">Customer reviews</button>
@@ -790,10 +800,10 @@ no need to manually pass the section as it is globally available)
         <div class="bp-rsum__big"><b>{% if section.settings.bp_auto_rating %}{{ _rating }}{% else %}{{ block.settings.rev_avg | default: '4.9' }}{% endif %}</b><span class="bp-stars">★★★★★</span><em>{% if section.settings.bp_auto_rating %}{{ _count }}{% else %}{{ block.settings.rev_total | default: '2,140' }}{% endif %}</em></div>
         <div class="bp-rsum__bars">
           {%- assign rbars = block.settings.rev_bars | newline_to_br | split: '<br />' -%}
-          {%- for row in rbars -%}{%- assign rb = row | strip | split: '|' -%}{%- if rb.size >= 2 -%}{%- assign rbc = rb[3] | default: '#38415F' | strip -%}<div class="bp-rbar"><span style="color:{{ rbc }}">{{ rb[0] | strip }}</span><div class="bp-rbar__t"><i style="width:{{ rb[1] | strip }}%;background:{{ rbc }}"></i></div><em>{{ rb[2] | strip }}</em></div>{%- endif -%}{%- endfor -%}
+          {%- for row in rbars -%}{%- assign rb = row | strip | split: '|' -%}{%- if rb.size >= 2 -%}<div class="bp-rbar"><div class="bp-rbar__l"><span>{{ rb[0] | strip }}</span><em>{{ rb[2] | strip }}</em></div><div class="bp-rbar__t"><i style="width:{{ rb[1] | strip }}%"></i></div></div>{%- endif -%}{%- endfor -%}
         </div>
       </div>
-      {%- if block.settings.rev_ai != blank -%}<div class="bp-aisum"><div class="bp-aisum__h"><span class="bp-ai bp-ai--sm">AI</span><b>AI summary</b></div><p>{{ block.settings.rev_ai }}</p></div>{%- endif -%}
+      {%- if block.settings.rev_ai != blank -%}<div class="bp-aisum"><div class="bp-aisum__h">Review summary</div><p>{{ block.settings.rev_ai }}</p></div>{%- endif -%}
       {%- if block.settings.rev_keywords != blank -%}<div class="bp-kw">{%- assign rkw = block.settings.rev_keywords | newline_to_br | split: '<br />' -%}{%- for row in rkw -%}{%- assign kw = row | strip | split: '|' -%}{%- if kw[0] != blank -%}<span>{{ kw[0] | strip }} <em>{{ kw[1] | strip }}</em></span>{%- endif -%}{%- endfor -%}</div>{%- endif -%}
     </div>
     <div class="bp-revpane" data-pane="photos" hidden>
@@ -816,8 +826,7 @@ no need to manually pass the section as it is globally available)
 
           {%- when 'social-proof' -%}
             {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--social-proof" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-loved{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-loved__h{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-loved__h{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-loved__h{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-loved__h{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
-<div class="bp-mod bp-loved">
-  <div class="bp-loved__glow"></div>
+<div class="bp-loved">
   <div class="bp-loved__top">
     <span class="bp-eyebrow bp-eyebrow--violet">{{ block.settings.eyebrow }}</span>
     <h2 class="bp-loved__h">{{ block.settings.loved_h | default: '40,000 men.<br>One shirt they trust.' }}</h2>
@@ -829,9 +838,7 @@ no need to manually pass the section as it is globally available)
   </div>
   <div class="bp-notes">
     {%- assign lnotes = block.settings.loved_notes | newline_to_br | split: '<br />' -%}
-    {%- assign lncolors = 'var(--gold),var(--green),var(--coral),var(--nav),var(--gold2),var(--green)' | split: ',' -%}
-    {%- assign lnrot = '-3deg,2.5deg,-1.5deg,3deg,-2deg,1.5deg' | split: ',' -%}
-    {%- for row in lnotes -%}{%- assign nt = row | strip | split: '|' -%}{%- if nt.size >= 2 -%}<div class="bp-note" style="--r:{{ lnrot[forloop.index0] | default: '0deg' }}"><span class="bp-note__q" style="color:{{ lncolors[forloop.index0] | default: 'var(--gold)' }}">”</span><p>{{ nt[0] | strip }}</p><div class="bp-note__by"><span style="background:{{ lncolors[forloop.index0] | default: 'var(--gold)' }}"></span>{{ nt[1] | strip }}</div></div>{%- endif -%}{%- endfor -%}
+    {%- for row in lnotes -%}{%- assign nt = row | strip | split: '|' -%}{%- if nt.size >= 2 -%}<div class="bp-note"><p>“{{ nt[0] | strip | replace: '"', '' }}”</p><div class="bp-note__by">{{ nt[1] | strip }}</div></div>{%- endif -%}{%- endfor -%}
   </div>
   <a href="#bp-reviews" class="bp-loved__cta">{{ block.settings.loved_cta | default: 'Read all 2,140 reviews →' }}</a>
 </div>
@@ -842,9 +849,8 @@ no need to manually pass the section as it is globally available)
 <div class="bp-mod bp-look">
   <div class="bp-look__head">
     <div><span class="bp-eyebrow bp-eyebrow--coral">{{ block.settings.eyebrow }}</span><h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2></div>
-    <span class="bp-chip-g">{{ block.settings.look_save | default: 'Save ₹1,800' }}</span>
   </div>
-  <div class="bp-card">
+  <div class="bp-look__body">
     {%- assign lk_any = false -%}{%- for i in (1..3) -%}{%- assign _pk = 'look_product_' | append: i -%}{%- if block.settings[_pk] != blank -%}{%- assign lk_any = true -%}{%- endif -%}{%- endfor -%}
     <div class="bp-look__row">
       {%- if lk_any -%}{%- for i in (1..3) -%}{%- assign _pk = 'look_product_' | append: i -%}{%- assign prod = block.settings[_pk] -%}{%- if prod != blank -%}{%- assign _tk = 'look_tag_' | append: i -%}{%- assign _v = prod.selected_or_first_available_variant -%}<div class="bp-look__i"><a href="{{ prod.url }}" class="bp-look__img" style="text-decoration:none">{%- if prod.featured_image -%}<img src="{{ prod.featured_image | image_url: width: 400 }}" alt="{{ prod.title | escape }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">{%- else -%}<span>{{ prod.title | truncate: 10 }}</span>{%- endif -%}{%- if block.settings[_tk] != blank -%}<b class="bp-look__tag">{{ block.settings[_tk] }}</b>{%- endif -%}</a><div class="bp-look__n">{{ prod.title }}</div><div class="bp-look__p"><span>{{ _v.price | money }}</span>{%- if prod.compare_at_price > _v.price -%}<s>{{ prod.compare_at_price | money }}</s>{%- endif -%}</div></div>{%- endif -%}{%- endfor -%}
@@ -853,9 +859,9 @@ no need to manually pass the section as it is globally available)
     </div>
     <div class="bp-look__foot">
       {%- if lk_any -%}{%- assign _tot = 0 -%}{%- assign _mrp = 0 -%}{%- assign _perma = '' -%}{%- for i in (1..3) -%}{%- assign _pk = 'look_product_' | append: i -%}{%- assign prod = block.settings[_pk] -%}{%- if prod != blank -%}{%- assign _v = prod.selected_or_first_available_variant -%}{%- assign _tot = _tot | plus: _v.price -%}{%- if prod.compare_at_price > _v.price -%}{%- assign _mrp = _mrp | plus: prod.compare_at_price -%}{%- else -%}{%- assign _mrp = _mrp | plus: _v.price -%}{%- endif -%}{%- if _perma != '' -%}{%- assign _perma = _perma | append: ',' -%}{%- endif -%}{%- assign _perma = _perma | append: _v.id | append: ':1' -%}{%- endif -%}{%- endfor -%}
-      <div><div class="bp-look__bl">Bundle price</div><div class="bp-look__bp"><span>{{ _tot | money }}</span>{%- if _mrp > _tot -%}<s>{{ _mrp | money }}</s>{%- endif -%}</div></div>
+      <div><div class="bp-look__bl">{{ block.settings.look_save | default: 'Bundle price' }}</div><div class="bp-look__bp"><span>{{ _tot | money }}</span>{%- if _mrp > _tot -%}<s>{{ _mrp | money }}</s>{%- endif -%}</div></div>
       <a href="/cart/{{ _perma }}" class="bp-look__cta">{{ block.settings.look_cta | default: 'Add all →' }}</a>
-      {%- else -%}<div><div class="bp-look__bl">Bundle price</div><div class="bp-look__bp"><span>{{ block.settings.look_bundle | default: '₹4,197' }}</span><s>{{ block.settings.look_bundle_mrp | default: '₹8,797' }}</s></div></div>
+      {%- else -%}<div><div class="bp-look__bl">{{ block.settings.look_save | default: 'Bundle price' }}</div><div class="bp-look__bp"><span>{{ block.settings.look_bundle | default: '₹4,197' }}</span><s>{{ block.settings.look_bundle_mrp | default: '₹8,797' }}</s></div></div>
       <button type="button" class="bp-look__cta" data-bp-addlook>{{ block.settings.look_cta | default: 'Add all 3 →' }}</button>{%- endif -%}
     </div>
   </div>
@@ -865,11 +871,11 @@ no need to manually pass the section as it is globally available)
           {%- when 'gallery' -%}
             {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--gallery" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-gcard__img{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
 <div class="bp-mod bp-gal">
-  <div class="bp-gal__head"><div><span class="bp-eyebrow bp-eyebrow--coral">{{ block.settings.eyebrow }}</span><h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2></div><span class="bp-chip-n">Tap to shop</span></div>
+  <div class="bp-gal__head"><div><span class="bp-eyebrow bp-eyebrow--mint">{{ block.settings.eyebrow }}</span><h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2></div></div>
   <div class="bp-gal__grid">
     {%- assign gl = block.settings.gal_items | newline_to_br | split: '<br />' -%}
     {%- for row in gl -%}{%- assign g = row | strip | split: '|' -%}{%- if g.size >= 3 -%}
-      {%- assign gimg = 'gal_img_' | append: forloop.index -%}{%- assign gimgv = block.settings[gimg] -%}<div class="bp-gcard"><div class="bp-gcard__img" style="height:{{ g[0] | strip }}px">{% if gimgv != blank %}<img src="{{ gimgv | image_url: width: 500 }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">{% else %}UGC photo{% endif %}</div><div class="bp-gcard__bar"><span>{{ g[1] | strip }}</span><b>🛍 {{ g[2] | strip }}</b></div></div>
+      {%- assign gimg = 'gal_img_' | append: forloop.index -%}{%- assign gimgv = block.settings[gimg] -%}<div class="bp-gcard"><div class="bp-gcard__img" style="height:{{ g[0] | strip }}px">{% if gimgv != blank %}<img src="{{ gimgv | image_url: width: 500 }}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">{% else %}UGC photo{% endif %}</div><div class="bp-gcard__bar"><span>{{ g[1] | strip }}</span></div></div>
     {%- endif -%}{%- endfor -%}
   </div>
 </div>
@@ -878,13 +884,13 @@ no need to manually pass the section as it is globally available)
           {%- when 'lifestyle' -%}
             {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--lifestyle" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }},#bp-{{ block.id }} *{ {% if block.settings.c_bg != blank %}--card:{{ block.settings.c_bg }} !important;{% endif %}{% if block.settings.c_text != blank %}--ink:{{ block.settings.c_text }} !important;--ink2:{{ block.settings.c_text }} !important;--muted:{{ block.settings.c_text }} !important;--faint:{{ block.settings.c_text }} !important;{% endif %}{% if block.settings.c_dark != blank %}--nav:{{ block.settings.c_dark }} !important;{% endif %}{% if block.settings.c_accent != blank %}--gold:{{ block.settings.c_accent }} !important;--gold2:{{ block.settings.c_accent }} !important;--goldd:{{ block.settings.c_accent }} !important;{% endif %}{% if block.settings.c_accent2 != blank %}--green:{{ block.settings.c_accent2 }} !important;--green2:{{ block.settings.c_accent2 }} !important;{% endif %}{% if block.settings.c_accent3 != blank %}--coral:{{ block.settings.c_accent3 }} !important;--coral2:{{ block.settings.c_accent3 }} !important;--rose:{{ block.settings.c_accent3 }} !important;--violet:{{ block.settings.c_accent3 }} !important;--sky:{{ block.settings.c_accent3 }} !important;{% endif %}}{% if block.settings.c_bg != blank %}#bp-{{ block.id }} .bp-lcard__cap{ background:{{ block.settings.c_bg }} !important; }{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-h2{ color:{{ block.settings.c_dark }} !important; }{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2{ font-size:{{ block.settings.head_size }}px !important; }{% endif %}#bp-{{ block.id }} .bp-h2{ font-weight:{{ block.settings.head_weight | default: 700 }} !important; }{% if block.settings.c_border != blank %}#bp-{{ block.id }} *{ border-color:{{ block.settings.c_border }} !important; }{% endif %}{% if block.settings.c_cell != blank %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ background:{{ block.settings.c_cell }} !important; }{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-snapcell,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-spec__c,#bp-{{ block.id }} .bp-acc__i,#bp-{{ block.id }} .bp-pr,#bp-{{ block.id }} .bp-wcard,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-stat,#bp-{{ block.id }} .bp-note,#bp-{{ block.id }} .bp-care__i,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-faq__i,#bp-{{ block.id }} .bp-rcard,#bp-{{ block.id }} .bp-lcard__cap,#bp-{{ block.id }} .bp-cmp__r,#bp-{{ block.id }} .bp-card,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-addon{ padding:{{ block.settings.cpad }}px !important; }{% endif %}{% if block.settings.custom_fonts %}#bp-{{ block.id }},#bp-{{ block.id }} *{ font-family:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }} !important; }#bp-{{ block.id }} .bp-h2{ font-family:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }} !important; }{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-spec__v,#bp-{{ block.id }} .bp-spec__k,#bp-{{ block.id }} .bp-acc__s,#bp-{{ block.id }} .bp-acc__txt,#bp-{{ block.id }} .bp-gcell__t,#bp-{{ block.id }} .bp-gcell__s,#bp-{{ block.id }} .bp-pr__s,#bp-{{ block.id }} .bp-cmp__c1,#bp-{{ block.id }} .bp-cmp__c3,#bp-{{ block.id }} .bp-pt__r,#bp-{{ block.id }} .bp-diff__s,#bp-{{ block.id }} .bp-faq__p,#bp-{{ block.id }} .bp-rcard__tx,#bp-{{ block.id }} .bp-founder__q,#bp-{{ block.id }} .bp-care__t,#bp-{{ block.id }} .bp-care__s,#bp-{{ block.id }} .bp-note p,#bp-{{ block.id }} .bp-stat span,#bp-{{ block.id }} .bp-snapcell__k,#bp-{{ block.id }} .bp-chip,#bp-{{ block.id }} .bp-lcard__s{ font-size:{{ block.settings.body_size }}px !important; }{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
 <div class="bp-mod bp-life">
-  <h2 class="bp-h2 bp-h2--tight" style="margin-bottom:4px">{{ block.settings.heading }}</h2>
+  <h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2>
   <p class="bp-sub">{{ block.settings.life_sub }}</p>
 </div>
 <div class="bp-life__rail bp-scroll">
   {%- assign lf = block.settings.life_cards | newline_to_br | split: '<br />' -%}
   {%- for row in lf -%}{%- assign l = row | strip | split: '|' -%}{%- if l.size >= 2 -%}
-    {%- assign limg = 'life_img_' | append: forloop.index -%}{%- assign limgv = block.settings[limg] -%}<div class="bp-lcard"{% if limgv != blank %} style="background-image:url({{ limgv | image_url: width: 500 }});background-size:cover;background-position:center"{% endif %}><div class="bp-lcard__cap"><div class="bp-lcard__t">{{ l[0] | strip }}</div><div class="bp-lcard__s">{{ l[1] | strip }}</div></div></div>
+    {%- assign limg = 'life_img_' | append: forloop.index -%}{%- assign limgv = block.settings[limg] -%}<div class="bp-lcard"><div class="bp-lcard__img"{% if limgv != blank %} style="background-image:url({{ limgv | image_url: width: 500 }});background-size:cover;background-position:center"{% endif %}></div><div class="bp-lcard__cap"><div class="bp-lcard__t">{{ l[0] | strip }}</div><div class="bp-lcard__s">{{ l[1] | strip }}</div></div></div>
   {%- endif -%}{%- endfor -%}
 </div>
             </div>
@@ -928,11 +934,19 @@ no need to manually pass the section as it is globally available)
 
           {%- when 'live-feed' -%}
             {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--live-feed" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-head__title,#bp-{{ block.id }} .bp-off__title,#bp-{{ block.id }} .bp-fab__title,#bp-{{ block.id }} .bp-loved__h,#bp-{{ block.id }} .bp-founder__t,#bp-{{ block.id }} .bp-size__label,#bp-{{ block.id }} .bp-rew__head,#bp-{{ block.id }} .bp-modal__title h2{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-ticker__row,#bp-{{ block.id }} .bp-size__hint,#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-head__value,#bp-{{ block.id }} .bp-head__rate,#bp-{{ block.id }} .bp-sbar__meta,#bp-{{ block.id }} .bp-fit__line,#bp-{{ block.id }} .bp-thumb span,#bp-{{ block.id }} .bp-guide__n{font-size:{{ block.settings.body_size }}px !important;}{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-thumb,#bp-{{ block.id }} .bp-wrow,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-fit__prefs button,#bp-{{ block.id }} .bp-snapcell{padding:{{ block.settings.cpad }}px !important;}{% endif %}{% if block.settings.c_tag != blank %}#bp-{{ block.id }} .bp-live__tag{background:{{ block.settings.c_tag }} !important;color:#fff !important;}{% endif %}{% if block.settings.c_item != blank %}#bp-{{ block.id }} .bp-live__item{background:{{ block.settings.c_item }} !important;}{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
-<div class="bp-live bp-scroll">
-  <span class="bp-live__tag"><span class="bp-dot bp-dot--r"></span>{{ block.settings.live_label | default: 'LIVE' }}</span>
-  {%- assign feed = block.settings.live_feed | newline_to_br | split: '<br />' -%}
-  {%- for f in feed -%}{%- assign fi = f | strip -%}{%- if fi != blank -%}<span class="bp-live__item">{{ fi }}</span>{%- endif -%}{%- endfor -%}
+{%- assign feed = block.settings.live_feed | newline_to_br | split: '<br />' -%}
+<div class="bp-live" data-bp-live>
+  <div class="bp-live__l">
+    <span class="bp-live__tag"></span>
+    {%- for f in feed -%}{%- assign fi = f | strip -%}{%- if fi != blank -%}<span class="bp-live__item"{% unless forloop.first %} hidden{% endunless %}>{{ fi }}</span>{%- endif -%}{%- endfor -%}
+  </div>
+  {%- if block.settings.live_meta != blank -%}<span class="bp-live__meta">{{ block.settings.live_meta }}</span>{%- endif -%}
 </div>
+<script>
+(function(){var r=document.getElementById('bp-{{ block.id }}');if(!r||r.dataset.bpBound)return;r.dataset.bpBound='1';
+var items=Array.prototype.slice.call(r.querySelectorAll('.bp-live__item'));if(items.length<2)return;var i=0;
+setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden=false;},4000);})();
+</script>
             </div>
 
           {%- when 'hero' -%}
@@ -945,8 +959,8 @@ no need to manually pass the section as it is globally available)
       {%- if block.settings.badge_text != blank -%}<span class="bp-badge bp-badge--trend">{{ block.settings.badge_text }}</span>{%- endif -%}
     </div>
     {%- if block.settings.stock_text != blank -%}<div class="bp-badge bp-badge--stock">{{ block.settings.stock_text }}</div>{%- endif -%}
-    <div class="bp-hero__dots" data-bp-dots>{%- for media in product.media limit: 6 -%}<button type="button" class="bp-hdot {% if forloop.first %}is-on{% endif %}" data-i="{{ forloop.index0 }}" aria-label="image {{ forloop.index }}"></button>{%- endfor -%}</div>
   </div>
+  <div class="bp-hero__dots" data-bp-dots>{%- for media in product.media limit: 6 -%}<button type="button" class="bp-hdot {% if forloop.first %}is-on{% endif %}" data-i="{{ forloop.index0 }}" aria-label="image {{ forloop.index }}"></button>{%- endfor -%}</div>
   <div class="bp-hero__thumbs bp-scroll" data-bp-thumbs>
     {%- assign labels = block.settings.thumb_labels | split: ',' -%}
     {%- for media in product.media limit: 6 -%}<button type="button" class="bp-thumb {% if forloop.first %}is-on{% endif %}" data-i="{{ forloop.index0 }}" style="background-image:url({{ media | image_url: width: 140 }});background-size:cover;background-position:center">{%- assign _lb = labels[forloop.index0] | strip -%}{%- if _lb != blank -%}<span>{{ _lb }}</span>{%- endif -%}</button>{%- endfor -%}
@@ -967,15 +981,37 @@ setActive(0);})();
           {%- when 'size-picker' -%}
             {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _sizeopt = null -%}{%- for opt in product.options_with_values -%}{%- assign _dn = opt.name | downcase -%}{%- if _dn contains 'size' -%}{%- assign _sizeopt = opt -%}{%- endif -%}{%- endfor -%}{%- unless _sizeopt -%}{%- assign _sizeopt = product.options_with_values.first -%}{%- endunless -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--size-picker" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-head__title,#bp-{{ block.id }} .bp-off__title,#bp-{{ block.id }} .bp-fab__title,#bp-{{ block.id }} .bp-loved__h,#bp-{{ block.id }} .bp-founder__t,#bp-{{ block.id }} .bp-size__label,#bp-{{ block.id }} .bp-rew__head,#bp-{{ block.id }} .bp-modal__title h2{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-ticker__row,#bp-{{ block.id }} .bp-size__hint,#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-head__value,#bp-{{ block.id }} .bp-head__rate,#bp-{{ block.id }} .bp-sbar__meta,#bp-{{ block.id }} .bp-fit__line,#bp-{{ block.id }} .bp-thumb span,#bp-{{ block.id }} .bp-guide__n{font-size:{{ block.settings.body_size }}px !important;}{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-thumb,#bp-{{ block.id }} .bp-wrow,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-fit__prefs button,#bp-{{ block.id }} .bp-snapcell{padding:{{ block.settings.cpad }}px !important;}{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
 <div class="bp-mod bp-size" data-bp-sizepicker>
+  {%- comment -%} Colour swatches, when the product has a colour option. {%- endcomment -%}
+  {%- assign _colopt = null -%}
+  {%- for opt in product.options_with_values -%}
+    {%- assign _cn = opt.name | downcase -%}
+    {%- if _cn contains 'colour' or _cn contains 'color' -%}{%- assign _colopt = opt -%}{%- endif -%}
+  {%- endfor -%}
+  {%- if _colopt and block.settings.show_swatches -%}
+    <div class="bp-size__grp">
+      <div class="bp-size__head">
+        <span class="bp-size__label">{{ _colopt.name }}</span>
+        <span class="bp-size__label"><em data-bp-selected-colour>{{ _colopt.selected_value }}</em></span>
+      </div>
+      <div class="bp-swatches" data-bp-swatches>
+        {%- for value in _colopt.values -%}
+          {%- assign _sw = value | handleize -%}
+          <button type="button" class="bp-swatch {% if _colopt.selected_value == value %}is-on{% endif %}" data-colour="{{ value | escape }}" title="{{ value | escape }}" aria-label="{{ value | escape }}" style="{% if value.swatch.color %}background-color:{{ value.swatch.color }};{% else %}background-color:var(--tint);{% endif %}{% if value.swatch.image %}background-image:url({{ value.swatch.image | image_url: width: 96 }});{% endif %}"></button>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+  <div class="bp-size__grp">
   <div class="bp-size__head">
-    <span class="bp-size__label">{{ block.settings.label | default: 'Select size' }} · <em data-bp-selected>{{ _sizeopt.selected_value }}</em></span>
+    <span class="bp-size__label">{{ block.settings.label | default: 'Size' }}</span>
     <div class="bp-size__acts">
-      {%- if block.settings.show_chart -%}<button type="button" class="bp-pill" data-bp-openfit="chart">📏 Size chart</button>{%- endif -%}
-      {%- if block.settings.show_fit -%}<button type="button" class="bp-pill bp-pill--dark" data-bp-openfit="recommend"><span class="bp-ai">AI</span>Find my fit</button>{%- endif -%}
+      {%- if block.settings.show_chart -%}<button type="button" class="bp-linkbtn" data-bp-openfit="chart">Size chart</button>{%- endif -%}
     </div>
   </div>
   <div class="bp-size__row" data-bp-sizes>{%- for value in _sizeopt.values -%}<button type="button" class="bp-sz {% if _sizeopt.selected_value == value %}is-on{% endif %}" data-size="{{ value | escape }}">{{ value }}</button>{%- endfor -%}</div>
+  {%- if block.settings.show_fit -%}<button type="button" class="bp-openfit" data-bp-openfit="recommend"><i>↔</i>{{ block.settings.fit_label | default: 'Find my perfect size' }}</button>{%- endif -%}
   {%- if block.settings.hint != blank -%}<div class="bp-size__hint">{{ block.settings.hint }}</div>{%- endif -%}
+  </div>
 </div>
 <script>
 (function(){var wrap=document.getElementById('bp-{{ block.id }}');if(!wrap||wrap.dataset.bpBound)return;wrap.dataset.bpBound='1';
@@ -991,14 +1027,14 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
 <div class="bp-sticky">
   <div class="bp-wallet" data-bp-wallet hidden>
     <div class="bp-wallet__h">{{ block.settings.wallet_head | default: 'YOUR PERKS' }}</div>
-    <div class="bp-wallet__list">{%- assign perks = block.settings.wallet_items | newline_to_br | split: '<br />' -%}{%- for row in perks -%}{%- assign pk = row | strip | split: '|' -%}{%- if pk[0] != blank -%}<div class="bp-wrow"><span class="bp-wrow__i" style="background:{{ pk[2] | default: 'var(--green)' | strip }}">✓</span><span class="t">{{ pk[0] | strip }}</span><b>{{ pk[1] | strip }}</b></div>{%- endif -%}{%- endfor -%}</div>
+    <div class="bp-wallet__list">{%- assign perks = block.settings.wallet_items | newline_to_br | split: '<br />' -%}{%- for row in perks -%}{%- assign pk = row | strip | split: '|' -%}{%- if pk[0] != blank -%}<div class="bp-wrow"><span class="bp-wrow__i"></span><span class="t">{{ pk[0] | strip }}</span><b>{{ pk[1] | strip }}</b></div>{%- endif -%}{%- endfor -%}</div>
   </div>
   <div class="bp-sbar">
     <div class="bp-sbar__meter"><i style="width:{{ block.settings.meter | default: 70 }}%"></i></div>
     <div class="bp-sbar__row">
       <button type="button" class="bp-sbar__price" data-bp-toggle-wallet>
+        <div class="bp-sbar__meta"><em data-bp-sticky-size>{{ product.selected_or_first_available_variant.title }}</em> <em data-bp-chev>▴</em></div>
         <div class="bp-sbar__nums"><span>{{ product.price | money }}</span>{%- if product.compare_at_price > product.price -%}<s>{{ product.compare_at_price | money }}</s>{%- endif -%}</div>
-        <div class="bp-sbar__meta"><em data-bp-sticky-size>{{ product.selected_or_first_available_variant.title }}</em>{%- if _save > 0 %} · save <em>{{ _save | money }}</em>{% endif %} · perks <em data-bp-chev>▴</em></div>
       </button>
       <button type="button" class="bp-sbar__cta" data-bp-buy>{{ block.settings.cta | default: 'Add to cart' }}</button>
     </div>
@@ -1022,12 +1058,51 @@ function conf(){if(!cb)return;for(var i=0;i<24;i++){var p=document.createElement
             {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _save = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _save = product.compare_at_price | minus: product.price -%}{%- endif -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--product-header" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-head__title,#bp-{{ block.id }} .bp-off__title,#bp-{{ block.id }} .bp-fab__title,#bp-{{ block.id }} .bp-loved__h,#bp-{{ block.id }} .bp-founder__t,#bp-{{ block.id }} .bp-size__label,#bp-{{ block.id }} .bp-rew__head,#bp-{{ block.id }} .bp-modal__title h2{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-ticker__row,#bp-{{ block.id }} .bp-size__hint,#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-head__value,#bp-{{ block.id }} .bp-head__rate,#bp-{{ block.id }} .bp-sbar__meta,#bp-{{ block.id }} .bp-fit__line,#bp-{{ block.id }} .bp-thumb span,#bp-{{ block.id }} .bp-guide__n{font-size:{{ block.settings.body_size }}px !important;}{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-thumb,#bp-{{ block.id }} .bp-wrow,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-fit__prefs button,#bp-{{ block.id }} .bp-snapcell{padding:{{ block.settings.cpad }}px !important;}{% endif %}{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-head__title{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.price_size > 0 %}#bp-{{ block.id }} .bp-price{font-size:{{ block.settings.price_size }}px !important;}{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-head__title{color:{{ block.settings.c_dark }} !important;}{% endif %}{% if block.settings.c_price != blank %}#bp-{{ block.id }} .bp-price{color:{{ block.settings.c_price }} !important;}{% endif %}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
 <div class="bp-head">
   {%- assign _rid = product.id | default: 7 -%}{%- assign _rn = _rid | modulo: 10 | plus: 41 -%}{%- assign _rint = _rn | divided_by: 10 -%}{%- assign _rdec = _rn | modulo: 10 -%}{%- assign _rating = _rint | append: '.' | append: _rdec -%}{%- assign _count = _rid | modulo: 168 | plus: 27 -%}
-  {%- if block.settings.show_rating -%}<div class="bp-head__rate"><span class="bp-stars">★★★★★</span><b>{% if section.settings.bp_auto_rating %}{{ _rating }}{% else %}{{ block.settings.rating | default: '4.9' }}{% endif %}</b><a href="#bp-reviews">{% if section.settings.bp_auto_rating %}{{ _count }}{% else %}{{ block.settings.review_count | default: '2,140' }}{% endif %} reviews</a>{%- if block.settings.kept_pct != blank -%}<span class="bp-chip-g">✓ {{ block.settings.kept_pct }} kept it</span>{%- endif -%}</div>{%- endif -%}
+  {%- assign _pct = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _pct = _save | times: 100 | divided_by: product.compare_at_price -%}{%- endif -%}
+  {%- comment -%} eyebrow — collection line on the left, SKU on the right {%- endcomment -%}
+  {%- if block.settings.series != blank or block.settings.show_sku -%}
+    <div class="bp-head__eyerow">
+      <span class="bp-head__series">{{ block.settings.series }}</span>
+      {%- if block.settings.show_sku and product.selected_or_first_available_variant.sku != blank -%}
+        <span class="bp-head__sku">SKU {{ product.selected_or_first_available_variant.sku }}</span>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+  <h1 class="bp-head__title">{{ product.title }}</h1>
+  {%- if block.settings.show_rating -%}
+    <div class="bp-head__rate">
+      <span class="bp-stars">★★★★★</span>
+      <b>{% if section.settings.bp_auto_rating %}{{ _rating }}{% else %}{{ block.settings.rating | default: '4.9' }}{% endif %}</b>
+      <i>|</i>
+      <a href="#bp-reviews">{% if section.settings.bp_auto_rating %}{{ _count }}{% else %}{{ block.settings.review_count | default: '2,140' }}{% endif %} reviews</a>
+    </div>
+  {%- endif -%}
   <div class="bp-head__row">
-    <h1 class="bp-head__title">{{ product.title }}</h1>
-    <div class="bp-head__price"><div class="bp-price">{{ product.price | money }}</div>{%- if product.compare_at_price > product.price -%}<div class="bp-mrp">{{ product.compare_at_price | money }}</div>{%- endif -%}</div>
+    <span class="bp-price">{{ product.price | money }}</span>
+    {%- if product.compare_at_price > product.price -%}
+      <span class="bp-mrp">{{ product.compare_at_price | money }}</span>
+      <span class="bp-head__save">{{ _pct }}% OFF</span>
+    {%- endif -%}
   </div>
+  {%- if block.settings.tax_line != blank -%}<span class="bp-head__tax">{{ block.settings.tax_line }}</span>{%- endif -%}
+  {%- comment -%} badge chips — "LABEL|tone" per line, tone one of acc / acc3 / star {%- endcomment -%}
+  {%- assign _badges = block.settings.badges | newline_to_br | split: '<br />' -%}
+  {%- if _badges.size > 0 and block.settings.badges != blank -%}
+    <div class="bp-head__badges">
+      {%- for row in _badges -%}
+        {%- assign bd = row | strip | split: '|' -%}
+        {%- if bd[0] != blank -%}<span class="is-{{ bd[1] | default: 'acc' | strip }}">{{ bd[0] | strip }}</span>{%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+  {%- if block.settings.emi_parts > 1 and product.price > 0 -%}
+    {%- assign _emi = product.price | divided_by: block.settings.emi_parts -%}
+    <span class="bp-head__emi">or {{ block.settings.emi_parts }} interest-free payments of <b>{{ _emi | money }}</b>{% if block.settings.emi_note != blank %} · {{ block.settings.emi_note }}{% endif %}</span>
+  {%- endif -%}
   {%- if block.settings.show_value and product.compare_at_price > product.price -%}<p class="bp-head__value">{{ block.settings.value_prefix | default: 'Looks like a' }} {{ product.compare_at_price | money }} shirt. Yours for {{ product.price | money }} · save {{ _save | money }}</p>{%- endif -%}
+  {%- if block.settings.countdown != blank -%}
+    <div class="bp-head__timer"><span>{{ block.settings.countdown_label | default: 'Sale ends in' }}</span><b data-bp-countdown="{{ block.settings.countdown }}">{{ block.settings.countdown }}</b></div>
+  {%- endif -%}
 </div>
             </div>
 
@@ -1082,6 +1157,209 @@ function conf(){if(!cb)return;for(var i=0;i<24;i++){var p=document.createElement
 })();
 </script>
             </div>{%- elsif request.design_mode -%}<div style="margin:8px 0;padding:10px 12px;border:1px dashed #C9C2B4;border-radius:10px;font-size:11.5px;color:#8B8578;background:#FAF8F3">BP · Pre-order notice — this product isn’t in the list yet, so nothing shows on the live page. Pick it under “Which products &amp; sizes”.</div>{%- endif -%}
+
+
+          {%- comment -%} ---- Bluprint editorial blocks ------------------------------------- {%- endcomment -%}
+
+          {%- when 'bp-topbar' -%}
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-topbar" style="max-width:100%;overflow-x:clip">
+              <div class="bp-top">
+                <span class="bp-top__name">{{ block.settings.brand | default: 'BLUPRINT' }}</span>
+                <span class="bp-top__live">{{ block.settings.meta }}</span>
+              </div>
+            </div>
+
+          {%- when 'bp-volume' -%}
+            {%- assign _vrows = block.settings.vol_rows | newline_to_br | split: '<br />' -%}
+            {%- if _vrows.size > 0 and block.settings.vol_rows != blank -%}
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-volume" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
+              <div class="bp-vol">
+                <span class="bp-off__title">{{ block.settings.heading | default: 'Buy more, pay less' }}</span>
+                <div class="bp-vol__list">
+                  {%- comment -%} "Label|Price each|Save note" per line. {%- endcomment -%}
+                  {%- for row in _vrows -%}
+                    {%- assign v = row | strip | split: '|' -%}
+                    {%- if v.size >= 2 -%}
+                      <div class="bp-vol__r {% if forloop.index == block.settings.vol_highlight %}is-on{% endif %}">
+                        <span>{{ v[0] | strip }}{%- if v[2] != blank -%}<span class="bp-vol__save">{{ v[2] | strip }}</span>{%- endif -%}</span>
+                        <b>{{ v[1] | strip }}</b>
+                      </div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+            {%- endif -%}
+
+          {%- when 'bp-stock' -%}
+            {%- assign _v = product.selected_or_first_available_variant -%}
+            {%- assign _left = _v.inventory_quantity | default: 0 -%}
+            {%- assign _cap = block.settings.stock_full | default: 30 -%}
+            {%- assign _pctleft = 0 -%}
+            {%- if _left > 0 and _cap > 0 -%}{%- assign _pctleft = _left | times: 100 | divided_by: _cap -%}{%- endif -%}
+            {%- if _pctleft > 100 -%}{%- assign _pctleft = 100 -%}{%- endif -%}
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-stock" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
+              <div class="bp-inv">
+                {%- if block.settings.show_stock -%}
+                  <div class="bp-inv__l">
+                    <div class="bp-inv__row">
+                      <span>
+                        {%- if _v.available -%}
+                          {%- if _left > 0 and _left <= block.settings.low_at -%}
+                            {{ block.settings.low_text | default: 'In stock' }} — {{ _left }} left in {{ _v.title }}
+                          {%- else -%}
+                            {{ block.settings.in_text | default: 'In stock' }}
+                          {%- endif -%}
+                        {%- else -%}
+                          {{ block.settings.out_text | default: 'Sold out in this size' }}
+                        {%- endif -%}
+                      </span>
+                      {%- if block.settings.restock_note != blank -%}<em>{{ block.settings.restock_note }}</em>{%- endif -%}
+                    </div>
+                    <div class="bp-inv__t"><i style="width:{{ _pctleft }}%"></i></div>
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.pickup_title != blank -%}
+                  <div class="bp-pickup">
+                    <span></span>
+                    <div>
+                      <div class="bp-pickup__t">{{ block.settings.pickup_title }}</div>
+                      {%- if block.settings.pickup_note != blank -%}<div class="bp-pickup__s">{{ block.settings.pickup_note }}</div>{%- endif -%}
+                    </div>
+                  </div>
+                {%- endif -%}
+              </div>
+            </div>
+
+          {%- when 'bp-qty' -%}
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-qty" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
+              <div class="bp-qty" data-bp-qty>
+                {%- if block.settings.show_qty -%}
+                  <div class="bp-qty__row">
+                    <span class="bp-qty__lbl">{{ block.settings.qty_label | default: 'Quantity' }}</span>
+                    <div class="bp-qty__step">
+                      <button type="button" data-bp-qty-minus aria-label="Decrease quantity">&minus;</button>
+                      <input type="number" min="1" value="1" data-bp-qty-input aria-label="Quantity">
+                      <button type="button" data-bp-qty-plus aria-label="Increase quantity">+</button>
+                    </div>
+                  </div>
+                {%- endif -%}
+                {%- comment -%}
+                  Line item properties. The name attribute is what Shopify records against
+                  the cart line, so these carry through to the order.
+                {%- endcomment -%}
+                {%- if block.settings.initials_label != blank -%}
+                  <div class="bp-qty__grp">
+                    <span class="bp-qty__lbl">{{ block.settings.initials_label }}{%- if block.settings.initials_note != blank -%} <em>({{ block.settings.initials_note }})</em>{%- endif -%}</span>
+                    <input class="bp-qty__in" type="text" maxlength="{{ block.settings.initials_max | default: 4 }}"
+                      name="properties[{{ block.settings.initials_label | escape }}]"
+                      form="{{ product_form_id }}"
+                      placeholder="{{ block.settings.initials_hint | escape }}">
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.gift_label != blank -%}
+                  <label class="bp-qty__check">
+                    <input type="checkbox" name="properties[{{ block.settings.gift_label | escape }}]" value="Yes" form="{{ product_form_id }}">
+                    <span class="bp-qty__box">✓</span>
+                    <span>{{ block.settings.gift_label }}</span>
+                  </label>
+                {%- endif -%}
+              </div>
+            </div>
+            <script>
+            (function(){var r=document.getElementById('bp-{{ block.id }}');if(!r||r.dataset.bpBound)return;r.dataset.bpBound='1';
+            var inp=r.querySelector('[data-bp-qty-input]');if(!inp)return;
+            function mirror(){var q=document.querySelector('form[action*="/cart/add"] input[name="quantity"], quantity-selector input[name="quantity"]');
+              if(q){q.value=inp.value;q.dispatchEvent(new Event('change',{bubbles:true}));}}
+            r.querySelector('[data-bp-qty-minus]').addEventListener('click',function(){inp.value=Math.max(1,(+inp.value||1)-1);mirror();});
+            r.querySelector('[data-bp-qty-plus]').addEventListener('click',function(){inp.value=(+inp.value||1)+1;mirror();});
+            inp.addEventListener('change',mirror);})();
+            </script>
+
+          {%- when 'bp-policies' -%}
+            {%- assign _pol = block.settings.policy_items | newline_to_br | split: '<br />' -%}
+            {%- if block.settings.policy_items != blank -%}
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-policies" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
+              <div class="bp-mod bp-faq" data-bp-acc style="margin-top:22px">
+                {%- if block.settings.heading != blank -%}<h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2>{%- endif -%}
+                <div class="bp-faq__list">
+                  {%- comment -%} "Question|Answer" per line; the first is open. {%- endcomment -%}
+                  {%- for row in _pol -%}
+                    {%- assign q = row | strip | split: '|' -%}
+                    {%- if q.size >= 2 -%}
+                      <div class="bp-faq__i{% if forloop.first and block.settings.open_first %} is-open{% endif %}">
+                        <button type="button" class="bp-faq__b"><span>{{ q[0] | strip }}</span><em>{% if forloop.first and block.settings.open_first %}&minus;{% else %}+{% endif %}</em></button>
+                        <div class="bp-faq__p"{% unless forloop.first and block.settings.open_first %} hidden{% endunless %}>{{ q[1] | strip }}</div>
+                      </div>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+            {%- endif -%}
+
+          {%- when 'bp-pairs' -%}
+            {%- assign _hasPairs = false -%}
+            {%- for i in (1..4) -%}{%- assign _pk = 'pair_product_' | append: i -%}{%- if block.settings[_pk] != blank -%}{%- assign _hasPairs = true -%}{%- endif -%}{%- endfor -%}
+            {%- if _hasPairs -%}
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-pairs" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
+              <div class="bp-pairs">
+                {%- if block.settings.heading != blank -%}<h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2>{%- endif -%}
+                <div class="bp-pairs__rail bp-scroll">
+                  {%- for i in (1..4) -%}
+                    {%- assign _pk = 'pair_product_' | append: i -%}
+                    {%- assign prod = block.settings[_pk] -%}
+                    {%- if prod != blank -%}
+                      <a class="bp-pairs__i" href="{{ prod.url }}">
+                        <div class="bp-pairs__img">{%- if prod.featured_image -%}<img src="{{ prod.featured_image | image_url: width: 400 }}" alt="{{ prod.title | escape }}" loading="lazy">{%- endif -%}</div>
+                        <span class="bp-pairs__n">{{ prod.title }}</span>
+                        <span class="bp-pairs__p">{{ prod.price | money }}</span>
+                      </a>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+                {%- if block.settings.foot_link != blank and block.settings.foot_label != blank -%}
+                  <div class="bp-pairs__foot">
+                    <em>{{ block.settings.foot_eyebrow }}</em>
+                    <a href="{{ block.settings.foot_link }}">{{ block.settings.foot_label }}</a>
+                  </div>
+                {%- endif -%}
+              </div>
+            </div>
+            {%- endif -%}
+
+          {%- when 'bp-share' -%}
+            {%- assign _url = shop.url | append: product.url -%}
+            {%- assign _msg = product.title | append: ' — ' | append: _url | url_encode -%}
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-share" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
+              <div class="bp-share">
+                <span class="bp-share__l">{{ block.settings.label | default: 'Share' }}</span>
+                <a href="https://wa.me/?text={{ _msg }}" target="_blank" rel="noopener">WhatsApp</a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ _url | url_encode }}" target="_blank" rel="noopener">Facebook</a>
+                <button type="button" data-bp-copy="{{ _url }}">Copy link</button>
+              </div>
+            </div>
+            <script>
+            (function(){var r=document.getElementById('bp-{{ block.id }}');if(!r||r.dataset.bpBound)return;r.dataset.bpBound='1';
+            var b=r.querySelector('[data-bp-copy]');if(!b)return;
+            b.addEventListener('click',function(){var u=b.getAttribute('data-bp-copy');
+              function done(){var o=b.textContent;b.textContent='Copied';setTimeout(function(){b.textContent=o;},1600);}
+              if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(u).then(done);}
+              else{var i=document.createElement('input');i.value=u;document.body.appendChild(i);i.select();document.execCommand('copy');i.remove();done();}});})();
+            </script>
+
+          {%- when 'bp-seal' -%}
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-seal" style="max-width:100%;overflow-x:clip">
+              <div class="bp-seal">
+                {%- if block.settings.year != blank -%}
+                  <div class="bp-seal__mark">
+                    <span class="bp-seal__k">{{ block.settings.year_label | default: 'SINCE' }}</span>
+                    <span class="bp-seal__y">{{ block.settings.year }}</span>
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.tagline != blank -%}<span class="bp-seal__t">{{ block.settings.tagline }}</span>{%- endif -%}
+              </div>
+            </div>
 
         {%- endcase -%}
       {%- endcapture -%}
