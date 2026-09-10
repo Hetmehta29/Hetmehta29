@@ -74,7 +74,9 @@
     --ph2: {{ _ph2 }};
     --onDark: {{ _onDark }};
     --disp: {{ section.settings.bp_heading_font.family }}, {{ section.settings.bp_heading_font.fallback_families }};
-    --body: {{ section.settings.bp_body_font.family }}, {{ section.settings.bp_body_font.fallback_families }};
+    {%- comment -%} Hanken Grotesk is not in Shopify's font library, so it comes from the
+        Google Fonts link at the top of this section rather than a font picker. {%- endcomment -%}
+    --body: {% if section.settings.bp_use_hanken != false %}'Hanken Grotesk', {% endif %}{{ section.settings.bp_body_font.family }}, {{ section.settings.bp_body_font.fallback_families }};
     --mono: 'Fragment Mono', ui-monospace, monospace;
     --dw: {{ _dw }};
     --dls: {{ _dls }};
@@ -1103,7 +1105,9 @@
     --ph2: {{ _ph2 }};
     --onDark: {{ _onDark }};
     --disp: {{ section.settings.bp_heading_font.family }}, {{ section.settings.bp_heading_font.fallback_families }};
-    --body: {{ section.settings.bp_body_font.family }}, {{ section.settings.bp_body_font.fallback_families }};
+    {%- comment -%} Hanken Grotesk is not in Shopify's font library, so it comes from the
+        Google Fonts link at the top of this section rather than a font picker. {%- endcomment -%}
+    --body: {% if section.settings.bp_use_hanken != false %}'Hanken Grotesk', {% endif %}{{ section.settings.bp_body_font.family }}, {{ section.settings.bp_body_font.fallback_families }};
     --mono: 'Fragment Mono', ui-monospace, monospace;
     --dw: {{ _dw }};
     --dls: {{ _dls }};
@@ -1871,6 +1875,13 @@
       "id": "bp_body_font",
       "label": "Body font",
       "default": "assistant_n4"
+    },
+    {
+      "type": "checkbox",
+      "id": "bp_use_hanken",
+      "label": "Hanken Grotesk for body text",
+      "default": true,
+      "info": "Loaded from Google Fonts, not the theme font library. Turn off to use the body font picker instead."
     },
     {
       "type": "range",

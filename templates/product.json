@@ -777,8 +777,8 @@
         "enable_image_zoom": true,
         "max_image_zoom_level": 3,
         "bp_use_bricolage": false,
-        "bp_heading_font": "bricolage_grotesque_n6",
-        "bp_body_font": "hanken_grotesk_n4",
+        "bp_heading_font": "bricolage_grotesque_n4",
+        "bp_body_font": "bricolage_grotesque_n4",
         "bp_heading_size": 26,
         "bp_body_size": 14,
         "bp_title_size": 42,
@@ -789,7 +789,7 @@
         "fit_pairs": "|Slim chinos|Pairs 98%\n|Leather loafers|Smart casual\n|Steel watch|Finishes it\n|Bomber jacket|Layer up",
         "bbx_radius": 0,
         "bbx_use_mono": false,
-        "bbx_font": "hanken_grotesk_n4",
+        "bbx_font": "bricolage_grotesque_n4",
         "bbx_paper": "#ffffff",
         "bbx_ink": "#171b22",
         "bbx_atc_fg": "#ffffff",
@@ -803,7 +803,8 @@
         "bp_color_muted": "#636a78",
         "bp_color_accent": "#1f4fe0",
         "bp_color_accent2": "#0a7c56",
-        "bp_color_accent3": "#6b4be8"
+        "bp_color_accent3": "#6b4be8",
+        "bp_use_hanken": true
       }
     },
     "related-products": {
