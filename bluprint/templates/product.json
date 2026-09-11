@@ -1,0 +1,864 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "topbar": {
+          "type": "bp-topbar",
+          "settings": {
+            "brand": "BLUPRINT",
+            "meta": "EST. 2021 · INDIA"
+          }
+        },
+        "hero": {
+          "type": "hero",
+          "settings": {
+            "blk_scale": 100,
+            "cpad": 0,
+            "head_size": 0,
+            "body_size": 0,
+            "badge_text": "",
+            "show_save": false,
+            "stock_text": "",
+            "thumb_labels": "",
+            "img_ratio": "4 / 5",
+            "img_fit": "cover",
+            "img_max": 460,
+            "enable_zoom": true,
+            "zoom_hint": "TAP TO OPEN · PINCH TO ZOOM",
+            "pad": 0,
+            "custom_css": "",
+            "thumb_size": 56,
+            "media_limit": 12,
+            "zoom_max": 5
+          }
+        },
+        "product_header": {
+          "type": "product-header",
+          "settings": {
+            "blk_scale": 100,
+            "cpad": 0,
+            "body_size": 0,
+            "series": "BLUPRINT · THE SHIRT SERIES",
+            "show_sku": true,
+            "show_rating": true,
+            "rating": "4.9",
+            "review_count": "2,140",
+            "kept_pct": "",
+            "tax_line": "Inclusive of all taxes · Free shipping",
+            "badges": "BESTSELLER|acc\nPREPAID 10% OFF|acc3",
+            "emi_parts": 3,
+            "emi_note": "UPI & cards",
+            "countdown_label": "Sale ends in",
+            "countdown": "",
+            "show_value": false,
+            "value_prefix": "Looks like a",
+            "head_size": 0,
+            "price_size": 0,
+            "c_dark": "",
+            "c_price": "",
+            "pad": 0,
+            "custom_css": ""
+          }
+        },
+        "ticker": {
+          "type": "ticker",
+          "settings": {
+            "blk_scale": 100,
+            "cpad": 0,
+            "head_size": 0,
+            "body_size": 0,
+            "ticker_text": "FREE SHIPPING OVER ₹999|7-DAY RETURN & EXCHANGE|COD AVAILABLE|SHIPS IN 24 HRS",
+            "bar_bg": "",
+            "text_color": "",
+            "speed": 22,
+            "pad": 0,
+            "custom_css": ""
+          }
+        },
+        "snapshot": {
+          "type": "snapshot",
+          "settings": {
+            "blk_scale": 100,
+            "cpad": 0,
+            "head_size": 0,
+            "body_size": 0,
+            "snapshot": "Fabric | 100% Premium cotton\nFit | Modern Slim · TTS\nRating | 4.9 ★\nDelivery | 2–4 days\nExchange | 7-day\nCOD | Available\nOccasion | Office → Evening",
+            "pad": 0,
+            "custom_css": ""
+          }
+        },
+        "live_feed": {
+          "type": "live-feed",
+          "settings": {
+            "blk_scale": 100,
+            "cpad": 0,
+            "head_size": 0,
+            "body_size": 0,
+            "live_label": "LIVE",
+            "live_feed": "Rahul from Mumbai just bought this\nPriya from Delhi added to cart\nAmit from Bengaluru bought 2 mins ago\nVikram from Jaipur just ordered",
+            "live_meta": "",
+            "c_tag": "",
+            "c_item": "",
+            "pad": 0,
+            "custom_css": ""
+          }
+        },
+        "size_picker": {
+          "type": "size-picker",
+          "settings": {
+            "blk_scale": 100,
+            "cpad": 0,
+            "head_size": 0,
+            "body_size": 0,
+            "label": "Size",
+            "show_swatches": true,
+            "show_chart": true,
+            "show_fit": true,
+            "fit_label": "Find my perfect size",
+            "hint": "",
+            "pad": 0,
+            "custom_css": ""
+          }
+        },
+        "kiwi_size_chart_recommender_kiwi_sizing_i9Rnxe": {
+          "type": "shopify://apps/kiwi-size-chart-recommender/blocks/kiwiSizing/b7369922-bf15-44ce-a121-a22a8fcbc4b0",
+          "settings": {
+            "fallbackToBlockPosition": true,
+            "waitForElementSelector": "",
+            "waitForElementDelay": 5
+          }
+        },
+        "variant_picker_4wTgyy": {
+          "type": "variant_picker",
+          "settings": {
+            "hide_sold_out_variants": false,
+            "separate_options": false,
+            "selector_style": "block",
+            "swatch_selector_style": "swatch",
+            "swatch_selector_size": "sm",
+            "block_selector_style": "outline",
+            "variant_image_options": "",
+            "size_chart_page": ""
+          }
+        },
+        "bp_preorder_apXJ8H": {
+          "type": "bp-preorder",
+          "settings": {
+            "pre_days": 10,
+            "pre_title": "Advance order",
+            "pre_text": "This size ships in {days} days",
+            "pre_icon": "PRE-ORDER",
+            "pre_prod1": "yellow-blue-checkered-shirt-copy",
+            "pre_size1": "S, M",
+            "pre_prod2": "pink-cotton-shirt-copy-1",
+            "pre_size2": "S, M",
+            "pre_prod3": "tan-cotton-linen-blend-shirt",
+            "pre_size3": "S, M, L, XL, 2XL",
+            "pre_prod4": "navy-blue-cotton-linen-blend-shirt",
+            "pre_size4": "S, M, L",
+            "pre_prod5": "dirt-green-cotton-linen-blend-shirt",
+            "pre_size5": "S, M, L, XL, 2XL",
+            "pre_prod6": "beige-striped-cotton-shirt-copy",
+            "pre_size6": "S, M",
+            "pre_prod7": "",
+            "pre_size7": "",
+            "pre_prod8": "",
+            "pre_size8": "",
+            "pre_prod9": "",
+            "pre_size9": "",
+            "pre_prod10": "",
+            "pre_size10": "",
+            "blk_scale": 100,
+            "pad": 0,
+            "cpad": 0,
+            "head_size": 0,
+            "body_size": 0,
+            "c_bg": "",
+            "c_border": "",
+            "c_accent": "",
+            "c_text": "",
+            "custom_css": ""
+          }
+        },
+        "fit_studio": {
+          "type": "fit-studio",
+          "disabled": true,
+          "settings": {
+            "blk_scale": 100,
+            "cpad": 0,
+            "head_size": 0,
+            "body_size": 0,
+            "button_label": "Find my perfect size",
+            "btn_bg": "",
+            "btn_color": "",
+            "pad": 0,
+            "custom_css": ""
+          }
+        },
+        "offers": {
+          "type": "bp-offers",
+          "settings": {
+            "offers": "EXTRA 10% OFF | Prepaid orders | 10% | Pay online to unlock · no min qty | auto\nEXTRA ₹100 OFF | Min. any 2 | 100 | Add 2 to unlock · applied at checkout | manual",
+            "blk_scale": 100,
+            "c_bg": "",
+            "c_text": "",
+            "c_dark": "",
+            "c_accent": "",
+            "c_accent2": "",
+            "c_accent3": "",
+            "pad": 0,
+            "head_size": 0,
+            "head_weight": "700",
+            "custom_fonts": false,
+            "f_head": "mono",
+            "f_body": "bricolage_grotesque_n4",
+            "body_size": 0,
+            "c_border": "",
+            "c_cell": "",
+            "cpad": 0,
+            "custom_css": ""
+          }
+        },
+        "volume": {
+          "type": "bp-volume",
+          "disabled": true,
+          "settings": {
+            "heading": "Buy more, pay less",
+            "vol_rows": "1 shirt|₹1,599 each|\n2 shirts|₹1,549 each|SAVE ₹100\n3 shirts|₹1,499 each|SAVE ₹300",
+            "vol_highlight": 2,
+            "pad": 0
+          }
+        },
+        "stock": {
+          "type": "bp-stock",
+          "settings": {
+            "show_stock": true,
+            "in_text": "In stock",
+            "low_text": "In stock",
+            "out_text": "Sold out in this size",
+            "low_at": 10,
+            "stock_full": 30,
+            "restock_note": "",
+            "pickup_title": "",
+            "pickup_note": "",
+            "pad": 0
+          }
+        },
+        "qty": {
+          "type": "bp-qty",
+          "settings": {
+            "show_qty": false,
+            "qty_label": "Quantity",
+            "initials_label": "",
+            "initials_note": "optional, free",
+            "initials_hint": "e.g. A.M. — embroidered on the cuff",
+            "initials_max": 4,
+            "gift_label": "",
+            "pad": 0
+          },
+          "disabled": true
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_payment_button": true,
+            "show_gift_card_recipient": true,
+            "show_quantity_selector": false,
+            "add_quantity_selector_spacing": false,
+            "atc_button_style": "solid",
+            "atc_button_background": "",
+            "atc_button_text_color": "",
+            "payment_button_background": "",
+            "payment_button_text_color": "",
+            "qty_label": "Qty",
+            "foot": ""
+          }
+        },
+        "rewards": {
+          "type": "rewards",
+          "settings": {
+            "heading": "Order with confidence",
+            "countdown": "",
+            "guarantees": "Ships in 24 hrs|Order conveniently\n7-day return & exchange|Hassle free\nCOD available|Pay on delivery\n10% prepaid off|Instant discount",
+            "blk_scale": 100,
+            "c_bg": "",
+            "c_text": "",
+            "c_dark": "",
+            "c_accent": "",
+            "c_accent2": "",
+            "c_accent3": "",
+            "pad": 0,
+            "head_size": 0,
+            "head_weight": "700",
+            "custom_fonts": false,
+            "f_head": "mono",
+            "f_body": "bricolage_grotesque_n4",
+            "body_size": 0,
+            "c_border": "",
+            "c_cell": "",
+            "cpad": 0,
+            "custom_css": ""
+          }
+        },
+        "price_transparency": {
+          "type": "price-transparency",
+          "settings": {
+            "pt_lead": "Where your ₹1,599 actually goes",
+            "pt_rows": "Premium fabric & trims|₹580|36\nExpert tailoring|₹300|24\nEthical factory wages|₹170|16\nLogistics & packaging|₹150|10\nMarketing & promo|₹150|9\nOur slim margin|₹249|14",
+            "pt_foot": "Legacy brands add ~₹1,500 of retail markup, middlemen and celebrity ads. We sell direct, so you keep it.",
+            "eyebrow": "HONEST PRICING",
+            "heading": "The ₹3,000 shirt. Priced at ₹1,599.",
+            "blk_scale": 100,
+            "c_bg": "",
+            "c_text": "",
+            "c_dark": "",
+            "c_accent": "",
+            "c_accent2": "",
+            "c_accent3": "",
+            "pad": 0,
+            "head_size": 0,
+            "head_weight": "700",
+            "custom_fonts": false,
+            "f_head": "mono",
+            "f_body": "bricolage_grotesque_n4",
+            "body_size": 0,
+            "c_border": "",
+            "c_cell": "",
+            "cpad": 0,
+            "custom_css": ""
+          }
+        },
+        "difference": {
+          "type": "difference",
+          "settings": {
+            "eyebrow_show": true,
+            "eyebrow": "THE BLUPRINT DIFFERENCE",
+            "heading_show": true,
+            "heading": "Five reasons it out-dresses shirts twice the price.",
+            "show_numbers": true,
+            "row1_on": true,
+            "row1_num": "01",
+            "row1_title": "Tailored, never boxy",
+            "row1_desc": "Cut on a modern slim block that actually flatters — no tent, no sausage.",
+            "row2_on": true,
+            "row2_num": "02",
+            "row2_title": "Crisp from 9 to 9",
+            "row2_desc": "A wrinkle-resistant finish walks straight from your bag into the room.",
+            "row3_on": true,
+            "row3_num": "03",
+            "row3_title": "Breathes in Indian heat",
+            "row3_desc": "An open weave moves air — tested through a 34°C commute.",
+            "row4_on": true,
+            "row4_num": "04",
+            "row4_title": "Colour that survives",
+            "row4_desc": "Reactive-dyed and colour-locked. Still sharp after 30+ washes.",
+            "row5_on": true,
+            "row5_num": "05",
+            "row5_title": "Built to outlast trends",
+            "row5_desc": "Reinforced seams, mother-of-pearl buttons, double-needle hems.",
+            "row6_on": false,
+            "blk_scale": 100,
+            "pad": 0
+          }
+        },
+        "fabric_dna": {
+          "type": "fabric-dna",
+          "settings": {
+            "fab_hero_img": "shopify://shop_images/hf_20260613_110836_d9468636-876e-495d-beaf-4179bb0d2f8d.png",
+            "fab_title": "Fabric DNA",
+            "fab_caption": "FABRIC MACRO SHOT",
+            "fab_cotton": "100% COTTON",
+            "dna_rows": "Softness|High|92\nBreathability|High|88\nCooling|Good|80\nWeight|Light|45\nWrinkle-resist|High|90\nStretch|Low|35",
+            "fab_chips": "Premium stitching\nHigh-density weave\nPre-washed\nColour-lock\nBreathable\nNatural fibres\nReinforced buttons\nMother-of-pearl buttons",
+            "care_items": "|Machine wash|Cold, gentle\n|Line dry|Avoid direct sun\n|Warm iron|Or steam\n|No bleach|Keeps colour",
+            "blk_scale": 100,
+            "c_bg": "",
+            "c_text": "",
+            "c_dark": "",
+            "c_accent": "",
+            "c_accent2": "",
+            "c_accent3": "",
+            "pad": 0,
+            "head_size": 0,
+            "head_weight": "700",
+            "custom_fonts": false,
+            "f_head": "mono",
+            "f_body": "bricolage_grotesque_n4",
+            "body_size": 0,
+            "c_border": "",
+            "c_cell": "",
+            "cpad": 0,
+            "custom_css": ""
+          }
+        },
+        "wash_test": {
+          "type": "wash-test",
+          "settings": {
+            "wash_img_1": "shopify://shop_images/hf_20260613_100406_a6639960-18df-4753-aad9-4b2bac762a9a.png",
+            "wash_img_2": "shopify://shop_images/hf_20260613_100406_a6639960-18df-4753-aad9-4b2bac762a9a.png",
+            "wash_img_3": "shopify://shop_images/hf_20260613_100406_a6639960-18df-4753-aad9-4b2bac762a9a.png",
+            "wash_img_4": "shopify://shop_images/hf_20260613_100406_a6639960-18df-4753-aad9-4b2bac762a9a.png",
+            "wash_sub": "Then measured colour and shape against day one.",
+            "wash_cards": "WASH 1|100|100|Factory fresh\nWASH 10|99|98|Still crisp\nWASH 20|98|97|Zero fade\nWASH 30|96|95|Shape kept",
+            "eyebrow": "BUILT TO LAST",
+            "heading": "We washed it 30 times.",
+            "blk_scale": 100,
+            "c_bg": "",
+            "c_text": "",
+            "c_dark": "",
+            "c_accent": "",
+            "c_accent2": "",
+            "c_accent3": "",
+            "pad": 0,
+            "head_size": 0,
+            "head_weight": "700",
+            "custom_fonts": false,
+            "f_head": "mono",
+            "f_body": "bricolage_grotesque_n4",
+            "body_size": 0,
+            "c_border": "",
+            "c_cell": "",
+            "cpad": 0,
+            "custom_css": ""
+          }
+        },
+        "comparison": {
+          "type": "comparison",
+          "settings": {
+            "cmp_header": "What matters|Bluprint|Others",
+            "cmp_rows": "Fabric|100% Premium cotton|Poly-blend\nShrinkage|Pre-washed, <2%|Up to 8%\nColour after 30 washes|Locked|Visible fade\nButtons|Mother-of-pearl|Plastic\nReturn & exchange|7 days|2–3 days\nPrice|₹1,599|₹3,000+",
+            "eyebrow": "HOW WE COMPARE",
+            "heading": "Bluprint vs fast fashion",
+            "blk_scale": 100,
+            "c_bg": "",
+            "c_text": "",
+            "c_dark": "",
+            "c_accent": "",
+            "c_accent2": "",
+            "c_accent3": "",
+            "pad": 0,
+            "head_size": 0,
+            "head_weight": "700",
+            "custom_fonts": false,
+            "f_head": "mono",
+            "f_body": "bricolage_grotesque_n4",
+            "body_size": 0,
+            "c_border": "",
+            "c_cell": "",
+            "cpad": 0,
+            "custom_css": ""
+          }
+        },
+        "promise": {
+          "type": "promise",
+          "settings": {
+            "eyebrow": "THE BLUPRINT PROMISE",
+            "heading": "The risk is entirely on us.",
+            "promise_items": "01|Wrong size?|Free size swap within 7 days of delivery.\n02|Changed your mind?|Return it within 7 days for a full refund.\n03|Stitching guarantee|A seam gives way inside a year, we repair or replace it.",
+            "blk_scale": 100,
+            "c_bg": "",
+            "c_text": "",
+            "c_dark": "",
+            "c_accent": "",
+            "c_accent2": "",
+            "c_accent3": "",
+            "pad": 0,
+            "head_size": 0,
+            "head_weight": "700",
+            "custom_fonts": false,
+            "f_head": "mono",
+            "f_body": "bricolage_grotesque_n4",
+            "body_size": 0,
+            "c_border": "",
+            "c_cell": "",
+            "cpad": 0,
+            "custom_css": ""
+          }
+        },
+        "product_details": {
+          "type": "product-details",
+          "settings": {
+            "eyebrow": "THE FINE PRINT",
+            "heading": "Product details",
+            "lead": "",
+            "spec_auto": true,
+            "spec_fabric_lbl": "Fabric",
+            "spec_fabric": "",
+            "spec_pattern_lbl": "Pattern",
+            "spec_pattern": "",
+            "spec_fit_lbl": "Fit",
+            "spec_fit": "",
+            "spec_weave_lbl": "Weave",
+            "spec_weave": "",
+            "spec_wash_lbl": "Wash",
+            "spec_wash": "",
+            "spec_collar_lbl": "Collar",
+            "spec_collar": "",
+            "spec_desc": "",
+            "spec_rows": "Fabric|100% Premium cotton\nPattern|Solid\nFit|Modern Slim\nCollar|Button-down Oxford\n\nWeave|Egyptian Oxford\nWash|Preshrunk & colourfast",
+            "returns_text": "We offer a 7-day exchange and return window from the date of delivery. To raise a request, simply reach out to our WhatsApp support team on +91 8141205048 or email info@bluprint.in within the eligible period, and we'll guide you through the process.",
+            "marketed_text": "Marketed by Hetakshat Retail Private Limited, Kedarmal Road, Malad East, Mumbai-400097. Manufactured in India. Customer care: info@bluprint.in · Country of origin: India",
+            "blk_scale": 100,
+            "c_bg": "",
+            "c_text": "",
+            "c_dark": "",
+            "c_accent": "",
+            "c_accent2": "",
+            "c_accent3": "",
+            "pad": 0,
+            "head_size": 0,
+            "head_weight": "700",
+            "custom_fonts": false,
+            "f_head": "mono",
+            "f_body": "bricolage_grotesque_n4",
+            "body_size": 0,
+            "c_border": "",
+            "c_cell": "",
+            "cpad": 0,
+            "custom_css": ""
+          }
+        },
+        "policies": {
+          "type": "bp-policies",
+          "settings": {
+            "heading": "",
+            "policy_items": "Shipping & delivery|Dispatched within 24 hours. Most orders are delivered in 2–4 business days depending on your location and the shipping option chosen. You'll receive tracking details as soon as your order ships.\nReturns & exchange|We take size exchange and return requests within 7 days of delivery, as per the courier tracking. Reach us on WhatsApp at +91 8141205048 or email info@bluprint.in.\nCare instructions|Machine wash cold on a gentle cycle, line dry away from direct sun, warm iron or steam. No bleach.",
+            "open_first": true,
+            "pad": 0
+          }
+        },
+        "reviews": {
+          "type": "reviews",
+          "settings": {
+            "rev_avg": "4.9",
+            "rev_total": "2,140 reviews",
+            "rev_bars": "Fit|88|True to size\nFabric|95|Premium\nValue|92|Excellent",
+            "rev_ai": "Buyers consistently praise the fabric quality, true-to-size fit and premium feel for the price. A few wish there were more colours.",
+            "rev_keywords": "premium feel|412\nno wrinkles|308\ntrue to size|287\ngreat value|241\nsoft fabric|198",
+            "rev_cards": "Arjun M.|179|75|M|5|y|Office|Genuinely looks like a ₹4k shirt. Collar holds shape all day, zero wrinkles after a full commute.|True to size|48\nRohit K.|182|80|L|5|n|Wedding|Broad shoulders usually mean tight shirts. L fit my chest without ballooning at the waist.|True to size|31\nSahil V.|172|64|S|4|y|College|Fabric is premium and soft. Slim fit is real — size up if you want roomy.|Runs slim|22\nNikhil P.|177|73|M|5|n|Daily|Colour hasn't faded after 15+ washes. The value play nobody talks about.|True to size|40\nKaran D.|185|88|XL|5|y|Travel|Tall, heavy build. XL length covers properly, sleeves hit right at the wrist.|True to size|27",
+            "rev_count": "4.9 · 2,140",
+            "heading": "What 2,140 men said",
+            "blk_scale": 100,
+            "c_bg": "",
+            "c_text": "",
+            "c_dark": "",
+            "c_accent": "",
+            "c_accent2": "",
+            "c_accent3": "",
+            "pad": 0,
+            "head_size": 0,
+            "head_weight": "700",
+            "custom_fonts": false,
+            "f_head": "mono",
+            "f_body": "bricolage_grotesque_n4",
+            "body_size": 0,
+            "c_border": "",
+            "c_cell": "",
+            "cpad": 0,
+            "custom_css": ""
+          }
+        },
+        "social_proof": {
+          "type": "social-proof",
+          "settings": {
+            "loved_h": "3,000 men.<br>One shirt they trust.",
+            "loved_stats": "3,000+|men in Bluprint\n4.75|avg rating\n98%|kept their shirt\n25%|buy again",
+            "loved_notes": "Genuinely can't believe this is under 2k.|Arjun, Bengaluru\n3rd one this month. Addicted.|Rohit, Pune\nFits like it was stitched for me.|Karan, Delhi",
+            "loved_cta": "Read all reviews →",
+            "eyebrow": "LOVED ACROSS INDIA",
+            "blk_scale": 100,
+            "c_bg": "",
+            "c_text": "",
+            "c_dark": "",
+            "c_accent": "",
+            "c_accent2": "",
+            "c_accent3": "",
+            "pad": 0,
+            "head_size": 0,
+            "head_weight": "700",
+            "custom_fonts": false,
+            "f_head": "mono",
+            "f_body": "bricolage_grotesque_n4",
+            "body_size": 0,
+            "c_border": "",
+            "c_cell": "",
+            "cpad": 0,
+            "custom_css": ""
+          }
+        },
+        "pairs": {
+          "type": "bp-pairs",
+          "settings": {
+            "heading": "Pairs well with",
+            "pair_product_1": "",
+            "pair_product_2": "",
+            "pair_product_3": "",
+            "pair_product_4": "",
+            "foot_eyebrow": "ALSO IN THIS FABRIC",
+            "foot_label": "",
+            "foot_link": "",
+            "pad": 0
+          }
+        },
+        "complete_look": {
+          "type": "complete-look",
+          "disabled": true,
+          "settings": {
+            "eyebrow": "STYLE IT RIGHT",
+            "heading": "Complete the look",
+            "look_save": "Bundle price",
+            "look_cta": "Add all 3",
+            "blk_scale": 100,
+            "pad": 0
+          }
+        },
+        "gallery": {
+          "type": "gallery",
+          "disabled": true,
+          "settings": {
+            "eyebrow": "SEEN IN THE WILD",
+            "heading": "3,000 men, one shirt",
+            "gal_items": "150|@arjun.m|\n112|@rohit.k|\n132|@nikhil.r|\n112|@aman.s|\n150|@k.dsz|\n130|@dev.p|",
+            "blk_scale": 100,
+            "pad": 0
+          }
+        },
+        "lifestyle": {
+          "type": "lifestyle",
+          "disabled": true,
+          "settings": {
+            "heading": "Wear it everywhere",
+            "life_sub": "One shirt, styled for your whole week.",
+            "life_cards": "Office|Tucked, sleeves down\nAirport|Untucked, rolled cuffs\nDate|Open collar, denim\nCoffee|Under a jacket\nWedding|With a bandhgala",
+            "blk_scale": 100,
+            "pad": 0
+          }
+        },
+        "founder": {
+          "type": "founder",
+          "settings": {
+            "founder_photo": "shopify://shop_images/IMG_7258.jpg",
+            "founder_title": "A note from our founder",
+            "founder_by": "HET MEHTA · FOUNDER, BLUPRINT",
+            "founder_quote": "“I spent years paying ₹3,000 for shirts that cost ₹1,500 to make — the rest was just markup and marketing. Bluprint exists to delete that gap. Same mills. Same tailoring. Priced honestly, sold directly to you.”",
+            "founder_sig": "— Het Mehta",
+            "blk_scale": 100,
+            "c_bg": "",
+            "c_text": "",
+            "c_dark": "",
+            "c_accent": "",
+            "c_accent2": "",
+            "c_accent3": "",
+            "pad": 0,
+            "head_size": 0,
+            "head_weight": "700",
+            "custom_fonts": false,
+            "f_head": "mono",
+            "f_body": "bricolage_grotesque_n4",
+            "body_size": 0,
+            "c_border": "",
+            "c_cell": "",
+            "cpad": 0,
+            "custom_css": ""
+          }
+        },
+        "faq": {
+          "type": "faq",
+          "settings": {
+            "faq_items": "Will it shrink after washing?|No. Our shirts are pre-shrunk, so you can expect virtually zero shrinkage when washed and cared for as instructed.\nHow do I pick my size?|Our shirts fit true to size. If you're unsure, use the size chart or tap Find my perfect size.\nWhat if the fit is wrong?|We take size exchange and return requests within 7 days of the product being delivered as per the courier tracking available.\nIs COD available in my city?|COD is available across most serviceable pin codes in India. You'll see the option at checkout.\nHow long does delivery take?|Most orders are delivered within 2–4 business days, depending on your location and the shipping option chosen. You'll receive tracking details as soon as your order ships.",
+            "heading": "Still deciding? Quick answers.",
+            "blk_scale": 100,
+            "c_bg": "",
+            "c_text": "",
+            "c_dark": "",
+            "c_accent": "",
+            "c_accent2": "",
+            "c_accent3": "",
+            "pad": 0,
+            "head_size": 0,
+            "head_weight": "700",
+            "custom_fonts": false,
+            "f_head": "mono",
+            "f_body": "bricolage_grotesque_n4",
+            "body_size": 0,
+            "c_border": "",
+            "c_cell": "",
+            "cpad": 0,
+            "custom_css": ""
+          }
+        },
+        "share": {
+          "type": "bp-share",
+          "settings": {
+            "label": "SHARE",
+            "pad": 0
+          }
+        },
+        "seal": {
+          "type": "bp-seal",
+          "settings": {
+            "year_label": "SINCE",
+            "year": "2021",
+            "tagline": "BLUPRINT SHIRTMAKERS · MUMBAI"
+          }
+        },
+        "sticky_bar": {
+          "type": "sticky-bar",
+          "settings": {
+            "blk_scale": 100,
+            "pad": 0,
+            "cpad": 0,
+            "head_size": 0,
+            "body_size": 0,
+            "cta": "Add to bag",
+            "wallet_head": "YOUR PERKS",
+            "wallet_items": "Free express shipping|₹0|\n7-day return & exchange|FREE|\nExtra 10% on prepaid|SAVE|",
+            "meter": 85,
+            "custom_css": ""
+          }
+        }
+      },
+      "block_order": [
+        "topbar",
+        "hero",
+        "product_header",
+        "ticker",
+        "snapshot",
+        "live_feed",
+        "size_picker",
+        "kiwi_size_chart_recommender_kiwi_sizing_i9Rnxe",
+        "variant_picker_4wTgyy",
+        "bp_preorder_apXJ8H",
+        "fit_studio",
+        "offers",
+        "volume",
+        "stock",
+        "qty",
+        "buy_buttons",
+        "rewards",
+        "price_transparency",
+        "difference",
+        "fabric_dna",
+        "wash_test",
+        "comparison",
+        "promise",
+        "product_details",
+        "policies",
+        "reviews",
+        "social_proof",
+        "pairs",
+        "complete_look",
+        "gallery",
+        "lifestyle",
+        "founder",
+        "faq",
+        "share",
+        "seal",
+        "sticky_bar"
+      ],
+      "settings": {
+        "bp_palette": "colour",
+        "bp_fullwidth": true,
+        "bp_gutter": 10,
+        "bp_maxwidth": 0,
+        "bp_hide_gallery": true,
+        "bp_auto_rating": false,
+        "color_scheme": "",
+        "allow_transparent_header": false,
+        "transparent_header_use_primary_colors": false,
+        "add_top_spacing": false,
+        "show_sticky_add_to_cart": false,
+        "product_media_size": 42,
+        "content_alignment": "left",
+        "desktop_media_layout": "carousel",
+        "desktop_carousel_controls": "lines",
+        "mobile_controls": "thumbnails",
+        "enable_media_autoplay": false,
+        "enable_video_looping": false,
+        "enable_image_zoom": true,
+        "max_image_zoom_level": 3,
+        "bp_use_bricolage": false,
+        "bp_heading_font": "bricolage_grotesque_n4",
+        "bp_body_font": "bricolage_grotesque_n4",
+        "bp_heading_size": 20,
+        "bp_body_size": 12,
+        "bp_title_size": 30,
+        "bp_block_gap": 2,
+        "fit_enable": true,
+        "fit_title": "Fit Studio",
+        "fit_size_rows": "S|41|26|17.5\nM|44|27|18\nL|46|27.5|18.25\nXL|48|28.5|19\nXXL|49.5|29.5|20.5",
+        "fit_pairs": "|Slim chinos|Pairs 98%\n|Leather loafers|Smart casual\n|Steel watch|Finishes it\n|Bomber jacket|Layer up",
+        "bbx_radius": 4,
+        "bbx_use_mono": false,
+        "bbx_font": "bricolage_grotesque_n4",
+        "bbx_paper": "#ffffff",
+        "bbx_ink": "#171b22",
+        "bbx_atc_fg": "#ffffff",
+        "bbx_connect": false,
+        "bp_color_page": "#ffffff",
+        "bp_color_card": "#ffffff",
+        "bp_color_tint": "#f1f3f6",
+        "bp_color_line": "#e1e4e9",
+        "bp_color_ink": "#171b22",
+        "bp_color_ink2": "#2e3440",
+        "bp_color_muted": "#636a78",
+        "bp_color_accent": "#1f4fe0",
+        "bp_color_accent2": "#0a7c56",
+        "bp_color_accent3": "#6b4be8",
+        "bp_use_hanken": true,
+        "bp_scale": 85,
+        "bp_bleed_panels": false,
+        "bbx_layout": "row",
+        "bbx_atc_bg": "#171b22",
+        "bbx_buy_bg": "#1f4fe0",
+        "bbx_buy_fg": "#ffffff",
+        "bbx_gap": 8
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "blocks": {
+        "section-header": {
+          "type": "_section-header",
+          "static": true,
+          "settings": {
+            "subheading": "",
+            "title": "You may like",
+            "content": "",
+            "button_text": "",
+            "button_link": "shopify://collections/shirts",
+            "button_style": "outline",
+            "text_alignment": "left",
+            "heading_size": "h4",
+            "title_icon": "none",
+            "show_scrolling_title": false
+          },
+          "blocks": {}
+        }
+      },
+      "settings": {
+        "color_scheme": "",
+        "stack_products": false,
+        "recommendations_count": 8,
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 4,
+        "show_view_all_button": true,
+        "show_scrolling_bar": false
+      }
+    }
+  },
+  "order": [
+    "main",
+    "related-products"
+  ]
+}
