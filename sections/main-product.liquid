@@ -1823,6 +1823,18 @@
   }
 
   {%- comment -%} the footnote {%- endcomment -%}
+  {%- comment -%}
+    When the docket itself gets tight the QTY word costs Add to cart the room
+    it needs, so it drops; the stepper still says what it is. This keys off the
+    docket's own width, not the screen's — the content column can be narrow on
+    a wide display, which a viewport media query would miss entirely.
+  {%- endcomment -%}
+  #shopify-section-{{ section.id }} .bp-order { container-type: inline-size; }
+  @container (max-width: 330px) {
+    #shopify-section-{{ section.id }} .bp-order__qtyk { display: none !important; }
+    #shopify-section-{{ section.id }} .bp-order [class*="quantity-selector"],
+    #shopify-section-{{ section.id }} .bp-order [class*="quantity-input"] { padding-left: 8px !important; }
+  }
   #shopify-section-{{ section.id }} .bp-order__foot {
     padding: 11px 16px !important; text-align: center;
     border-top: 1px solid var(--bp-line, #E1E4E9) !important;
