@@ -457,8 +457,53 @@ no need to manually pass the section as it is globally available)
                   if (getComputedStyle(el).display === 'none') el.style.setProperty('display', 'block', 'important');
                 }
               }
+              {%- comment -%}
+                Once Add to cart has been moved onto the ticket line, the container the
+                theme built for it is still there, empty but holding its own height —
+                that is the gap under the ticket, not a margin. Collapse anything below
+                the rule that does not lead to the payment button. Elements holding a
+                form control are left alone, so nothing the cart needs is touched.
+              {%- endcomment -%}
+              function trim(box) {
+                var pay = box.querySelector('.shopify-payment-button, shopify-accelerated-checkout');
+                function walk(parent) {
+                  Array.prototype.forEach.call(parent.children, function (el) {
+                    if (el.classList && (el.classList.contains('bp-order__line') ||
+                        el.classList.contains('bp-order__rule') ||
+                        el.classList.contains('bp-order__foot'))) return;
+                    {%- comment -%}
+                      Stop AT the payment button's own element — descending into it
+                      hid the button itself, because the button is not "pay" and does
+                      not contain it.
+                    {%- endcomment -%}
+                    if (pay && el === pay) return;
+                    if (pay && el.contains(pay)) { walk(el); return; }
+                    {%- comment -%}
+                      A branch holding a control the shopper can actually see — the gift
+                      recipient fields, for instance — is left completely alone. Only a
+                      branch whose controls are all hidden gets collapsed, so its inputs
+                      still post but it stops holding the gap open.
+                    {%- endcomment -%}
+                    var fields = el.querySelectorAll('input, select, textarea');
+                    if (fields.length) {
+                      for (var k = 0; k < fields.length; k++) {
+                        if (fields[k].type !== 'hidden' && fields[k].offsetParent !== null) return;
+                      }
+                      el.style.setProperty('height', '0', 'important');
+                      el.style.setProperty('min-height', '0', 'important');
+                      el.style.setProperty('margin', '0', 'important');
+                      el.style.setProperty('overflow', 'hidden', 'important');
+                      return;
+                    }
+                    el.style.setProperty('display', 'none', 'important');
+                  });
+                }
+                walk(box);
+              }
               function run() {
-                document.querySelectorAll('[data-bp-buybox]').forEach(function (box) { wire(box); hoist(box); });
+                document.querySelectorAll('[data-bp-buybox]').forEach(function (box) {
+                  wire(box); hoist(box); trim(box);
+                });
               }
               var queued = false;
               function schedule() {

@@ -1701,6 +1701,8 @@
     margin: 0 !important; padding: 0 !important; border: none !important;
     background: none !important; box-shadow: none !important; outline: none !important;
     max-width: 100% !important; min-width: 0 !important; float: none !important;
+    {%- comment -%} a theme min-height here is what held the gap open {%- endcomment -%}
+    min-height: 0 !important; row-gap: 0 !important; gap: 0 !important;
   }
   #shopify-section-{{ section.id }} .bp-order > *:not(.bp-order__line):not(.bp-order__rule):not(.bp-order__foot) {
     display: block !important; width: 100% !important;
