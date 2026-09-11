@@ -1718,16 +1718,11 @@
     align-items: center;
   }
   {%- comment -%}
-    Structural flatten: anything in the ticket that contains one of the two
-    buttons is a wrapper, whatever it is called.
+    Structural flatten: inside the ticket, ANY element that contains a button is
+    a wrapper, whatever it is called. Naming the wrappers did not hold — the live
+    theme has one this file never guessed.
   {%- endcomment -%}
-  #shopify-section-{{ section.id }} .bp-order *:has(button[name="add"]),
-  #shopify-section-{{ section.id }} .bp-order *:has(.product-form__submit),
-  #shopify-section-{{ section.id }} .bp-order *:has(.shopify-payment-button),
-  #shopify-section-{{ section.id }} .bp-order product-form,
-  #shopify-section-{{ section.id }} .bp-order form,
-  #shopify-section-{{ section.id }} .bp-order add-to-cart-component,
-  #shopify-section-{{ section.id }} .bp-order .product-form__buttons { display: contents !important; }
+  #shopify-section-{{ section.id }} .bp-order *:has(button):not(button):not(.bp-order__qty):not(quantity-selector):not(quantity-selector-component):not([class*="quantity"]) { display: contents !important; }
   {%- comment -%} default: a full-width row of its own, so nothing lands in a stray cell {%- endcomment -%}
   #shopify-section-{{ section.id }} .bp-order > * { grid-column: 1 / -1; min-width: 0; }
   #shopify-section-{{ section.id }} .bp-order__qtyk { grid-column: 1 !important; grid-row: 1 !important; }
@@ -1735,7 +1730,31 @@
   #shopify-section-{{ section.id }} .bp-order__lead { grid-column: 3 !important; grid-row: 1 !important; }
   {{ _atc }} { grid-column: 4 !important; grid-row: 1 !important; }
   #shopify-section-{{ section.id }} .bp-order__rule { grid-column: 1 / -1 !important; grid-row: 2 !important; }
-  #shopify-section-{{ section.id }} .bp-order .shopify-payment-button { grid-column: 1 / -1 !important; grid-row: 3 !important; }
+  {%- comment -%}
+    Belt and braces. If a wrapper survives the flatten for any reason, IT is the
+    grid item and placing the button inside it does nothing — which is exactly how
+    Add to cart ended up on the wrong side of the ticket. So place whichever turns
+    out to be the direct child: the button, or the thing holding it.
+  {%- endcomment -%}
+  #shopify-section-{{ section.id }} .bp-order > *:has(button[name="add"]),
+  #shopify-section-{{ section.id }} .bp-order > *:has([name="add"]),
+  #shopify-section-{{ section.id }} .bp-order > *:has(.product-form__submit),
+  #shopify-section-{{ section.id }} .bp-order > *:has(button[type="submit"]) {
+    grid-column: 4 !important; grid-row: 1 !important;
+  }
+  #shopify-section-{{ section.id }} .bp-order :is(.shopify-payment-button, shopify-accelerated-checkout),
+  #shopify-section-{{ section.id }} .bp-order > *:has(.shopify-payment-button__button),
+  #shopify-section-{{ section.id }} .bp-order .shopify-payment-button__button {
+    grid-column: 1 / -1 !important; grid-row: 3 !important;
+  }
+  {%- comment -%}
+    A surviving wrapper must not add its own box around the button.
+  {%- endcomment -%}
+  #shopify-section-{{ section.id }} .bp-order > *:has(button) {
+    display: flex !important; align-items: center !important; justify-content: flex-end !important;
+    margin: 0 !important; padding: 0 !important; border: none !important; background: none !important;
+  }
+  #shopify-section-{{ section.id }} .bp-order > *:has(.shopify-payment-button__button) { justify-content: stretch !important; }
   #shopify-section-{{ section.id }} .bp-order__foot { grid-column: 1 / -1 !important; grid-row: 4 !important; }
   {%- endif -%}
 
