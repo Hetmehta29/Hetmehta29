@@ -249,7 +249,7 @@
         "qty": {
           "type": "bp-qty",
           "settings": {
-            "show_qty": true,
+            "show_qty": false,
             "qty_label": "Quantity",
             "initials_label": "",
             "initials_note": "optional, free",
@@ -257,7 +257,8 @@
             "initials_max": 4,
             "gift_label": "",
             "pad": 0
-          }
+          },
+          "disabled": true
         },
         "buy_buttons": {
           "type": "buy_buttons",
@@ -806,7 +807,11 @@
         "bp_color_accent3": "#6b4be8",
         "bp_use_hanken": true,
         "bp_scale": 85,
-        "bp_bleed_panels": false
+        "bp_bleed_panels": false,
+        "bbx_layout": "row",
+        "bbx_atc_bg": "#171b22",
+        "bbx_buy_bg": "#1f4fe0",
+        "bbx_buy_fg": "#ffffff"
       }
     },
     "related-products": {

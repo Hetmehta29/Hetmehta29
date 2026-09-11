@@ -1621,14 +1621,23 @@
 {%- endstyle -%}
 
 {%- comment -%}
-  Bluprint · editorial buy box. The purchase module above keeps all of the
-  theme's own cart markup and behaviour; this only flattens its skin to match
-  the artboards — no card, no offset shadow, two full-width 56px buttons.
+  Bluprint · editorial buy box. The theme's own cart markup and behaviour are
+  untouched; this only lays it out and colours it.
+
+  Target: one purchase unit —
+      [− 1 +] [        ADD TO CART        ]
+      [           BUY IT NOW              ]
+
+  The theme's buy-buttons snippet nests the quantity selector, the add button
+  and the payment button at depths this file cannot see, so the wrappers are
+  flattened with display:contents and the three controls are placed by grid.
+  Unknown children fall through to their own full-width row rather than
+  landing in a cell they were never meant for. If a theme update breaks the
+  row, "Purchase layout: Stacked" restores a plain column.
 {%- endcomment -%}
 {%- style -%}
   #shopify-section-{{ section.id }} .bp-buybox {
-    padding: 0 !important; gap: 9px !important;
-    border: none !important; border-radius: 0 !important;
+    padding: 0 !important; border: none !important; border-radius: 0 !important;
     background: transparent !important; box-shadow: none !important;
     margin-top: 22px !important;
   }
@@ -1636,36 +1645,94 @@
   #shopify-section-{{ section.id }} .bp-buybox * {
     font-family: var(--body, 'Hanken Grotesk', system-ui, sans-serif) !important;
   }
-  #shopify-section-{{ section.id }} .bp-buybox .product-form__buttons { gap: 9px !important; }
-  {%- comment -%} BP · Quantity & personalisation owns the stepper now. {%- endcomment -%}
-  #shopify-section-{{ section.id }} .bp-buybox quantity-selector,
-  #shopify-section-{{ section.id }} .bp-buybox .quantity-selector,
-  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity-selector"],
-  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity-input"] { display: none !important; }
 
+  {%- if section.settings.bbx_layout == 'stacked' -%}
+  #shopify-section-{{ section.id }} .bp-buybox { display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 9px !important; }
+  #shopify-section-{{ section.id }} .bp-buybox .product-form__buttons { display: flex !important; flex-direction: column !important; gap: 9px !important; width: 100% !important; }
+  {%- comment -%} the stepper keeps its own small width instead of stretching {%- endcomment -%}
+  #shopify-section-{{ section.id }} .bp-buybox quantity-selector,
+  #shopify-section-{{ section.id }} .bp-buybox quantity-selector-component,
+  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity-selector"],
+  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity-input"] { align-self: flex-start !important; }
+  {%- else -%}
+  #shopify-section-{{ section.id }} .bp-buybox {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 9px !important; align-items: stretch;
+  }
+  {%- comment -%} flatten the wrappers so the real controls become grid items {%- endcomment -%}
+  #shopify-section-{{ section.id }} .bp-buybox product-form,
+  #shopify-section-{{ section.id }} .bp-buybox product-form > form,
+  #shopify-section-{{ section.id }} .bp-buybox > form,
+  #shopify-section-{{ section.id }} .bp-buybox add-to-cart-component,
+  #shopify-section-{{ section.id }} .bp-buybox .product-form__buttons { display: contents !important; }
+  {%- comment -%} anything unrecognised gets its own full-width row {%- endcomment -%}
+  #shopify-section-{{ section.id }} .bp-buybox > * { grid-column: 1 / -1; }
+  #shopify-section-{{ section.id }} .bp-buybox quantity-selector,
+  #shopify-section-{{ section.id }} .bp-buybox quantity-selector-component,
+  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity-selector"],
+  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity-input"] { grid-column: 1; grid-row: 1; }
+  #shopify-section-{{ section.id }} .bp-buybox button[name="add"] { grid-column: 2; grid-row: 1; }
+  #shopify-section-{{ section.id }} .bp-buybox .shopify-payment-button { grid-column: 1 / -1; }
+  {%- endif -%}
+
+  {%- comment -%} the quantity stepper — small, square, hairline {%- endcomment -%}
+  #shopify-section-{{ section.id }} .bp-buybox quantity-selector,
+  #shopify-section-{{ section.id }} .bp-buybox quantity-selector-component,
+  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity-selector"],
+  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity-input"] {
+    display: inline-flex !important; align-items: stretch !important;
+    width: auto !important; min-width: 0 !important; flex: 0 0 auto !important;
+    height: 52px !important; margin: 0 !important; padding: 0 !important;
+    border: 1px solid var(--bp-line, #E1E4E9) !important; border-radius: 0 !important;
+    background: transparent !important; box-shadow: none !important; overflow: visible !important;
+  }
+  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity"] button {
+    width: 34px !important; min-width: 34px !important; height: auto !important;
+    padding: 0 !important; margin: 0 !important; border: none !important; border-radius: 0 !important;
+    background: transparent !important; color: var(--bp-ink, #171B22) !important;
+    font-size: 15px !important; cursor: pointer; opacity: 1 !important;
+  }
+  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity"] input {
+    width: 34px !important; min-width: 34px !important; height: auto !important;
+    padding: 0 !important; margin: 0 !important; text-align: center !important;
+    border: none !important; border-left: 1px solid var(--bp-line, #E1E4E9) !important;
+    border-right: 1px solid var(--bp-line, #E1E4E9) !important; border-radius: 0 !important;
+    background: transparent !important; color: var(--bp-ink, #171B22) !important;
+    font-size: 13px !important; -moz-appearance: textfield !important;
+  }
+  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity"] input::-webkit-outer-spin-button,
+  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity"] input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important; margin: 0 !important;
+  }
+  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity"] label,
+  #shopify-section-{{ section.id }} .bp-buybox [class*="quantity"] legend { display: none !important; }
+
+  {%- comment -%} the two buttons {%- endcomment -%}
   #shopify-section-{{ section.id }} .bp-buybox button[name="add"],
   #shopify-section-{{ section.id }} .bp-buybox .shopify-payment-button__button {
-    height: 56px !important; min-height: 56px !important; padding: 0 !important;
-    border-radius: 0 !important; box-shadow: none !important;
-    font-size: 13.5px !important; font-weight: 500 !important;
-    letter-spacing: .16em !important; text-transform: uppercase !important;
+    width: 100% !important; height: 52px !important; min-height: 52px !important;
+    padding: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+    font-size: 13px !important; font-weight: 500 !important;
+    letter-spacing: .14em !important; text-transform: uppercase !important;
   }
   #shopify-section-{{ section.id }} .bp-buybox button[name="add"] {
     border: none !important;
-    background: var(--bp-ink, #171B22) !important; color: var(--bp-pg, #FFFFFF) !important;
+    background: {{ section.settings.bbx_atc_bg | default: '#171B22' }} !important;
+    color: {{ section.settings.bbx_atc_fg | default: '#FFFFFF' }} !important;
   }
   #shopify-section-{{ section.id }} .bp-buybox .shopify-payment-button__button {
-    border: 1px solid var(--bp-ink, #171B22) !important;
-    background: transparent !important; color: var(--bp-ink, #171B22) !important;
+    border: none !important;
+    background: {{ section.settings.bbx_buy_bg | default: '#1F4FE0' }} !important;
+    color: {{ section.settings.bbx_buy_fg | default: '#FFFFFF' }} !important;
   }
-  #shopify-section-{{ section.id }} .bp-buybox .shopify-payment-button__button:hover {
-    background: var(--bp-tint, #F1F3F6) !important;
-  }
+  #shopify-section-{{ section.id }} .bp-buybox .shopify-payment-button__button:hover { filter: brightness(.94); }
   #shopify-section-{{ section.id }} .bp-buybox button[name="add"][disabled],
   #shopify-section-{{ section.id }} .bp-buybox button[name="add"][aria-disabled="true"] {
     background: var(--bp-line, #E1E4E9) !important; color: var(--bp-mut, #636A78) !important;
   }
-  {%- comment -%} The buy box sits outside .bp-blk, so mirror the palette onto the section. {%- endcomment -%}
+
+  {%- comment -%} the buy box sits outside .bp-blk, so mirror the palette onto the section {%- endcomment -%}
   #shopify-section-{{ section.id }} {
     --bp-ink: {{ section.settings.bp_color_ink | default: _ink }};
     --bp-pg: {{ section.settings.bp_color_page | default: _pg }};
@@ -2007,6 +2074,41 @@
     {
       "type": "paragraph",
       "content": "Neo-brutalist skin over the native quantity, Add to cart & Buy now controls. Cart, variant, inventory & sold-out logic are the theme’s own — fully working & untouched."
+    },
+    {
+      "type": "select",
+      "id": "bbx_layout",
+      "label": "Purchase layout",
+      "info": "Row puts the quantity stepper beside Add to cart. Switch to Stacked if a theme update breaks the row.",
+      "options": [
+        {
+          "value": "row",
+          "label": "Row — quantity + Add to cart"
+        },
+        {
+          "value": "stacked",
+          "label": "Stacked — full-width buttons"
+        }
+      ],
+      "default": "row"
+    },
+    {
+      "type": "color",
+      "id": "bbx_atc_bg",
+      "label": "Add to cart background",
+      "default": "#171B22"
+    },
+    {
+      "type": "color",
+      "id": "bbx_buy_bg",
+      "label": "Buy it now background",
+      "default": "#1F4FE0"
+    },
+    {
+      "type": "color",
+      "id": "bbx_buy_fg",
+      "label": "Buy it now text",
+      "default": "#FFFFFF"
     },
     {
       "type": "range",
