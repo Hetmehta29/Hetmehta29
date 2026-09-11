@@ -384,95 +384,33 @@ no need to manually pass the section as it is globally available)
 
           {%- when 'buy_buttons' -%}
             {%- comment -%}
-              Bluprint · ticket. The theme's own buy-buttons render is untouched
-              inside; the mono key, the dotted leader and the dashed rule around it
-              are ours. The native controls are placed into the grid by rule, since
-              their nesting differs between themes.
+              Bluprint · ticket.
+
+              Earlier builds tried to place the theme's controls with CSS grid,
+              display:contents and :has(). Every attempt broke differently, because
+              the markup they target is not visible from this repo. So the ticket
+              line is plain markup of our own, and the one control that has to sit
+              on it — Add to cart — is MOVED into it. Nothing here depends on the
+              theme's nesting.
+
+              The form attribute is set before the move, which keeps a submit button
+              posting to its form from outside it. If the script never runs, the
+              button simply stays where the theme put it: below the rule, visible
+              and working.
             {%- endcomment -%}
             <div class="bp-buybox bp-order" data-bp-buybox>
-              <span class="bp-order__k bp-order__qtyk">{{ block.settings.qty_label | default: 'Qty' }}</span>
-              {%- comment -%}
-                Our own stepper rather than the theme's. The theme's markup differs
-                between versions and could not be styled reliably from here; this one
-                posts with the product form through the form attribute, so the cart
-                still receives the quantity exactly as before.
-              {%- endcomment -%}
-              <div class="bp-order__qty">
-                <button type="button" data-bp-q="-" aria-label="Decrease quantity">&minus;</button>
-                <input type="number" name="quantity" value="1" min="1" inputmode="numeric"
-                       form="{{ product_form_id }}" aria-label="Quantity">
-                <button type="button" data-bp-q="+" aria-label="Increase quantity">+</button>
+              <div class="bp-order__line">
+                <span class="bp-order__k bp-order__qtyk">{{ block.settings.qty_label | default: 'Qty' }}</span>
+                <div class="bp-order__qty">
+                  <button type="button" data-bp-q="-" aria-label="Decrease quantity">&minus;</button>
+                  <input type="number" name="quantity" value="1" min="1" inputmode="numeric"
+                         form="{{ product_form_id }}" aria-label="Quantity">
+                  <button type="button" data-bp-q="+" aria-label="Increase quantity">+</button>
+                </div>
+                <span class="bp-order__lead" aria-hidden="true"></span>
+                {%- comment -%} Add to cart is moved in here {%- endcomment -%}
               </div>
-              {%- comment -%} the dotted leader between the stepper and Add to cart {%- endcomment -%}
-              <span class="bp-order__lead" aria-hidden="true"></span>
-              {%- comment -%} the lower dashed rule of the ticket {%- endcomment -%}
               <span class="bp-order__rule" aria-hidden="true"></span>
-              <script>
-              (function(){
-                var box = document.currentScript.closest('[data-bp-buybox]');
-                if (!box || box.dataset.bpQtyBound) return;
-                box.dataset.bpQtyBound = '1';
-                var inp = box.querySelector('.bp-order__qty input');
-                if (!inp) return;
-                box.querySelectorAll('[data-bp-q]').forEach(function (b) {
-                  b.addEventListener('click', function () {
-                    var n = parseInt(inp.value, 10) || 1;
-                    n = b.getAttribute('data-bp-q') === '+' ? n + 1 : Math.max(1, n - 1);
-                    inp.value = n;
-                    inp.dispatchEvent(new Event('change', { bubbles: true }));
-                  });
-                });
-              })();
-              </script>
-              <script>
-              {%- comment -%}
-                Safety net. The ticket's layout is CSS written against markup this
-                repo cannot see, and a mis-aimed rule once hid Add to cart outright.
-                Nothing about the page is worth a missing buy button, so after paint
-                the button is checked: anything hiding it between here and the ticket
-                is overridden, and if it is not a direct child it is moved to be one
-                so the grid can place it. The form attribute is set first, which keeps
-                a submit button posting to its form from outside it.
-              {%- endcomment -%}
-              (function () {
-                function fix() {
-                  document.querySelectorAll('[data-bp-buybox]').forEach(function (box) {
-                    var atc = box.querySelector('button[name="add"], [name="add"], .product-form__submit, button[type="submit"]');
-                    if (!atc) return;
-                    if (atc.parentElement === box && atc.offsetParent !== null) return;   /* already right */
-                    for (var el = atc; el && el !== box; el = el.parentElement) {
-                      if (getComputedStyle(el).display === 'none') el.style.setProperty('display', 'block', 'important');
-                      if (getComputedStyle(el).visibility === 'hidden') el.style.setProperty('visibility', 'visible', 'important');
-                    }
-                    if (getComputedStyle(atc).display === 'none') atc.style.setProperty('display', 'flex', 'important');
-                    if (atc.parentElement !== box) {
-                      if (!atc.getAttribute('form')) atc.setAttribute('form', '{{ product_form_id }}');
-                      box.appendChild(atc);
-                    }
-                  });
-                }
-                {%- comment -%}
-                  fix() moves a node, which would retrigger the observer, so it is
-                  debounced to one run per frame and skips work once the button is
-                  already a visible direct child.
-                {%- endcomment -%}
-                var queued = false;
-                function schedule() {
-                  if (queued) return;
-                  queued = true;
-                  requestAnimationFrame(function () { queued = false; fix(); });
-                }
-                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule);
-                else schedule();
-                {%- comment -%} a variant change re-renders the form, so run it again {%- endcomment -%}
-                document.addEventListener('shopify:section:load', schedule);
-                document.addEventListener('variant:change', schedule);
-                var host = document.querySelector('[data-bp-buybox]');
-                if (host && host.parentElement) {
-                  new MutationObserver(schedule).observe(host.parentElement, { childList: true, subtree: true });
-                }
-              })();
-              </script>
             {%- render 'buy-buttons',
                 product: product,
                 form_id: product_form_id,
@@ -490,7 +428,55 @@ no need to manually pass the section as it is globally available)
                 <div class="bp-order__foot">{{ block.settings.foot }}</div>
               {%- endif -%}
             </div>
-
+            <script>
+            (function () {
+              function wire(box) {
+                var inp = box.querySelector('.bp-order__qty input');
+                if (inp && !box.dataset.bpQtyBound) {
+                  box.dataset.bpQtyBound = '1';
+                  box.querySelectorAll('[data-bp-q]').forEach(function (b) {
+                    b.addEventListener('click', function () {
+                      var n = parseInt(inp.value, 10) || 1;
+                      n = b.getAttribute('data-bp-q') === '+' ? n + 1 : Math.max(1, n - 1);
+                      inp.value = n;
+                      inp.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+                  });
+                }
+              }
+              function hoist(box) {
+                var line = box.querySelector('.bp-order__line');
+                if (!line) return;
+                var atc = box.querySelector('button[name="add"], [name="add"], .product-form__submit, button[type="submit"]');
+                if (!atc || atc.parentElement === line) return;
+                if (!atc.getAttribute('form')) atc.setAttribute('form', '{{ product_form_id }}');
+                atc.classList.add('bp-order__atc');
+                line.appendChild(atc);
+                {%- comment -%} nothing between the button and the ticket may hide it {%- endcomment -%}
+                for (var el = atc; el && el !== box; el = el.parentElement) {
+                  if (getComputedStyle(el).display === 'none') el.style.setProperty('display', 'block', 'important');
+                }
+              }
+              function run() {
+                document.querySelectorAll('[data-bp-buybox]').forEach(function (box) { wire(box); hoist(box); });
+              }
+              var queued = false;
+              function schedule() {
+                if (queued) return;
+                queued = true;
+                requestAnimationFrame(function () { queued = false; run(); });
+              }
+              if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule);
+              else schedule();
+              {%- comment -%} a variant change re-renders the form, so the button comes back {%- endcomment -%}
+              document.addEventListener('shopify:section:load', schedule);
+              document.addEventListener('variant:change', schedule);
+              var host = document.querySelector('[data-bp-buybox]');
+              if (host && host.parentElement) {
+                new MutationObserver(schedule).observe(host.parentElement, { childList: true, subtree: true });
+              }
+            })();
+            </script>
 
           {%- when 'volume_pricing' -%}
             {%- render 'volume-pricing-table', variant: product.selected_or_first_available_variant -%}

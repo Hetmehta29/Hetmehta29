@@ -1666,36 +1666,17 @@
       - - - - - - - - - - - - - - - - - - - - - - -
       [             BUY IT NOW              ]
 
-  Two lessons are baked in here.
-
-  The add button is NOT reliably button[name="add"] — on this theme it is
-  not, which is why an earlier build left it with the theme's shadow and
-  radius and let it auto-place. It is matched by a set of selectors now, and
-  as a last resort by "a button inside the form that is not the payment
-  button", so a class name we cannot see is no longer load-bearing.
-
-  The wrappers between .bp-order and those buttons are unknown and differ by
-  theme version, so rather than listing tag names they are flattened
-  structurally: any element inside the ticket that CONTAINS one of the two
-  buttons is display:contents. That holds whatever the nesting turns out
-  to be.
-
-  The quantity stepper is ours (see product-info.liquid) rather than the
-  theme's, so none of its markup has to be styled blind.
+  No grid placement, no display:contents, no :has() on theme markup. The ticket
+  line is our own div and Add to cart is moved into it by script. What the theme
+  leaves behind holds only the payment button, and is stripped of every box it
+  might draw — an unstripped wrapper is what put an empty outlined rectangle on
+  the ticket line in an earlier build.
 {%- endcomment -%}
 {%- style -%}
   {%- assign _rad = section.settings.bbx_radius | default: 4 -%}
-  {%- comment -%}
-    Every selector that might be the add button on some theme version, wrapped in
-    :is(). Written as a bare comma list instead, appending a state like [disabled]
-    would attach only to the LAST selector and style all the others unconditionally
-    — which turned every Add to cart grey.
-  {%- endcomment -%}
-  {%- capture _atc -%}#shopify-section-{{ section.id }} .bp-order :is(button[name="add"], [name="add"], button[type="submit"], .product-form__submit, add-to-cart-component button, product-form button:not(.shopify-payment-button__button):not([data-bp-q]), form button:not(.shopify-payment-button__button):not([data-bp-q])){%- endcapture -%}
-  {%- capture _buy -%}#shopify-section-{{ section.id }} .bp-order :is(.shopify-payment-button__button, .shopify-payment-button button){%- endcapture -%}
 
   #shopify-section-{{ section.id }} .bp-order {
-    margin-top: 22px !important;
+    display: block !important; margin-top: 22px !important;
     border: none !important; border-top: 1px dashed var(--bp-ink, #171B22) !important;
     border-radius: 0 !important; background: transparent !important;
     box-shadow: none !important; padding: 0 !important; max-width: 100% !important;
@@ -1707,83 +1688,37 @@
     font-family: var(--body, 'Hanken Grotesk', system-ui, sans-serif) !important;
   }
 
-  {%- if section.settings.bbx_layout == 'stacked' -%}
-  #shopify-section-{{ section.id }} .bp-order { display: flex !important; flex-direction: column !important; gap: 10px !important; }
-  #shopify-section-{{ section.id }} .bp-order__lead { display: none !important; }
-  #shopify-section-{{ section.id }} .bp-order__qty { align-self: flex-start !important; }
-  {%- else -%}
-  #shopify-section-{{ section.id }} .bp-order {
-    display: grid !important;
-    grid-template-columns: max-content max-content minmax(20px, 1fr) max-content;
-    align-items: center;
-  }
   {%- comment -%}
-    Structural flatten: inside the ticket, ANY element that contains a button is
-    a wrapper, whatever it is called. Naming the wrappers did not hold — the live
-    theme has one this file never guessed.
+    Everything the theme still renders inside the ticket is plumbing around the
+    payment button. Strip it flat so it cannot draw a box, and let it fill the row.
   {%- endcomment -%}
-  #shopify-section-{{ section.id }} .bp-order *:has(button):not(button):not(.bp-order__qty) { display: contents !important; }
-  {%- comment -%} default: a full-width row of its own, so nothing lands in a stray cell {%- endcomment -%}
-  #shopify-section-{{ section.id }} .bp-order > * { grid-column: 1 / -1; min-width: 0; }
-  #shopify-section-{{ section.id }} .bp-order__qtyk { grid-column: 1 !important; grid-row: 1 !important; }
-  #shopify-section-{{ section.id }} .bp-order__qty  { grid-column: 2 !important; grid-row: 1 !important; }
-  #shopify-section-{{ section.id }} .bp-order__lead { grid-column: 3 !important; grid-row: 1 !important; }
-  {{ _atc }} { grid-column: 4 !important; grid-row: 1 !important; }
-  #shopify-section-{{ section.id }} .bp-order__rule { grid-column: 1 / -1 !important; grid-row: 2 !important; }
   {%- comment -%}
-    Belt and braces. If a wrapper survives the flatten for any reason, IT is the
-    grid item and placing the button inside it does nothing — which is exactly how
-    Add to cart ended up on the wrong side of the ticket. So place whichever turns
-    out to be the direct child: the button, or the thing holding it.
+    Containers only. Buttons are excluded — stripping their background here beat
+    the payment button's own colour and left Buy it now white on white.
   {%- endcomment -%}
-  #shopify-section-{{ section.id }} .bp-order > *:has(button[name="add"]),
-  #shopify-section-{{ section.id }} .bp-order > *:has([name="add"]),
-  #shopify-section-{{ section.id }} .bp-order > *:has(.product-form__submit),
-  #shopify-section-{{ section.id }} .bp-order > *:has(button[type="submit"]) {
-    grid-column: 4 !important; grid-row: 1 !important;
+  #shopify-section-{{ section.id }} .bp-order > *:not(.bp-order__line):not(.bp-order__rule):not(.bp-order__foot):not(button),
+  #shopify-section-{{ section.id }} .bp-order > *:not(.bp-order__line):not(.bp-order__rule):not(.bp-order__foot) *:not(button):not(svg):not(path):not(img) {
+    margin: 0 !important; padding: 0 !important; border: none !important;
+    background: none !important; box-shadow: none !important; outline: none !important;
+    max-width: 100% !important; min-width: 0 !important; float: none !important;
   }
-  #shopify-section-{{ section.id }} .bp-order :is(.shopify-payment-button, shopify-accelerated-checkout),
-  #shopify-section-{{ section.id }} .bp-order > *:has(.shopify-payment-button__button),
-  #shopify-section-{{ section.id }} .bp-order .shopify-payment-button__button {
-    grid-column: 1 / -1 !important; grid-row: 3 !important;
+  #shopify-section-{{ section.id }} .bp-order > *:not(.bp-order__line):not(.bp-order__rule):not(.bp-order__foot) {
+    display: block !important; width: 100% !important;
   }
-  {%- comment -%}
-    A surviving wrapper must not add its own box around the button.
-  {%- endcomment -%}
-  #shopify-section-{{ section.id }} .bp-order > *:has(button) {
-    display: flex !important; align-items: center !important; justify-content: flex-end !important;
-    margin: 0 !important; padding: 0 !important; border: none !important; background: none !important;
-  }
-  #shopify-section-{{ section.id }} .bp-order > *:has(.shopify-payment-button__button) { justify-content: stretch !important; }
-  #shopify-section-{{ section.id }} .bp-order__foot { grid-column: 1 / -1 !important; grid-row: 4 !important; }
-  {%- endif -%}
 
-  {%- comment -%} the ticket line {%- endcomment -%}
+  {%- comment -%} the ticket line — our own row {%- endcomment -%}
+  #shopify-section-{{ section.id }} .bp-order__line {
+    display: flex !important; align-items: center !important;
+    min-height: 62px; width: 100%; gap: 0;
+  }
   #shopify-section-{{ section.id }} .bp-order__k {
     font-family: var(--mono, 'Fragment Mono', monospace) !important;
     font-size: 9.5px !important; letter-spacing: .16em !important;
-    text-transform: uppercase; color: var(--bp-mut, #636A78) !important; white-space: nowrap;
+    text-transform: uppercase; color: var(--bp-mut, #636A78) !important;
+    white-space: nowrap; flex: 0 0 auto; padding-right: 14px;
   }
-  #shopify-section-{{ section.id }} .bp-order__qtyk {
-    min-height: 62px; display: flex !important; align-items: center !important;
-    padding: 0 14px 0 0 !important;
-  }
-  #shopify-section-{{ section.id }} .bp-order__lead {
-    min-height: 62px; display: flex !important; align-items: center !important;
-    margin: 0 14px !important; min-width: 20px;
-  }
-  #shopify-section-{{ section.id }} .bp-order__lead::after {
-    content: ''; display: block; width: 100%;
-    border-bottom: 1px dotted var(--bp-line, #E1E4E9);
-  }
-  #shopify-section-{{ section.id }} .bp-order__rule {
-    height: 0 !important; border-top: 1px dashed var(--bp-ink, #171B22) !important;
-    margin-bottom: 12px !important;
-  }
-
-  {%- comment -%} our stepper — bare marks, number in the display face {%- endcomment -%}
   #shopify-section-{{ section.id }} .bp-order__qty {
-    min-height: 62px; display: flex !important; align-items: center !important; gap: 2px;
+    display: flex !important; align-items: center !important; gap: 2px; flex: 0 0 auto;
   }
   #shopify-section-{{ section.id }} .bp-order__qty button {
     width: 28px; height: 28px; padding: 0; margin: 0; border: none; background: transparent;
@@ -1799,17 +1734,26 @@
     border: none; background: transparent; border-radius: 0;
     color: var(--bp-ink, #171B22);
     font-family: var(--disp, 'Bricolage Grotesque', sans-serif);
-    font-weight: var(--dw, 600); font-size: 16px;
-    -moz-appearance: textfield;
+    font-weight: var(--dw, 600); font-size: 16px; -moz-appearance: textfield;
   }
   #shopify-section-{{ section.id }} .bp-order__qty input::-webkit-outer-spin-button,
   #shopify-section-{{ section.id }} .bp-order__qty input::-webkit-inner-spin-button {
     -webkit-appearance: none; margin: 0;
   }
+  #shopify-section-{{ section.id }} .bp-order__lead {
+    flex: 1 1 auto; min-width: 20px; margin: 0 14px;
+    border-bottom: 1px dotted var(--bp-line, #E1E4E9); height: 1px;
+  }
+  #shopify-section-{{ section.id }} .bp-order__rule {
+    display: block !important; height: 0 !important;
+    border-top: 1px dashed var(--bp-ink, #171B22) !important; margin-bottom: 12px !important;
+  }
 
-  {%- comment -%} Add to cart — sized to its label, on the ticket line {%- endcomment -%}
-  {{ _atc }} {
-    width: auto !important; max-width: 100% !important; min-width: 0 !important;
+  {%- comment -%} Add to cart, once the script has moved it onto the line {%- endcomment -%}
+  #shopify-section-{{ section.id }} .bp-order__line .bp-order__atc,
+  #shopify-section-{{ section.id }} .bp-order__line button {
+    flex: 0 0 auto !important;
+    width: auto !important; max-width: 60% !important; min-width: 0 !important;
     height: 44px !important; min-height: 44px !important; margin: 0 !important;
     padding: 0 20px !important; border: none !important;
     border-radius: {{ _rad }}px !important; box-shadow: none !important; filter: none !important;
@@ -1820,18 +1764,22 @@
     color: {{ section.settings.bbx_atc_fg | default: '#FFFFFF' }} !important;
     transition: transform .1s ease, background-color .2s ease;
   }
-  {{ _atc }}:active { transform: scale(.98); }
-  {{ _atc }}:is([disabled], [aria-disabled="true"]) {
+  {%- comment -%} the stepper's own buttons must keep their bare look {%- endcomment -%}
+  #shopify-section-{{ section.id }} .bp-order__line .bp-order__qty button {
+    flex: 0 0 auto !important; width: 28px !important; height: 28px !important;
+    padding: 0 !important; background: transparent !important;
+    color: var(--bp-mut, #636A78) !important; font-size: 15px !important;
+    letter-spacing: 0 !important; text-transform: none !important; max-width: none !important;
+  }
+  #shopify-section-{{ section.id }} .bp-order__line .bp-order__atc:active { transform: scale(.98); }
+  #shopify-section-{{ section.id }} .bp-order__line .bp-order__atc[aria-busy="true"] { opacity: .78; cursor: wait; }
+  #shopify-section-{{ section.id }} .bp-order__line .bp-order__atc:is([disabled], [aria-disabled="true"]) {
     background: var(--bp-line, #E1E4E9) !important; color: var(--bp-mut, #636A78) !important;
   }
 
   {%- comment -%} Buy it now — the full-width bar; Shopify owns its insides {%- endcomment -%}
-  #shopify-section-{{ section.id }} .bp-order .shopify-payment-button,
-  #shopify-section-{{ section.id }} .bp-order .shopify-payment-button > * {
-    min-width: 0 !important; max-width: 100% !important; width: 100% !important;
-    margin: 0 !important; padding: 0 !important; box-shadow: none !important;
-  }
-  {{ _buy }} {
+  #shopify-section-{{ section.id }} .bp-order .shopify-payment-button__button,
+  #shopify-section-{{ section.id }} .bp-order .shopify-payment-button button {
     width: 100% !important; height: 54px !important; min-height: 54px !important;
     margin: 0 !important; padding: 0 12px !important; border: none !important;
     border-radius: {{ _rad }}px !important; box-shadow: none !important; filter: none !important;
@@ -1842,15 +1790,12 @@
     color: {{ section.settings.bbx_buy_fg | default: '#FFFFFF' }} !important;
     transition: transform .1s ease, background-color .2s ease;
   }
-  {{ _buy }}:active { transform: scale(.995); }
+  #shopify-section-{{ section.id }} .bp-order .shopify-payment-button__button:active { transform: scale(.995); }
 
-  {%- comment -%} nothing inside the ticket keeps a theme shadow {%- endcomment -%}
-  #shopify-section-{{ section.id }} .bp-order * { box-shadow: none !important; }
   {%- comment -%}
-    The theme's own stepper is off in the template. This hides it if it comes back,
-    but ONLY an element that holds a quantity field and no button — a broad
-    [class*="quantity"] match here hid the Add to cart entirely on the live theme,
-    which nests it inside a container named that way.
+    Hide a theme stepper only if it holds a quantity field and no button — a broad
+    match here once hid Add to cart, which this theme nests in a container named
+    for quantity.
   {%- endcomment -%}
   #shopify-section-{{ section.id }} .bp-order
     :is(quantity-selector, quantity-selector-component):has(input[name="quantity"]):not(:has(button[type="submit"])):not(:has([name="add"])) {
