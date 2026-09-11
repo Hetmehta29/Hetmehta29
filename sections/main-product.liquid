@@ -1696,8 +1696,10 @@
   #shopify-section-{{ section.id }} .bp-buybox {
     display: grid !important;
     grid-template-columns: auto minmax(0, 1fr);
-    gap: 9px !important; align-items: stretch;
+    gap: 8px !important; align-items: center;
+    max-width: 100% !important;
   }
+  #shopify-section-{{ section.id }} .bp-buybox * { box-sizing: border-box !important; }
   {%- comment -%} flatten the wrappers so the real controls become grid items {%- endcomment -%}
   #shopify-section-{{ section.id }} .bp-buybox product-form,
   #shopify-section-{{ section.id }} .bp-buybox product-form > form,
@@ -1705,7 +1707,7 @@
   #shopify-section-{{ section.id }} .bp-buybox add-to-cart-component,
   #shopify-section-{{ section.id }} .bp-buybox .product-form__buttons { display: contents !important; }
   {%- comment -%} anything unrecognised gets its own full-width row {%- endcomment -%}
-  #shopify-section-{{ section.id }} .bp-buybox > * { grid-column: 1 / -1; }
+  #shopify-section-{{ section.id }} .bp-buybox > * { grid-column: 1 / -1; min-width: 0; }
   #shopify-section-{{ section.id }} .bp-buybox quantity-selector,
   #shopify-section-{{ section.id }} .bp-buybox quantity-selector-component,
   #shopify-section-{{ section.id }} .bp-buybox [class*="quantity-selector"],
@@ -1721,23 +1723,26 @@
   #shopify-section-{{ section.id }} .bp-buybox [class*="quantity-input"] {
     display: inline-flex !important; align-items: stretch !important;
     width: auto !important; min-width: 0 !important; flex: 0 0 auto !important;
-    height: 52px !important; margin: 0 !important; padding: 0 !important;
+    height: 48px !important; margin: 0 !important; padding: 0 !important;
     border: 1px solid var(--bp-line, #E1E4E9) !important; border-radius: 0 !important;
-    background: transparent !important; box-shadow: none !important; overflow: visible !important;
+    background: transparent !important; box-shadow: none !important; overflow: hidden !important;
   }
   #shopify-section-{{ section.id }} .bp-buybox [class*="quantity"] button {
-    width: 34px !important; min-width: 34px !important; height: auto !important;
+    width: 28px !important; min-width: 28px !important; max-width: 28px !important;
+    height: 100% !important; flex: 0 0 28px !important;
     padding: 0 !important; margin: 0 !important; border: none !important; border-radius: 0 !important;
     background: transparent !important; color: var(--bp-ink, #171B22) !important;
-    font-size: 15px !important; cursor: pointer; opacity: 1 !important;
+    font-size: 14px !important; line-height: 1 !important; cursor: pointer; opacity: 1 !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
   }
   #shopify-section-{{ section.id }} .bp-buybox [class*="quantity"] input {
-    width: 34px !important; min-width: 34px !important; height: auto !important;
+    width: 30px !important; min-width: 30px !important; max-width: 30px !important;
+    height: 100% !important; flex: 0 0 30px !important;
     padding: 0 !important; margin: 0 !important; text-align: center !important;
     border: none !important; border-left: 1px solid var(--bp-line, #E1E4E9) !important;
     border-right: 1px solid var(--bp-line, #E1E4E9) !important; border-radius: 0 !important;
     background: transparent !important; color: var(--bp-ink, #171B22) !important;
-    font-size: 13px !important; -moz-appearance: textfield !important;
+    font-size: 12.5px !important; -moz-appearance: textfield !important;
   }
   #shopify-section-{{ section.id }} .bp-buybox [class*="quantity"] input::-webkit-outer-spin-button,
   #shopify-section-{{ section.id }} .bp-buybox [class*="quantity"] input::-webkit-inner-spin-button {
@@ -1749,10 +1754,24 @@
   {%- comment -%} the two buttons {%- endcomment -%}
   #shopify-section-{{ section.id }} .bp-buybox button[name="add"],
   #shopify-section-{{ section.id }} .bp-buybox .shopify-payment-button__button {
-    width: 100% !important; height: 52px !important; min-height: 52px !important;
-    padding: 0 !important; border-radius: 0 !important; box-shadow: none !important;
-    font-size: 13px !important; font-weight: 500 !important;
-    letter-spacing: .14em !important; text-transform: uppercase !important;
+    width: 100% !important; max-width: 100% !important;
+    {%- comment -%}
+      A theme min-width on the add button cannot be overridden by width:100%, so it
+      pushes straight out of its grid column. This is what put Add to cart past the
+      edge of the page while Buy it now sat correctly below it.
+    {%- endcomment -%}
+    min-width: 0 !important;
+    height: 48px !important; min-height: 48px !important;
+    padding: 0 10px !important; border-radius: 0 !important; box-shadow: none !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    text-align: center !important; white-space: nowrap !important;
+    font-size: 12.5px !important; font-weight: 500 !important;
+    letter-spacing: .12em !important; text-transform: uppercase !important;
+    overflow: hidden !important;
+  }
+  #shopify-section-{{ section.id }} .bp-buybox .shopify-payment-button,
+  #shopify-section-{{ section.id }} .bp-buybox .shopify-payment-button > * {
+    min-width: 0 !important; max-width: 100% !important; width: 100% !important;
   }
   #shopify-section-{{ section.id }} .bp-buybox button[name="add"] {
     border: none !important;
