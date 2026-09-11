@@ -758,7 +758,7 @@
       "settings": {
         "bp_palette": "colour",
         "bp_fullwidth": true,
-        "bp_gutter": 20,
+        "bp_gutter": 10,
         "bp_maxwidth": 0,
         "bp_hide_gallery": true,
         "bp_auto_rating": false,
@@ -779,10 +779,10 @@
         "bp_use_bricolage": false,
         "bp_heading_font": "bricolage_grotesque_n4",
         "bp_body_font": "bricolage_grotesque_n4",
-        "bp_heading_size": 26,
-        "bp_body_size": 14,
-        "bp_title_size": 42,
-        "bp_block_gap": 0,
+        "bp_heading_size": 20,
+        "bp_body_size": 12,
+        "bp_title_size": 30,
+        "bp_block_gap": 2,
         "fit_enable": true,
         "fit_title": "Fit Studio",
         "fit_size_rows": "S|41|26|17.5\nM|44|27|18\nL|46|27.5|18.25\nXL|48|28.5|19\nXXL|49.5|29.5|20.5",
@@ -804,7 +804,9 @@
         "bp_color_accent": "#1f4fe0",
         "bp_color_accent2": "#0a7c56",
         "bp_color_accent3": "#6b4be8",
-        "bp_use_hanken": true
+        "bp_use_hanken": true,
+        "bp_scale": 85,
+        "bp_bleed_panels": false
       }
     },
     "related-products": {

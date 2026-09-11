@@ -80,26 +80,35 @@
     --mono: 'Fragment Mono', ui-monospace, monospace;
     --dw: {{ _dw }};
     --dls: {{ _dls }};
-    --t1: {{ section.settings.bp_title_size | default: _t1 }}px;
+    --t1: min({{ section.settings.bp_title_size | default: _t1 }}px, 9vw);
     --t1lh: {{ _t1lh }};
     --rad: 0px;
-    --gut: {{ section.settings.bp_gutter | default: 20 }}px;
+    --gut: {{ section.settings.bp_gutter | default: 10 }}px;
     font-size: {{ section.settings.bp_body_size }}px;
   }
+  {%- comment -%}
+    One content scale for the whole page. The old page shrank each block on its own
+    (zoom 40-85%), so blocks drifted out of proportion with each other. The sticky
+    bar is excluded because it is position:fixed and zoom would shift it.
+  {%- endcomment -%}
+  {%- assign _sc = section.settings.bp_scale | default: 85 -%}
+  {%- if _sc != 100 -%}
+  #shopify-section-{{ section.id }} .bp-blk:not(.bp-blk--sticky-bar) { zoom: {{ _sc | divided_by: 100.0 }}; }
+  {%- endif -%}
   #shopify-section-{{ section.id }} .bp-blk .bp-mod,
   #shopify-section-{{ section.id }} .bp-blk .bp-rew { margin: 0; }
   #shopify-section-{{ section.id }} .bp-blk .bp-life__rail,
   #shopify-section-{{ section.id }} .bp-blk .bp-pairs__rail { padding-left: 0; padding-right: 0; }
-  #shopify-section-{{ section.id }} .bp-blk .bp-h2 { font-size: var(--bp-h2s, {{ section.settings.bp_heading_size }}px); font-weight: var(--bp-h2w, var(--dw)); }
+  #shopify-section-{{ section.id }} .bp-blk .bp-h2 { font-size: var(--bp-h2s, min({{ section.settings.bp_heading_size }}px, 6.5vw)); font-weight: var(--bp-h2w, var(--dw)); }
   #shopify-section-{{ section.id }} .bp-blk .bp-h2--tight { font-size: {{ section.settings.bp_heading_size | minus: 2 }}px; }
 
   {%- comment -%}
-    Full-bleed panels. Each BP block sits inside the theme's gutter, so a tinted or
-    inverted panel has to break back out to the screen edge and re-apply its own
-    side padding. The panel classes carry padding: 26px var(--gut) already.
+    Full-bleed panels. Off by default: the breakout assumes the container's side
+    padding is exactly the gutter, and when it is not the panel hangs outside its
+    block. Turn it on only if the tint panels should reach the screen edge.
   {%- endcomment -%}
-  {%- assign _g = section.settings.bp_gutter | default: 20 -%}
-  #shopify-section-{{ section.id }} .product-info__block-item:has(.bp-bleed),
+  {%- if section.settings.bp_bleed_panels -%}
+  {%- assign _g = section.settings.bp_gutter | default: 10 -%}
   #shopify-section-{{ section.id }} .product-info__block-item:has(.bp-panel),
   #shopify-section-{{ section.id }} .product-info__block-item:has(.bp-promise),
   #shopify-section-{{ section.id }} .product-info__block-item:has(.bp-loved),
@@ -108,6 +117,7 @@
   #shopify-section-{{ section.id }} .product-info__block-item:has(.bp-ticker) {
     margin-left: -{{ _g }}px !important; margin-right: -{{ _g }}px !important;
   }
+  {%- endif -%}
 {%- endstyle -%}
 <style>
 /* ============================================================
@@ -131,7 +141,7 @@
   --body:'Hanken Grotesk',system-ui,sans-serif;
   --mono:'Fragment Mono',ui-monospace,monospace;
   --dw:600; --dls:-0.03em; --t1:42px; --t1lh:1.0; --rad:0px;
-  --gut:20px;                           /* section side padding */
+  --gut:10px;                           /* section side padding */
   font-family: var(--body); color: var(--ink); }
 
 /* legacy token aliases — older markup still references these */
@@ -904,6 +914,28 @@
 .bp-gal__grid .bp-gcard { break-inside: avoid; margin-bottom: 6px; display: block; }
 .bp-live__item[hidden] { display: none !important; }
 
+/* ---------- containment ---------------------------------------------------------
+   Grid and flex children default to min-width:auto, so one long word or a wide
+   cell pushes the whole row past its block. These pin everything inside.
+   -------------------------------------------------------------------------------- */
+.bp-blk { max-width: 100%; }
+.bp-blk img { max-width: 100%; height: auto; }
+.bp-snap > *, .bp-hgrid > *, .bp-rew__grid > *, .bp-care > *, .bp-guide__grid > *,
+.bp-loved__stats > *, .bp-look__row > *, .bp-wash__row > *, .bp-size__row > * { min-width: 0; }
+.bp-cmp__hr > *, .bp-cmp__r > * { min-width: 0; overflow-wrap: anywhere; }
+.bp-snapcell__v, .bp-gcell__t, .bp-gcell__s, .bp-vol__r, .bp-inv__row,
+.bp-look__n, .bp-pairs__n, .bp-lcard__t { overflow-wrap: anywhere; }
+.bp-head__title, .bp-h2, .bp-loved__h, .bp-founder__q { overflow-wrap: break-word; }
+/* horizontal rails scroll rather than stretching their block */
+.bp-pairs__rail, .bp-life__rail, .bp-hero__thumbs, .bp-revfilters,
+.bp-rew__addrow, .bp-chips { max-width: 100%; }
+.bp-pairs__rail, .bp-life__rail, .bp-hero__thumbs, .bp-revfilters, .bp-rew__addrow {
+  overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* the ticker marquee must never widen the page */
+.bp-ticker { max-width: 100%; overflow: hidden; }
+/* the sticky bar is fixed — keep it off the last block */
+.bp-blk--sticky-bar { height: 0; }
+
 /* ---------- misc --------------------------------------------------------------- */
 .bp-confetti { display: none; }
 @keyframes bp-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -1111,7 +1143,7 @@
     --mono: 'Fragment Mono', ui-monospace, monospace;
     --dw: {{ _dw }};
     --dls: {{ _dls }};
-    --gut: {{ section.settings.bp_gutter | default: 20 }}px;
+    --gut: {{ section.settings.bp_gutter | default: 10 }}px;
     font-family: var(--body); color: var(--ink);
   }
   #shopify-section-{{ section.id }} [data-bp-fit] *{ box-sizing: border-box; }
@@ -1389,6 +1421,10 @@
   #shopify-section-{{ section.id }} .bp-blk .bp-top,
   #shopify-section-{{ section.id }} .bp-blk .bp-hero { margin: 0; }
   #shopify-section-{{ section.id }} .bp-blk .bp-ticker { margin: 22px 0 0; }
+  {%- comment -%} room for the fixed sticky bar, so it never sits on the last block {%- endcomment -%}
+  {%- for block in section.blocks -%}{%- if block.type == 'sticky-bar' -%}
+  #shopify-section-{{ section.id }} .product-info { padding-bottom: 96px !important; }
+  {%- break -%}{%- endif -%}{%- endfor -%}
 {%- endstyle -%}
 
 {%- comment -%} per-block custom font loading {%- endcomment -%}
@@ -1654,6 +1690,24 @@
       "id": "bp_fullwidth",
       "label": "Full-width Bluprint layout (edge to edge)",
       "default": true
+    },
+    {
+      "type": "range",
+      "id": "bp_scale",
+      "min": 60,
+      "max": 110,
+      "step": 5,
+      "unit": "%",
+      "label": "Content scale",
+      "default": 85,
+      "info": "Scales every block together. Lower it if the page reads too large."
+    },
+    {
+      "type": "checkbox",
+      "id": "bp_bleed_panels",
+      "label": "Tint panels run to the screen edge",
+      "default": false,
+      "info": "Off is safer. On, panels break out of the gutter, which only lines up if the container padding matches it."
     },
     {
       "type": "range",
