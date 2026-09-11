@@ -30,6 +30,11 @@
             "show_save": false,
             "stock_text": "",
             "thumb_labels": "",
+            "img_ratio": "4 / 5",
+            "img_fit": "contain",
+            "img_max": 460,
+            "enable_zoom": true,
+            "zoom_hint": "TAP THE IMAGE TO ZOOM",
             "pad": 0,
             "custom_css": ""
           }

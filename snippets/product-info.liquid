@@ -1073,10 +1073,10 @@ setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden
             </div>
 
           {%- when 'hero' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _disc = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _disc = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}{%- endif -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--hero" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-head__title,#bp-{{ block.id }} .bp-off__title,#bp-{{ block.id }} .bp-fab__title,#bp-{{ block.id }} .bp-loved__h,#bp-{{ block.id }} .bp-founder__t,#bp-{{ block.id }} .bp-size__label,#bp-{{ block.id }} .bp-rew__head,#bp-{{ block.id }} .bp-modal__title h2{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-ticker__row,#bp-{{ block.id }} .bp-size__hint,#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-head__value,#bp-{{ block.id }} .bp-head__rate,#bp-{{ block.id }} .bp-sbar__meta,#bp-{{ block.id }} .bp-fit__line,#bp-{{ block.id }} .bp-thumb span,#bp-{{ block.id }} .bp-guide__n{font-size:{{ block.settings.body_size }}px !important;}{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-thumb,#bp-{{ block.id }} .bp-wrow,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-fit__prefs button,#bp-{{ block.id }} .bp-snapcell{padding:{{ block.settings.cpad }}px !important;}{% endif %}#bp-{{ block.id }} .bp-hero__frame{overflow:hidden;}#bp-{{ block.id }} .bp-hero__track{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;}#bp-{{ block.id }} .bp-hero__track::-webkit-scrollbar{display:none;}#bp-{{ block.id }} .bp-hero__slide{flex:0 0 100%;height:100%;scroll-snap-align:center;}#bp-{{ block.id }} .bp-hero__slide .bp-hero__img{width:100%;height:100%;object-fit:cover;display:block;}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
+            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _disc = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _disc = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}{%- endif -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--hero" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.head_size > 0 %}#bp-{{ block.id }} .bp-h2,#bp-{{ block.id }} .bp-head__title,#bp-{{ block.id }} .bp-off__title,#bp-{{ block.id }} .bp-fab__title,#bp-{{ block.id }} .bp-loved__h,#bp-{{ block.id }} .bp-founder__t,#bp-{{ block.id }} .bp-size__label,#bp-{{ block.id }} .bp-rew__head,#bp-{{ block.id }} .bp-modal__title h2{font-size:{{ block.settings.head_size }}px !important;}{% endif %}{% if block.settings.body_size > 0 %}#bp-{{ block.id }} .bp-sub,#bp-{{ block.id }} p,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-ticker__row,#bp-{{ block.id }} .bp-size__hint,#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-head__value,#bp-{{ block.id }} .bp-head__rate,#bp-{{ block.id }} .bp-sbar__meta,#bp-{{ block.id }} .bp-fit__line,#bp-{{ block.id }} .bp-thumb span,#bp-{{ block.id }} .bp-guide__n{font-size:{{ block.settings.body_size }}px !important;}{% endif %}{% if block.settings.cpad > 0 %}#bp-{{ block.id }} .bp-sz,#bp-{{ block.id }} .bp-live__item,#bp-{{ block.id }} .bp-thumb,#bp-{{ block.id }} .bp-wrow,#bp-{{ block.id }} .bp-gcell,#bp-{{ block.id }} .bp-guide__i,#bp-{{ block.id }} .bp-offcard,#bp-{{ block.id }} .bp-fit__prefs button,#bp-{{ block.id }} .bp-snapcell{padding:{{ block.settings.cpad }}px !important;}{% endif %}#bp-{{ block.id }} .bp-hero{--hero-ar:{{ block.settings.img_ratio | default: "4 / 5" }};--hero-max:{{ block.settings.img_max | default: 460 }}px;--hero-fit:{{ block.settings.img_fit | default: "contain" }};}{% if block.settings.custom_css != blank %}{{ block.settings.custom_css | replace: "&", bpscope }}{% endif %}</style>
 <div class="bp-hero" data-bp-hero>
   <div class="bp-hero__frame">
-    <div class="bp-hero__track" data-bp-track>{%- if product.media.size > 0 -%}{%- for media in product.media limit: 6 -%}<div class="bp-hero__slide" data-i="{{ forloop.index0 }}"><img class="bp-hero__img" src="{{ media | image_url: width: 1080 }}" alt="{{ product.title | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"></div>{%- endfor -%}{%- else -%}<div class="bp-hero__slide"><div class="bp-ph bp-hero__img"><b>FRONT VIEW</b><span>add product images</span></div></div>{%- endif -%}</div>
+    <div class="bp-hero__track" data-bp-track>{%- if product.media.size > 0 -%}{%- for media in product.media limit: 6 -%}<div class="bp-hero__slide" data-i="{{ forloop.index0 }}"><img class="bp-hero__img" src="{{ media | image_url: width: 900 }}" data-full="{{ media | image_url: width: 1800 }}" alt="{{ product.title | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"></div>{%- endfor -%}{%- else -%}<div class="bp-hero__slide" data-i="0"><div class="bp-ph bp-hero__img"><b>FRONT VIEW</b><span>add product images</span></div></div>{%- endif -%}</div>
     <div class="bp-hero__badges">
       {%- if block.settings.show_save and _disc > 0 -%}<span class="bp-badge bp-badge--save">{{ _disc }}% OFF</span>{%- endif -%}
       {%- if block.settings.badge_text != blank -%}<span class="bp-badge bp-badge--trend">{{ block.settings.badge_text }}</span>{%- endif -%}
@@ -1086,18 +1086,183 @@ setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden
   <div class="bp-hero__dots" data-bp-dots>{%- for media in product.media limit: 6 -%}<button type="button" class="bp-hdot {% if forloop.first %}is-on{% endif %}" data-i="{{ forloop.index0 }}" aria-label="image {{ forloop.index }}"></button>{%- endfor -%}</div>
   <div class="bp-hero__thumbs bp-scroll" data-bp-thumbs>
     {%- assign labels = block.settings.thumb_labels | split: ',' -%}
-    {%- for media in product.media limit: 6 -%}<button type="button" class="bp-thumb {% if forloop.first %}is-on{% endif %}" data-i="{{ forloop.index0 }}" style="background-image:url({{ media | image_url: width: 140 }});background-size:cover;background-position:center">{%- assign _lb = labels[forloop.index0] | strip -%}{%- if _lb != blank -%}<span>{{ _lb }}</span>{%- endif -%}</button>{%- endfor -%}
+    {%- for media in product.media limit: 6 -%}<button type="button" class="bp-thumb {% if forloop.first %}is-on{% endif %}" data-i="{{ forloop.index0 }}" style="background-image:url({{ media | image_url: width: 200 }});background-size:contain;background-position:center">{%- assign _lb = labels[forloop.index0] | strip -%}{%- if _lb != blank -%}<span>{{ _lb }}</span>{%- endif -%}</button>{%- endfor -%}
+  </div>
+  {%- if block.settings.enable_zoom and block.settings.zoom_hint != blank and product.media.size > 0 -%}<div class="bp-hero__hint"><i>⤢</i>{{ block.settings.zoom_hint }}</div>{%- endif -%}
+</div>
+{%- if block.settings.enable_zoom and product.media.size > 0 -%}
+<div class="bp-zoom" id="bp-zoom-{{ block.id }}" data-bp-zoom aria-hidden="true" role="dialog" aria-label="{{ product.title | escape }}">
+  <div class="bp-zoom__pane" data-bp-zoompane><img class="bp-zoom__img" data-bp-zoomimg src="" alt="{{ product.title | escape }}"></div>
+  <div class="bp-zoom__bar">
+    <span class="bp-zoom__count"><em data-bp-zoomcount></em><b data-bp-zoomlevel>1&times;</b></span>
+    <button type="button" class="bp-zoom__x" data-bp-zoomclose aria-label="Close">&times;</button>
+  </div>
+  <div class="bp-zoom__nav">
+    <button type="button" data-bp-zoomnav="-1" aria-label="Previous image">&lsaquo;</button>
+    <button type="button" data-bp-zoomnav="1" aria-label="Next image">&rsaquo;</button>
   </div>
 </div>
+{%- endif -%}
 <script>
-(function(){var wrap=document.getElementById('bp-{{ block.id }}');if(!wrap||wrap.dataset.bpBound)return;wrap.dataset.bpBound='1';
-var track=wrap.querySelector('[data-bp-track]');if(!track)return;
-var dots=Array.prototype.slice.call(wrap.querySelectorAll('[data-bp-dots] .bp-hdot'));var thumbs=Array.prototype.slice.call(wrap.querySelectorAll('[data-bp-thumbs] .bp-thumb'));
-function setActive(i){dots.forEach(function(d){d.classList.toggle('is-on',+d.dataset.i===i);});thumbs.forEach(function(t){t.classList.toggle('is-on',+t.dataset.i===i);});}
-function slideTo(i){track.scrollTo({left:i*track.clientWidth,behavior:'smooth'});setActive(i);}
-dots.concat(thumbs).forEach(function(el){el.addEventListener('click',function(){slideTo(+el.dataset.i);});});
-var raf;track.addEventListener('scroll',function(){if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(function(){setActive(Math.round(track.scrollLeft/Math.max(1,track.clientWidth)));});},{passive:true});
-setActive(0);})();
+(function () {
+  var wrap = document.getElementById('bp-{{ block.id }}');
+  if (!wrap || wrap.dataset.bpBound) return;
+  wrap.dataset.bpBound = '1';
+
+  var track = wrap.querySelector('[data-bp-track]');
+  if (!track) return;
+  var dots   = [].slice.call(wrap.querySelectorAll('[data-bp-dots] .bp-hdot')),
+      thumbs = [].slice.call(wrap.querySelectorAll('[data-bp-thumbs] .bp-thumb')),
+      imgs   = [].slice.call(wrap.querySelectorAll('.bp-hero__slide img.bp-hero__img'));
+
+  function setActive(i) {
+    dots.forEach(function (d) { d.classList.toggle('is-on', +d.dataset.i === i); });
+    thumbs.forEach(function (t) { t.classList.toggle('is-on', +t.dataset.i === i); });
+  }
+  function slideTo(i, smooth) {
+    var to = i * track.clientWidth, from = track.scrollLeft;
+    try { track.scrollTo({ left: to, behavior: smooth === false ? 'auto' : 'smooth' }); }
+    catch (err) { track.scrollLeft = to; }
+    setActive(i);
+    /* Older Safari ignores the options object outright. If nothing has moved
+       by the time a smooth scroll would be well underway, land it by hand. */
+    setTimeout(function () {
+      if (track.scrollLeft === from && Math.abs(to - from) > 2) track.scrollLeft = to;
+    }, smooth === false ? 30 : 450);
+  }
+  dots.concat(thumbs).forEach(function (el) {
+    el.addEventListener('click', function () { slideTo(+el.dataset.i); });
+  });
+  var raf;
+  track.addEventListener('scroll', function () {
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(function () {
+      setActive(Math.round(track.scrollLeft / Math.max(1, track.clientWidth)));
+    });
+  }, { passive: true });
+  setActive(0);
+
+  /* ---- tap to open, then zoom as far as you like --------------------- */
+  var zoom = wrap.querySelector('[data-bp-zoom]');
+  if (!zoom || !imgs.length) return;
+
+  /* The block sits inside a zoom:/overflow-clip ancestor, so a fixed
+     overlay left in place would be trapped inside it. Re-home it on
+     <body>, clearing any copy a section reload left behind.             */
+  [].slice.call(document.querySelectorAll('#' + zoom.id)).forEach(function (n) {
+    if (n !== zoom) n.remove();
+  });
+  document.body.appendChild(zoom);
+
+  var pane   = zoom.querySelector('[data-bp-zoompane]'),
+      big    = zoom.querySelector('[data-bp-zoomimg]'),
+      count  = zoom.querySelector('[data-bp-zoomcount]'),
+      lvlEl  = zoom.querySelector('[data-bp-zoomlevel]'),
+      STEPS  = [1, 2, 3],
+      step   = 0, idx = 0, isOpen = false, justPanned = false;
+
+  function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function setStep(n, rx, ry) {
+    step = (n % STEPS.length + STEPS.length) % STEPS.length;
+    var z = STEPS[step], ax = rx == null ? 0.5 : rx, ay = ry == null ? 0.5 : ry;
+    zoom.style.setProperty('--bp-z', z);
+    zoom.classList.toggle('is-zoomed', z > 1);
+    if (lvlEl) lvlEl.innerHTML = z + '&times;';
+    if (z === 1) { pane.scrollLeft = 0; pane.scrollTop = 0; return; }
+    /* Hold the tapped point in the middle. The pane is not scrollable the
+       instant the class lands — and a just-swapped full-size src has no
+       intrinsic height until it decodes — so wait for it to grow.        */
+    var tries = 0;
+    (function centre() {
+      if (pane.scrollWidth <= pane.clientWidth &&
+          pane.scrollHeight <= pane.clientHeight && ++tries < 10) {
+        requestAnimationFrame(centre); return;
+      }
+      pane.scrollLeft = ax * pane.scrollWidth - pane.clientWidth / 2;
+      pane.scrollTop  = ay * pane.scrollHeight - pane.clientHeight / 2;
+    })();
+  }
+
+  function show(i) {
+    idx = (i % imgs.length + imgs.length) % imgs.length;
+    big.src = imgs[idx].getAttribute('data-full') || imgs[idx].src;
+    big.alt = imgs[idx].alt || '';
+    if (count) count.textContent = pad2(idx + 1) + ' / ' + pad2(imgs.length);
+    setStep(0);
+  }
+  function openAt(i) {
+    show(i);
+    zoom.classList.add('is-open');
+    zoom.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('bp-zoom-open');
+    isOpen = true;
+  }
+  function close() {
+    zoom.classList.remove('is-open');
+    zoom.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('bp-zoom-open');
+    isOpen = false;
+    setStep(0);
+    slideTo(idx, false);
+  }
+
+  /* open on a tap, never at the end of a swipe */
+  imgs.forEach(function (img, i) {
+    var sx = 0, sy = 0;
+    img.addEventListener('pointerdown', function (e) { sx = e.clientX; sy = e.clientY; });
+    img.addEventListener('click', function (e) {
+      if (Math.abs(e.clientX - sx) > 8 || Math.abs(e.clientY - sy) > 8) return;
+      openAt(i);
+    });
+  });
+
+  big.addEventListener('click', function (e) {
+    if (justPanned) { justPanned = false; return; }
+    var r = big.getBoundingClientRect();
+    setStep(step + 1, (e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height);
+  });
+
+  /* drag to pan with a mouse; touch already scrolls the pane natively */
+  var drag = null;
+  pane.addEventListener('pointerdown', function (e) {
+    if (e.pointerType === 'touch' || STEPS[step] === 1) return;
+    drag = { x: e.clientX, y: e.clientY, l: pane.scrollLeft, t: pane.scrollTop, moved: false };
+    zoom.classList.add('is-panning');
+  });
+  window.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    pane.scrollLeft = drag.l - (e.clientX - drag.x);
+    pane.scrollTop  = drag.t - (e.clientY - drag.y);
+    if (Math.abs(e.clientX - drag.x) > 4 || Math.abs(e.clientY - drag.y) > 4) drag.moved = true;
+  });
+  window.addEventListener('pointerup', function () {
+    if (!drag) return;
+    justPanned = drag.moved;
+    drag = null;
+    zoom.classList.remove('is-panning');
+  });
+
+  /* click the empty surround to dismiss, but only when not zoomed in */
+  pane.addEventListener('click', function (e) {
+    if (e.target === pane && STEPS[step] === 1) close();
+  });
+
+  [].slice.call(zoom.querySelectorAll('[data-bp-zoomnav]')).forEach(function (b) {
+    b.addEventListener('click', function () { show(idx + (+b.getAttribute('data-bp-zoomnav'))); });
+  });
+  var x = zoom.querySelector('[data-bp-zoomclose]');
+  if (x) x.addEventListener('click', close);
+
+  document.addEventListener('keydown', function (e) {
+    if (!isOpen) return;
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowRight') show(idx + 1);
+    else if (e.key === 'ArrowLeft') show(idx - 1);
+    else if (e.key === '+' || e.key === '=') setStep(step + 1);
+    else if (e.key === '-') setStep(step - 1);
+  });
+})();
 </script>
             </div>
 
