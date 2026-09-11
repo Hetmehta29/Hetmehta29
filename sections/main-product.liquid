@@ -254,21 +254,23 @@
 .bp-ticker__row i { font-style: normal; color: var(--accOn); }
 
 /* ---------- hero -------------------------------------------- */
-/* A ratio box, not a fixed height, and contain rather than cover — a fixed
-   560px with object-fit:cover crops the top of a standing model. The frame
-   carries the tint so the letterboxing reads as intentional.               */
+/* The W5 gallery, as built: a square frame with the image filling it,
+   soft corners and a lifted shadow, page dots riding on the picture and
+   a row of small rounded thumbnails beneath.                            */
 .bp-hero { position: relative; margin: 0; }
-.bp-hero__frame { position: relative; overflow: hidden; border-radius: 0;
-  aspect-ratio: var(--hero-ar, 4 / 5); height: auto;
-  max-height: var(--hero-max, 460px); margin-inline: auto;
-  background: var(--tint); }
+.bp-hero__frame { position: relative; overflow: hidden;
+  aspect-ratio: var(--hero-ar, 1 / 1); height: auto;
+  max-height: var(--hero-max, 560px); border-radius: var(--hero-rad, 24px);
+  background: repeating-linear-gradient(135deg,var(--ph1) 0 14px,var(--ph2) 14px 28px);
+  box-shadow: 0 18px 40px -22px rgba(56,65,95,.4);
+  animation: bp-breathe 7s ease-in-out infinite; }
 .bp-hero__track { display: flex; height: 100%; width: 100%;
   overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory;
   scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .bp-hero__track::-webkit-scrollbar { display: none; }
 .bp-hero__slide { flex: 0 0 100%; width: 100%; height: 100%;
   scroll-snap-align: center; scroll-snap-stop: always; }
-.bp-hero__img { width: 100%; height: 100%; object-fit: var(--hero-fit, contain);
+.bp-hero__img { width: 100%; height: 100%; object-fit: var(--hero-fit, cover);
   display: block; cursor: zoom-in; }
 .bp-ph.bp-hero__img { display: flex; }
 .bp-hero__badges { position: absolute; top: 16px; left: 16px; display: flex; flex-direction: column;
@@ -279,21 +281,24 @@
 .bp-badge--trend { background: var(--ink); color: var(--pg); border-color: var(--ink); }
 .bp-badge--stock { position: absolute; top: 16px; right: 16px; z-index: 2; background: var(--pg);
   color: var(--star); border: 1px solid var(--star); }
-/* progress lines, not dots */
-.bp-hero__dots { display: flex; gap: 6px; padding: 8px 0 0; }
-.bp-hdot { flex: 1; height: 2px; border: none; padding: 0; border-radius: 0; background: var(--line); cursor: pointer; }
-.bp-hdot.is-on { background: var(--ink); }
-.bp-hero__thumbs { display: flex; gap: 8px; padding: 10px 0 0; overflow-x: auto; }
-.bp-thumb { flex: 1 1 0; min-width: 0; aspect-ratio: 4 / 5; max-height: 72px; border: none;
-  border-radius: 0; padding: 0; overflow: hidden; position: relative; cursor: pointer;
-  background: var(--tint) center/contain no-repeat; }
-.bp-thumb.is-on { outline: 1px solid var(--ink); outline-offset: -1px; }
-.bp-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
-.bp-thumb span { position: absolute; bottom: 4px; left: 0; right: 0; font-family: var(--mono);
-  font-size: 7px; letter-spacing: .1em; color: var(--mut); }
+/* dots sit on the picture, the active one stretching into a bar */
+.bp-hero__dots { position: absolute; bottom: 10px; left: 0; right: 0; z-index: 2;
+  display: flex; justify-content: center; gap: 5px; }
+.bp-hdot { width: 6px; height: 6px; border: none; padding: 0; border-radius: 999px;
+  background: rgba(246,242,235,.5); transition: width .3s, background .3s; cursor: pointer; }
+.bp-hdot.is-on { width: 18px; background: #F6F2EB; }
+.bp-hero__thumbs { display: flex; gap: 7px; margin-top: 8px; padding: 0; overflow-x: auto; }
+.bp-thumb { flex: 0 0 auto; width: 50px; height: 58px; border-radius: 11px;
+  border: 2px solid transparent; padding: 0; overflow: hidden; position: relative; cursor: pointer;
+  background: repeating-linear-gradient(135deg,var(--ph1) 0 8px,var(--ph2) 8px 16px); }
+.bp-thumb.is-on { border-color: var(--ink); }
+.bp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bp-thumb span { position: absolute; bottom: 3px; left: 0; right: 0; font-family: var(--mono);
+  font-size: 7px; letter-spacing: .06em; color: var(--mut); }
 .bp-hero__hint { display: flex; align-items: center; gap: 6px; padding: 9px 0 0;
   font-family: var(--mono); font-size: 9px; letter-spacing: .14em; color: var(--mut); }
 .bp-hero__hint i { font-style: normal; font-size: 11px; color: var(--ink); }
+@keyframes bp-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.012); } }
 
 /* ---------- image zoom ---------------------------------------- */
 .bp-zoom { position: fixed; inset: 0; z-index: 2147483000; display: none;
@@ -8156,9 +8161,13 @@ body.bp-zoom-open { overflow: hidden; }
           "type": "select",
           "id": "img_ratio",
           "label": "Image shape",
-          "default": "4 / 5",
+          "default": "1 / 1",
           "info": "The gallery frame keeps this shape at every screen width.",
           "options": [
+            {
+              "value": "1 / 1",
+              "label": "Square 1:1"
+            },
             {
               "value": "4 / 5",
               "label": "Portrait 4:5"
@@ -8172,10 +8181,6 @@ body.bp-zoom-open { overflow: hidden; }
               "label": "Tall 2:3"
             },
             {
-              "value": "1 / 1",
-              "label": "Square 1:1"
-            },
-            {
               "value": "16 / 9",
               "label": "Wide 16:9"
             }
@@ -8185,7 +8190,7 @@ body.bp-zoom-open { overflow: hidden; }
           "type": "select",
           "id": "img_fit",
           "label": "How images fill the frame",
-          "default": "contain",
+          "default": "cover",
           "options": [
             {
               "value": "contain",
@@ -8205,7 +8210,17 @@ body.bp-zoom-open { overflow: hidden; }
           "step": 20,
           "unit": "px",
           "label": "Largest the gallery gets",
-          "default": 460
+          "default": 560
+        },
+        {
+          "type": "range",
+          "id": "img_radius",
+          "min": 0,
+          "max": 32,
+          "step": 2,
+          "unit": "px",
+          "label": "Corner rounding",
+          "default": 24
         },
         {
           "type": "header",
