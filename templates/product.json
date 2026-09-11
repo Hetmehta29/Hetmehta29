@@ -265,7 +265,7 @@
           "settings": {
             "show_payment_button": true,
             "show_gift_card_recipient": true,
-            "show_quantity_selector": true,
+            "show_quantity_selector": false,
             "add_quantity_selector_spacing": false,
             "atc_button_style": "solid",
             "atc_button_background": "",
@@ -790,7 +790,7 @@
         "fit_title": "Fit Studio",
         "fit_size_rows": "S|41|26|17.5\nM|44|27|18\nL|46|27.5|18.25\nXL|48|28.5|19\nXXL|49.5|29.5|20.5",
         "fit_pairs": "|Slim chinos|Pairs 98%\n|Leather loafers|Smart casual\n|Steel watch|Finishes it\n|Bomber jacket|Layer up",
-        "bbx_radius": 0,
+        "bbx_radius": 4,
         "bbx_use_mono": false,
         "bbx_font": "bricolage_grotesque_n4",
         "bbx_paper": "#ffffff",

@@ -391,10 +391,39 @@ no need to manually pass the section as it is globally available)
             {%- endcomment -%}
             <div class="bp-buybox bp-order" data-bp-buybox>
               <span class="bp-order__k bp-order__qtyk">{{ block.settings.qty_label | default: 'Qty' }}</span>
+              {%- comment -%}
+                Our own stepper rather than the theme's. The theme's markup differs
+                between versions and could not be styled reliably from here; this one
+                posts with the product form through the form attribute, so the cart
+                still receives the quantity exactly as before.
+              {%- endcomment -%}
+              <div class="bp-order__qty">
+                <button type="button" data-bp-q="-" aria-label="Decrease quantity">&minus;</button>
+                <input type="number" name="quantity" value="1" min="1" inputmode="numeric"
+                       form="{{ product_form_id }}" aria-label="Quantity">
+                <button type="button" data-bp-q="+" aria-label="Increase quantity">+</button>
+              </div>
               {%- comment -%} the dotted leader between the stepper and Add to cart {%- endcomment -%}
               <span class="bp-order__lead" aria-hidden="true"></span>
               {%- comment -%} the lower dashed rule of the ticket {%- endcomment -%}
               <span class="bp-order__rule" aria-hidden="true"></span>
+              <script>
+              (function(){
+                var box = document.currentScript.closest('[data-bp-buybox]');
+                if (!box || box.dataset.bpQtyBound) return;
+                box.dataset.bpQtyBound = '1';
+                var inp = box.querySelector('.bp-order__qty input');
+                if (!inp) return;
+                box.querySelectorAll('[data-bp-q]').forEach(function (b) {
+                  b.addEventListener('click', function () {
+                    var n = parseInt(inp.value, 10) || 1;
+                    n = b.getAttribute('data-bp-q') === '+' ? n + 1 : Math.max(1, n - 1);
+                    inp.value = n;
+                    inp.dispatchEvent(new Event('change', { bubbles: true }));
+                  });
+                });
+              })();
+              </script>
             {%- render 'buy-buttons',
                 product: product,
                 form_id: product_form_id,
