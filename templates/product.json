@@ -272,10 +272,11 @@
             "atc_button_text_color": "",
             "payment_button_background": "",
             "payment_button_text_color": "",
-            "show_selected": true,
+            "show_selected": false,
             "selected_label": "Selected",
             "qty_label": "Qty",
-            "foot": "Free shipping · 7-day exchange · COD"
+            "foot": "",
+            "show_total": false
           }
         },
         "rewards": {
