@@ -1722,7 +1722,7 @@
     a wrapper, whatever it is called. Naming the wrappers did not hold — the live
     theme has one this file never guessed.
   {%- endcomment -%}
-  #shopify-section-{{ section.id }} .bp-order *:has(button):not(button):not(.bp-order__qty):not(quantity-selector):not(quantity-selector-component):not([class*="quantity"]) { display: contents !important; }
+  #shopify-section-{{ section.id }} .bp-order *:has(button):not(button):not(.bp-order__qty) { display: contents !important; }
   {%- comment -%} default: a full-width row of its own, so nothing lands in a stray cell {%- endcomment -%}
   #shopify-section-{{ section.id }} .bp-order > * { grid-column: 1 / -1; min-width: 0; }
   #shopify-section-{{ section.id }} .bp-order__qtyk { grid-column: 1 !important; grid-row: 1 !important; }
@@ -1847,10 +1847,15 @@
   {%- comment -%} nothing inside the ticket keeps a theme shadow {%- endcomment -%}
   #shopify-section-{{ section.id }} .bp-order * { box-shadow: none !important; }
   {%- comment -%}
-    The theme's own stepper is turned off in the template, but hide it defensively
-    so switching that setting back on cannot put two steppers on the page.
+    The theme's own stepper is off in the template. This hides it if it comes back,
+    but ONLY an element that holds a quantity field and no button — a broad
+    [class*="quantity"] match here hid the Add to cart entirely on the live theme,
+    which nests it inside a container named that way.
   {%- endcomment -%}
-  #shopify-section-{{ section.id }} .bp-order :is(quantity-selector, quantity-selector-component, [class*="quantity-selector"], [class*="quantity-input"]) { display: none !important; }
+  #shopify-section-{{ section.id }} .bp-order
+    :is(quantity-selector, quantity-selector-component):has(input[name="quantity"]):not(:has(button[type="submit"])):not(:has([name="add"])) {
+    display: none !important;
+  }
 
   {%- comment -%} as the ticket narrows, the QTY word goes first, then the leader {%- endcomment -%}
   @container (max-width: 340px) { #shopify-section-{{ section.id }} .bp-order__qtyk { display: none !important; } }

@@ -424,6 +424,55 @@ no need to manually pass the section as it is globally available)
                 });
               })();
               </script>
+              <script>
+              {%- comment -%}
+                Safety net. The ticket's layout is CSS written against markup this
+                repo cannot see, and a mis-aimed rule once hid Add to cart outright.
+                Nothing about the page is worth a missing buy button, so after paint
+                the button is checked: anything hiding it between here and the ticket
+                is overridden, and if it is not a direct child it is moved to be one
+                so the grid can place it. The form attribute is set first, which keeps
+                a submit button posting to its form from outside it.
+              {%- endcomment -%}
+              (function () {
+                function fix() {
+                  document.querySelectorAll('[data-bp-buybox]').forEach(function (box) {
+                    var atc = box.querySelector('button[name="add"], [name="add"], .product-form__submit, button[type="submit"]');
+                    if (!atc) return;
+                    if (atc.parentElement === box && atc.offsetParent !== null) return;   /* already right */
+                    for (var el = atc; el && el !== box; el = el.parentElement) {
+                      if (getComputedStyle(el).display === 'none') el.style.setProperty('display', 'block', 'important');
+                      if (getComputedStyle(el).visibility === 'hidden') el.style.setProperty('visibility', 'visible', 'important');
+                    }
+                    if (getComputedStyle(atc).display === 'none') atc.style.setProperty('display', 'flex', 'important');
+                    if (atc.parentElement !== box) {
+                      if (!atc.getAttribute('form')) atc.setAttribute('form', '{{ product_form_id }}');
+                      box.appendChild(atc);
+                    }
+                  });
+                }
+                {%- comment -%}
+                  fix() moves a node, which would retrigger the observer, so it is
+                  debounced to one run per frame and skips work once the button is
+                  already a visible direct child.
+                {%- endcomment -%}
+                var queued = false;
+                function schedule() {
+                  if (queued) return;
+                  queued = true;
+                  requestAnimationFrame(function () { queued = false; fix(); });
+                }
+                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule);
+                else schedule();
+                {%- comment -%} a variant change re-renders the form, so run it again {%- endcomment -%}
+                document.addEventListener('shopify:section:load', schedule);
+                document.addEventListener('variant:change', schedule);
+                var host = document.querySelector('[data-bp-buybox]');
+                if (host && host.parentElement) {
+                  new MutationObserver(schedule).observe(host.parentElement, { childList: true, subtree: true });
+                }
+              })();
+              </script>
             {%- render 'buy-buttons',
                 product: product,
                 form_id: product_form_id,
