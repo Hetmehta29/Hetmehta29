@@ -813,7 +813,8 @@
         "bbx_layout": "row",
         "bbx_atc_bg": "#171b22",
         "bbx_buy_bg": "#1f4fe0",
-        "bbx_buy_fg": "#ffffff"
+        "bbx_buy_fg": "#ffffff",
+        "bbx_gap": 8
       }
     },
     "related-products": {

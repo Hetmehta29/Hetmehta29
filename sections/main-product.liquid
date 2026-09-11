@@ -1744,9 +1744,24 @@
     flex: 1 1 auto; min-width: 20px; margin: 0 14px;
     border-bottom: 1px dotted var(--bp-line, #E1E4E9); height: 1px;
   }
+  {%- comment -%}
+    The space under the ticket. Shopify's dynamic checkout button brings its own
+    spacing from inside a shadow root that this stylesheet cannot reach, so the
+    setting goes negative — that is the only way to claw back space we did not add.
+  {%- endcomment -%}
   #shopify-section-{{ section.id }} .bp-order__rule {
     display: block !important; height: 0 !important;
-    border-top: 1px dashed var(--bp-ink, #171B22) !important; margin-bottom: 12px !important;
+    border-top: 1px dashed var(--bp-ink, #171B22) !important;
+    margin-bottom: {{ section.settings.bbx_gap | default: 8 }}px !important;
+  }
+  {%- comment -%} nothing between the rule and the bar adds its own space {%- endcomment -%}
+  #shopify-section-{{ section.id }} .bp-order .shopify-payment-button,
+  #shopify-section-{{ section.id }} .bp-order shopify-accelerated-checkout,
+  #shopify-section-{{ section.id }} .bp-order shopify-accelerated-checkout-cart {
+    margin: 0 !important; padding: 0 !important; display: block !important;
+    --shopify-accelerated-checkout-inline-alignment: stretch;
+    --shopify-accelerated-checkout-row-gap: 0px;
+    --shopify-accelerated-checkout-button-block-size: 54px;
   }
 
   {%- comment -%} Add to cart, once the script has moved it onto the line {%- endcomment -%}
@@ -2172,6 +2187,17 @@
         }
       ],
       "default": "row"
+    },
+    {
+      "type": "range",
+      "id": "bbx_gap",
+      "min": -20,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap under the ticket",
+      "default": 8,
+      "info": "Space between the dashed rule and Buy it now. Go negative if Shopify's checkout button adds space of its own."
     },
     {
       "type": "color",
