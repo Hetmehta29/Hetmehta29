@@ -1077,7 +1077,7 @@ setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden
 <div class="bp-hero" data-bp-hero>
   <div class="bp-hero__frame">
     {%- comment -%} One 4:5 window, the slides swipe through it sideways. {%- endcomment -%}
-    <div class="bp-hero__track" data-bp-track>{%- if product.media.size > 0 -%}{%- for media in product.media limit: _lim -%}<div class="bp-hero__slide" data-i="{{ forloop.index0 }}"><img class="bp-hero__img" src="{{ media | image_url: width: 900 }}" srcset="{{ media | image_url: width: 500 }} 500w, {{ media | image_url: width: 750 }} 750w, {{ media | image_url: width: 1000 }} 1000w, {{ media | image_url: width: 1400 }} 1400w" sizes="(min-width: 750px) {{ _imax }}px, 100vw" data-full="{{ media | image_url: width: 2400 }}" alt="{{ media.alt | default: product.title | escape }}" draggable="false" {% if forloop.first %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}></div>{%- endfor -%}{%- else -%}<div class="bp-hero__slide" data-i="0"><div class="bp-ph bp-hero__img"><b>FRONT VIEW</b><span>add product images</span></div></div>{%- endif -%}</div>
+    <div class="bp-hero__track" data-bp-track>{%- if product.media.size > 0 -%}{%- for media in product.media limit: _lim -%}<div class="bp-hero__slide" data-i="{{ forloop.index0 }}"><img class="bp-hero__img" role="button" tabindex="-1" src="{{ media | image_url: width: 900 }}" srcset="{{ media | image_url: width: 500 }} 500w, {{ media | image_url: width: 750 }} 750w, {{ media | image_url: width: 1000 }} 1000w, {{ media | image_url: width: 1400 }} 1400w" sizes="(min-width: 750px) {{ _imax }}px, 100vw" data-full="{{ media | image_url: width: 2400 }}" alt="{{ media.alt | default: product.title | escape }}" draggable="false" {% if forloop.first %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}></div>{%- endfor -%}{%- else -%}<div class="bp-hero__slide" data-i="0"><div class="bp-ph bp-hero__img"><b>FRONT VIEW</b><span>add product images</span></div></div>{%- endif -%}</div>
     <div class="bp-hero__badges">
       {%- if block.settings.show_save and _disc > 0 -%}<span class="bp-badge bp-badge--save">{{ _disc }}% OFF</span>{%- endif -%}
       {%- if block.settings.badge_text != blank -%}<span class="bp-badge bp-badge--trend">{{ block.settings.badge_text }}</span>{%- endif -%}
@@ -1095,18 +1095,14 @@ setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden
   {%- if block.settings.enable_zoom and block.settings.zoom_hint != blank and product.media.size > 0 -%}<div class="bp-hero__hint"><i>&#10530;</i>{{ block.settings.zoom_hint }}</div>{%- endif -%}
 </div>
 {%- if block.settings.enable_zoom and product.media.size > 0 -%}
-<div class="bp-zoom" id="bp-zoom-{{ block.id }}" data-bp-zoom aria-hidden="true" role="dialog" aria-modal="true" aria-label="{{ product.title | escape }}">
+<div class="bp-zoom" id="bp-zoom-{{ block.id }}" data-bp-zoom aria-hidden="true" role="dialog" aria-modal="true" tabindex="-1" aria-label="{{ product.title | escape }}">
   <div class="bp-zoom__stage" data-bp-stage><img class="bp-zoom__img" data-bp-zoomimg src="" alt="{{ product.title | escape }}" draggable="false"></div>
-  <div class="bp-zoom__bar">
-    <span class="bp-zoom__count"><em data-bp-zoomcount></em><b data-bp-zoomlevel>1&times;</b></span>
-    <button type="button" class="bp-zoom__x" data-bp-zoomclose aria-label="Close">&times;</button>
+  <div class="bp-zoom__count"><em data-bp-zoomcount></em><b data-bp-zoomlevel>1&times;</b></div>
+  <div class="bp-zoom__dock">
+    {%- if product.media.size > 1 -%}<button type="button" data-bp-zoomnav="-1" aria-label="Previous image"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5 7.5 12l7.5 7.5"/></svg></button>{%- endif -%}
+    <button type="button" class="bp-zoom__x" data-bp-zoomclose aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    {%- if product.media.size > 1 -%}<button type="button" data-bp-zoomnav="1" aria-label="Next image"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4.5 7.5 7.5L9 19.5"/></svg></button>{%- endif -%}
   </div>
-  {%- if product.media.size > 1 -%}
-  <div class="bp-zoom__nav">
-    <button type="button" data-bp-zoomnav="-1" aria-label="Previous image">&lsaquo;</button>
-    <button type="button" data-bp-zoomnav="1" aria-label="Next image">&rsaquo;</button>
-  </div>
-  {%- endif -%}
 </div>
 {%- endif -%}
 <script>
@@ -1132,6 +1128,9 @@ setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden
   }
   function setActive(i) {
     cur = i;
+    /* only the image actually on screen sits in the tab order, so the
+       gallery costs a keyboard user one stop rather than one per photo */
+    imgs.forEach(function (im, k) { im.tabIndex = k === i ? 0 : -1; });
     dots.forEach(function (d) { d.classList.toggle('is-on', +d.dataset.i === i); });
     thumbs.forEach(function (t) {
       var on = +t.dataset.i === i;
@@ -1199,10 +1198,24 @@ setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden
 
   /* The block sits inside a zoom:/overflow-clip ancestor, so a fixed
      overlay left in place would be trapped inside it. Re-home it on
-     <body>, clearing any copy a section reload left behind.             */
+     <body>, clearing any copy a section reload left behind.
+
+     That move also carries it out of .bp-blk, which is where the palette
+     tokens are declared — so copy the resolved values onto the element
+     while it is still in scope. Skip this and --pg resolves to nothing,
+     the background falls back to transparent, and the page shows
+     straight through the viewer.                                       */
   [].slice.call(document.querySelectorAll('#' + zoom.id)).forEach(function (n) {
     if (n !== zoom) n.remove();
   });
+  (function () {
+    var cs = getComputedStyle(wrap);
+    ['--pg', '--card', '--tint', '--ink', '--ink2', '--mut', '--line', '--acc', '--accInk', '--mono']
+      .forEach(function (k) {
+        var v = cs.getPropertyValue(k);
+        if (v && v.trim()) zoom.style.setProperty(k, v.trim());
+      });
+  })();
   document.body.appendChild(zoom);
 
   var stage = zoom.querySelector('[data-bp-stage]'),
@@ -1213,7 +1226,7 @@ setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden
       MAXZ  = {{ _zmax }},
       TAPZ  = Math.min(2.5, {{ _zmax }}),
       st    = { z: 1, x: 0, y: 0 },
-      idx = 0, isOpen = false;
+      idx = 0, isOpen = false, opener = null;
 
   function pad2(n) { return n < 10 ? '0' + n : '' + n; }
 
@@ -1275,8 +1288,8 @@ setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden
     zoom.setAttribute('aria-hidden', 'false');
     document.body.classList.add('bp-zoom-open');
     isOpen = true;
-    var x = zoom.querySelector('[data-bp-zoomclose]');
-    if (x) { try { x.focus({ preventScroll: true }); } catch (err) {} }
+    opener = imgs[idx] || null;
+    try { zoom.focus({ preventScroll: true }); } catch (err) {}
   }
   function close() {
     zoom.classList.remove('is-open');
@@ -1285,6 +1298,7 @@ setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden
     isOpen = false;
     reset();
     slideTo(idx, false);
+    if (opener) { try { opener.focus({ preventScroll: true }); } catch (err) {} }
   }
 
   /* open on a tap, never at the end of a swipe */
@@ -1294,6 +1308,9 @@ setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden
     img.addEventListener('click', function (e) {
       if (Math.abs(e.clientX - sx) > 8 || Math.abs(e.clientY - sy) > 8) return;
       openAt(i);
+    });
+    img.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); openAt(i); }
     });
   });
 

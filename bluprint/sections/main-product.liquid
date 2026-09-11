@@ -312,37 +312,62 @@
 .bp-hero__hint i { font-style: normal; font-size: 11px; color: var(--ink); }
 
 /* ---------- image zoom ---------------------------------------- */
-/* Opens showing the whole photo, then pinch / wheel / tap to scale and
-   drag to pan anywhere inside it. The image is moved by transform, not by
-   scrolling a pane, so panning reaches every corner at any zoom level.  */
+/* The overlay is re-homed onto <body> so a fixed layer is not trapped
+   inside the block's zoom:/overflow-clip ancestor — which also carries
+   it out of .bp-blk, where the palette lives. Every var() therefore
+   gets a literal fallback here, and the script copies the resolved
+   tokens onto the element before it moves. Without both, --pg went
+   invalid, the background fell back to transparent and the page showed
+   straight through the viewer.                                        */
 .bp-zoom { position: fixed; inset: 0; z-index: 2147483000; display: none;
-  background: var(--pg); touch-action: none; }
+  background: var(--pg, #fff); touch-action: none;
+  -webkit-tap-highlight-color: transparent; }
+.bp-zoom, .bp-zoom * { box-sizing: border-box; }
+/* the dialog takes focus itself on open, so keyboard users start inside
+   it — no ring on that, the controls show their own when tabbed to */
+.bp-zoom:focus { outline: none; }
 .bp-zoom.is-open { display: block; }
 .bp-zoom__stage { position: absolute; inset: 0; overflow: hidden;
-  display: flex; align-items: center; justify-content: center; }
+  display: flex; align-items: center; justify-content: center; padding: 8px; }
 .bp-zoom__img { display: block; max-width: 100%; max-height: 100%;
-  width: auto; height: auto; object-fit: contain; cursor: zoom-in;
+  width: auto; height: auto; object-fit: contain; border-radius: 14px;
+  cursor: zoom-in; background: var(--tint, #f1f3f6);
   transform: translate3d(var(--bp-x, 0px), var(--bp-y, 0px), 0) scale(var(--bp-z, 1));
   transform-origin: center center; will-change: transform;
   -webkit-user-select: none; user-select: none; -webkit-user-drag: none; }
-.bp-zoom.is-zoomed .bp-zoom__img { cursor: grab; }
+.bp-zoom.is-zoomed .bp-zoom__img { border-radius: 0; cursor: grab; }
 .bp-zoom.is-panning .bp-zoom__img { cursor: grabbing; }
 .bp-zoom.is-smooth .bp-zoom__img { transition: transform .24s cubic-bezier(.22, .61, .36, 1); }
-.bp-zoom__bar { position: absolute; top: 0; left: 0; right: 0; z-index: 2;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 16px; background: linear-gradient(var(--pg), transparent);
-  pointer-events: none; }
-.bp-zoom__bar > * { pointer-events: auto; }
-.bp-zoom__count { display: flex; align-items: center; gap: 10px; font-family: var(--mono);
-  font-size: 10px; letter-spacing: .16em; color: var(--mut); }
-.bp-zoom__count b { font-weight: 400; color: var(--ink); }
-.bp-zoom__x { width: 34px; height: 34px; border: 1px solid var(--ink); border-radius: 0;
-  background: var(--ink); color: var(--pg); font-size: 15px; line-height: 1; cursor: pointer; }
-.bp-zoom__nav { position: absolute; inset: auto 0 0 0; z-index: 2; display: flex;
-  gap: 8px; justify-content: center; padding: 16px; pointer-events: none; }
-.bp-zoom__nav button { width: 40px; height: 34px; border: 1px solid var(--line); border-radius: 0;
-  background: var(--pg); color: var(--ink); font-size: 14px; cursor: pointer; pointer-events: auto; }
-.bp-zoom__nav button[disabled] { opacity: .3; cursor: default; }
+/* counter at rest, zoom level once you are in — same slot, never both */
+.bp-zoom__count { position: absolute; left: 0; right: 0; z-index: 2; text-align: center;
+  top: calc(14px + env(safe-area-inset-top, 0px)); pointer-events: none;
+  font-family: var(--mono, ui-monospace, monospace); font-size: 10px;
+  letter-spacing: .18em; color: var(--mut, #636a78); }
+.bp-zoom__count em { font-style: normal; }
+.bp-zoom__count b { display: none; font-weight: 400; color: var(--ink, #171b22); }
+.bp-zoom.is-zoomed .bp-zoom__count em { display: none; }
+.bp-zoom.is-zoomed .bp-zoom__count b { display: inline; }
+/* one dock of round controls, thumb-reachable at the bottom */
+.bp-zoom__dock { position: absolute; left: 0; right: 0; z-index: 2;
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+  display: flex; gap: 14px; justify-content: center; pointer-events: none; }
+.bp-zoom__dock button { pointer-events: auto; width: 54px; height: 54px; flex: 0 0 auto;
+  border: 0; border-radius: 50%; padding: 0; display: flex; align-items: center;
+  justify-content: center; cursor: pointer; color: var(--ink, #171b22);
+  background: color-mix(in srgb, var(--ink, #171b22) 7%, transparent);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  transition: transform .14s ease, opacity .14s ease; }
+@supports not (background: color-mix(in srgb, #000 7%, transparent)) {
+  .bp-zoom__dock button { background: rgba(0, 0, 0, .07); }
+}
+.bp-zoom__dock button:active { transform: scale(.92); }
+/* focus moves into the dialog on open for keyboard users; only show the
+   ring when they are actually driving from the keyboard */
+.bp-zoom__dock button:focus:not(:focus-visible) { outline: none; }
+.bp-zoom__dock button:focus-visible { outline: 2px solid var(--ink, #171b22); outline-offset: 2px; }
+.bp-zoom__dock button[disabled] { opacity: .25; cursor: default; }
+.bp-zoom__dock svg { width: 21px; height: 21px; display: block; fill: none;
+  stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 body.bp-zoom-open { overflow: hidden; }
 
 /* ---------- product header ---------------------------------- */

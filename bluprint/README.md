@@ -24,8 +24,20 @@ inside it.
 a mouse, one image per gesture. Progress lines and the thumbnail rail track
 the position; a resize re-lands on the image you were on.
 
-**Tapping opens the photo whole, then zooms anywhere.** The viewer opens the
-full uncropped picture, then:
+**The viewer is a full-screen phone gallery.** An opaque backdrop, the photo
+edge to edge with a soft corner, a counter above it and one dock of round
+controls — prev / close / next — in thumb reach at the bottom.
+
+The overlay is re-homed onto `<body>` so a fixed layer is not trapped inside
+the block's `zoom:`/overflow-clip ancestor. That move also carried it out of
+`.bp-blk`, where the palette tokens are declared, so `var(--pg)` resolved to
+nothing, the background fell back to transparent and the page showed straight
+through the viewer — the header, the thumb rail and the sticky bar all visible
+behind the photo, the close control drawn as a bare outline. The script now
+copies the resolved tokens onto the element before it moves, and every `var()`
+in the overlay's CSS carries a literal fallback.
+
+**It opens the photo whole, then zooms anywhere:**
 
 - pinch to zoom, or tap the picture to jump to 2.5× at the point you touched
 - drag to pan — the image is moved by `transform`, so panning reaches every
@@ -33,6 +45,11 @@ full uncropped picture, then:
 - wheel / trackpad-pinch on desktop; `+` `-` `0` `←` `→` `Esc` on a keyboard
 - at 1×: swipe sideways for the next photo, pull down or tap the surround to
   close
+
+The gallery is also operable from a keyboard now — it previously could not be
+opened without a pointer. The image on screen is the single tab stop (roving
+tabindex, so twelve photos still cost one stop), `Enter` or `Space` opens it,
+focus moves into the dialog and returns to the image on close.
 
 **The thumbnail rail is small and shows full photos.** Fixed 56px cells in the
 same shape as the main image, `contain` so nothing is cropped — a landscape
