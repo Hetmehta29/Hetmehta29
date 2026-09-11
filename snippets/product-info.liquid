@@ -1036,21 +1036,102 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
         <div class="bp-sbar__meta"><em data-bp-sticky-size>{{ product.selected_or_first_available_variant.title }}</em> <em data-bp-chev>▴</em></div>
         <div class="bp-sbar__nums"><span>{{ product.price | money }}</span>{%- if product.compare_at_price > product.price -%}<s>{{ product.compare_at_price | money }}</s>{%- endif -%}</div>
       </button>
-      <button type="button" class="bp-sbar__cta" data-bp-buy>{{ block.settings.cta | default: 'Add to cart' }}</button>
+      <button type="button" class="bp-sbar__cta" data-bp-buy data-label-adding="{{ block.settings.cta_adding | default: 'Adding…' | escape }}" data-label-done="{{ block.settings.cta_done | default: 'Added to bag' | escape }}">{{ block.settings.cta | default: 'Add to cart' }}</button>
     </div>
   </div>
 </div>
-<div class="bp-confetti" data-bp-confetti aria-hidden="true"></div>
 <script>
-(function(){var wrap=document.getElementById('bp-{{ block.id }}');if(!wrap||wrap.dataset.bpBound)return;wrap.dataset.bpBound='1';
-var box=wrap.querySelector('[data-bp-wallet]'),tg=wrap.querySelector('[data-bp-toggle-wallet]'),cv=wrap.querySelector('[data-bp-chev]'),op=false;
-if(tg)tg.addEventListener('click',function(){op=!op;if(box)box.hidden=!op;if(cv)cv.textContent=op?'▾':'▴';});
-var buy=wrap.querySelector('[data-bp-buy]'),cb=wrap.querySelector('[data-bp-confetti]');
-function realAdd(){var b=document.querySelector('product-form button[name="add"], form[action*="/cart/add"] [type="submit"], form[action*="/cart/add"] [name="add"], .product-form__submit');if(b){b.click();return;}var f=document.querySelector('form[action*="/cart/add"]');if(f){f.requestSubmit?f.requestSubmit():f.submit();}}
-if(buy)buy.addEventListener('click',function(){conf();realAdd();});
-document.addEventListener('bp:size',function(e){var s=wrap.querySelector('[data-bp-sticky-size]');if(s&&e.detail&&e.detail.size)s.textContent=e.detail.size;});
-var C=['#FFCE54','#17C27F','#FF5C33','#38415F','#7C4DFF'];
-function conf(){if(!cb)return;for(var i=0;i<24;i++){var p=document.createElement('i');p.style.left=Math.random()*100+'%';p.style.background=C[i%5];p.style.animationDuration=(1+Math.random()*0.9).toFixed(2)+'s';p.style.animationDelay=(Math.random()*0.25).toFixed(2)+'s';cb.appendChild(p);}setTimeout(function(){cb.innerHTML='';},2200);}})();
+(function(){
+  var wrap = document.getElementById('bp-{{ block.id }}');
+  if (!wrap || wrap.dataset.bpBound) return;
+  wrap.dataset.bpBound = '1';
+
+  var box = wrap.querySelector('[data-bp-wallet]'),
+      tg  = wrap.querySelector('[data-bp-toggle-wallet]'),
+      cv  = wrap.querySelector('[data-bp-chev]'), op = false;
+  if (tg) tg.addEventListener('click', function () {
+    op = !op; if (box) box.hidden = !op; if (cv) cv.textContent = op ? '▾' : '▴';
+  });
+
+  document.addEventListener('bp:size', function (e) {
+    var s = wrap.querySelector('[data-bp-sticky-size]');
+    if (s && e.detail && e.detail.size) s.textContent = e.detail.size;
+  });
+
+  var buy = wrap.querySelector('[data-bp-buy]');
+  if (!buy) return;
+  var idleLabel = buy.textContent.trim(),
+      addingLabel = buy.getAttribute('data-label-adding') || 'Adding…',
+      doneLabel = buy.getAttribute('data-label-done') || 'Added to bag',
+      busy = false, revert;
+
+  function state(s) {
+    buy.classList.toggle('is-pending', s === 'pending');
+    buy.classList.toggle('is-done', s === 'done');
+    buy.textContent = s === 'pending' ? addingLabel : s === 'done' ? doneLabel : idleLabel;
+    buy.setAttribute('aria-busy', s === 'pending' ? 'true' : 'false');
+    if (s === 'pending') { buy.setAttribute('disabled', ''); } else { buy.removeAttribute('disabled'); }
+  }
+  function settle(ok) {
+    busy = false;
+    state(ok ? 'done' : 'idle');
+    if (ok) {
+      try { if (navigator.vibrate) navigator.vibrate([12, 40, 18]); } catch (e) {}
+      clearTimeout(revert);
+      revert = setTimeout(function () { state('idle'); }, 1800);
+    }
+  }
+
+  {%- comment -%}
+    Read the cart before and after, so the confirmation reflects what actually
+    landed in the cart rather than the fact that a button was pressed. Theme
+    cart events short-circuit the poll where the theme fires them.
+  {%- endcomment -%}
+  function count() {
+    return fetch('/cart.js', { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (c) { return c.item_count; })
+      .catch(function () { return null; });
+  }
+  function clickRealAdd() {
+    var b = document.querySelector('product-form button[name="add"], form[action*="/cart/add"] [type="submit"], form[action*="/cart/add"] [name="add"], .product-form__submit');
+    if (b) { b.click(); return true; }
+    var f = document.querySelector('form[action*="/cart/add"]');
+    if (f) { f.requestSubmit ? f.requestSubmit() : f.submit(); return true; }
+    return false;
+  }
+
+  buy.addEventListener('click', function () {
+    if (busy) return;
+    busy = true;
+    try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) {}
+    state('pending');
+
+    count().then(function (before) {
+      if (!clickRealAdd()) { settle(false); return; }
+
+      var done = false, tries = 0;
+      function finish(ok) { if (done) return; done = true; cleanup(); settle(ok); }
+      function onCartEvent() { setTimeout(function () { finish(true); }, 120); }
+      var EVENTS = ['cart:updated', 'cart:update', 'cart:refresh', 'cart:change', 'CartUpdateEvent'];
+      function cleanup() { EVENTS.forEach(function (n) { document.removeEventListener(n, onCartEvent); }); }
+      EVENTS.forEach(function (n) { document.addEventListener(n, onCartEvent); });
+
+      (function poll() {
+        if (done) return;
+        if (++tries > 14) { finish(before === null); return; }   /* ~6s, then stop guessing */
+        setTimeout(function () {
+          count().then(function (now) {
+            if (done) return;
+            if (before === null || now === null) { finish(true); return; }
+            if (now > before) { finish(true); return; }
+            poll();
+          });
+        }, 420);
+      })();
+    });
+  });
+})();
 </script>
             </div>
 
