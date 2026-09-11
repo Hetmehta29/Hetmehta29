@@ -383,26 +383,18 @@ no need to manually pass the section as it is globally available)
             -%}
 
           {%- when 'buy_buttons' -%}
-            {%- comment -%} Bluprint · buy box — styling hook only. The native render + all cart/checkout logic is untouched. {%- endcomment -%}
             {%- comment -%}
-              Bluprint · order docket. The theme's own buy-buttons render is untouched
-              inside; the rows around it and the frame are ours, so the purchase moment
-              reads as one object in the page's language rather than loose native
-              controls. The native controls are placed into the grid by rule, since
+              Bluprint · ticket. The theme's own buy-buttons render is untouched
+              inside; the mono key, the dotted leader and the dashed rule around it
+              are ours. The native controls are placed into the grid by rule, since
               their nesting differs between themes.
             {%- endcomment -%}
-            {%- assign _ov = product.selected_or_first_available_variant -%}
-            <div class="bp-buybox bp-order" data-bp-buybox data-unit="{{ _ov.price }}">
-              {%- if block.settings.show_selected != false -%}
-                <div class="bp-order__row bp-order__sel">
-                  <span class="bp-order__k">{{ block.settings.selected_label | default: 'Selected' }}</span>
-                  <span class="bp-order__v" data-bp-order-variant>{{ _ov.title | replace: ' / ', ' · ' }}</span>
-                </div>
-              {%- endif -%}
+            <div class="bp-buybox bp-order" data-bp-buybox>
               <span class="bp-order__k bp-order__qtyk">{{ block.settings.qty_label | default: 'Qty' }}</span>
-              {%- if block.settings.show_total -%}
-                <span class="bp-order__total" data-bp-order-total>{{ _ov.price | money }}</span>
-              {%- endif -%}
+              {%- comment -%} the dotted leader between the stepper and Add to cart {%- endcomment -%}
+              <span class="bp-order__lead" aria-hidden="true"></span>
+              {%- comment -%} the lower dashed rule of the ticket {%- endcomment -%}
+              <span class="bp-order__rule" aria-hidden="true"></span>
             {%- render 'buy-buttons',
                 product: product,
                 form_id: product_form_id,
@@ -420,25 +412,7 @@ no need to manually pass the section as it is globally available)
                 <div class="bp-order__foot">{{ block.settings.foot }}</div>
               {%- endif -%}
             </div>
-            <script>
-            (function(){
-              var box = document.querySelector('[data-bp-buybox]');
-              if (!box || box.dataset.bpOrderBound) return;
-              box.dataset.bpOrderBound = '1';
-              var out = box.querySelector('[data-bp-order-total]');
-              var unit = parseInt(box.getAttribute('data-unit'), 10);
-              if (!out || !unit) return;
-              {%- comment -%} the row total tracks the stepper, so the number is the real line total {%- endcomment -%}
-              function fmt(p){ return {{ shop.money_format | json }}.replace(/\{\{\s*amount[^}]*\}\}/, (p/100).toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})); }
-              function sync(){
-                var q = box.querySelector('input[name="quantity"]');
-                var n = q ? parseInt(q.value, 10) : 1;
-                out.textContent = fmt(unit * (n > 0 ? n : 1));
-              }
-              box.addEventListener('change', sync);
-              box.addEventListener('click', function(){ setTimeout(sync, 60); });
-            })();
-            </script>
+
 
           {%- when 'volume_pricing' -%}
             {%- render 'volume-pricing-table', variant: product.selected_or_first_available_variant -%}
