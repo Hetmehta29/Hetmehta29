@@ -8,6 +8,16 @@ Three files, dropped into the Shopify theme at these paths:
 | `snippets/product-info.liquid` | `snippets/product-info.liquid` |
 | `templates/product.json` | `templates/product.json` |
 
+`templates/product.json` now carries the settings from the live product
+template merged in: all 19 blocks the live page runs, with all 361 of their
+setting values, plus the 17 blocks this build adds. Four palette keys were
+renamed between schema versions and are remapped by role — `bp_color_dark` ->
+`bp_color_ink2`, `bp_color_gold` -> `bp_color_accent`, `bp_color_green` ->
+`bp_color_accent2`, `bp_color_coral` -> `bp_color_accent3`. The four `*_deep`
+shades, `bp_color_violet` and `bp_card_radius` have no slot in the new schema
+and are dropped. `bp_hide_gallery` is forced on, because this template runs
+the BP hero and leaving the theme gallery on would stack two galleries.
+
 Everything outside the **BP · Hero gallery** block is untouched.
 
 ## What changed
