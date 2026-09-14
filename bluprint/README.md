@@ -6,7 +6,6 @@ Three files, dropped into the Shopify theme at these paths:
 |---|---|
 | `sections/main-product.liquid` | `sections/main-product.liquid` |
 | `snippets/product-info.liquid` | `snippets/product-info.liquid` |
-| `snippets/bp-blockstyle.liquid` | `snippets/bp-blockstyle.liquid` **(new file)** |
 | `templates/product.json` | `templates/product.json` |
 
 `templates/product.json` now carries the settings from the live product
@@ -90,10 +89,13 @@ custom CSS
 
 Sixteen blocks had these already, because ~3.4KB of Liquid had been
 copy-pasted into each of their branches; the other seventeen had between
-nothing and six. That duplication is now one snippet,
-`snippets/bp-blockstyle.liquid`, called once per block with the selectors that
-block uses — so the controls behave identically everywhere and the next change
-happens in one place. `product-info.liquid` drops from 202KB to 128KB.
+nothing and six. That duplication is now a single pass at the top of the block
+loop in `product-info.liquid`: a table gives each block the selectors it uses
+for its panel, heading, cells and running text, and one emitter below it writes
+the CSS. Still three files, and the next change to any of it happens in one
+place. `product-info.liquid` drops from 202KB to 135KB.
+
+To restyle a block differently, edit its row in that table.
 
 Custom CSS takes `&` as the block, e.g. `& .bp-h2 { letter-spacing: 0 }`.
 

@@ -100,6 +100,93 @@ no need to manually pass the section as it is globally available)
       %}
 
       {%- capture block_content -%}
+        {%- comment -%}
+          ── Per-block styling ────────────────────────────────────────────
+          Every BP block carries the same controls: background, text, heading
+          and border colours, a cell colour, three accents, heading and text
+          size, heading weight, inner padding, two fonts and custom CSS.
+
+          Emitted once here rather than copied into all thirty-three branches
+          — which is how it used to be, so only the sixteen branches that had
+          been copied to could be styled at all. Everything below is scoped to
+          #bp-<block id>, so it works from anywhere in the output.
+
+          The table says, per block: the panel its background paints, its own
+          heading, any extra boxed cells, and any extra running text. To
+          restyle a block differently, change its row.
+        {%- endcomment -%}
+        {%- assign bpbg = '' -%}{%- assign bphead = '' -%}{%- assign bpcell = '' -%}{%- assign bpbody = '' -%}
+        {%- case block.type -%}
+          {%- when 'bp-topbar' -%}{%- assign bpbg = '.bp-top' -%}{%- assign bphead = '.bp-top__name' -%}{%- assign bpcell = '.bp-top' -%}{%- assign bpbody = '.bp-top__live' -%}
+          {%- when 'hero' -%}{%- assign bpbg = '.bp-hero__frame' -%}{%- assign bpcell = '.bp-thumb' -%}{%- assign bpbody = '.bp-hero__hint,.bp-thumb span' -%}
+          {%- when 'product-header' -%}{%- assign bpbg = '.bp-head' -%}{%- assign bphead = '.bp-head__title' -%}{%- assign bpcell = '.bp-head__badges span' -%}{%- assign bpbody = '.bp-head__tax,.bp-head__rate,.bp-head__value,.bp-head__emi,.bp-head__sku' -%}
+          {%- when 'ticker' -%}{%- assign bpbg = '.bp-ticker' -%}{%- assign bpcell = '.bp-ticker__row' -%}{%- assign bpbody = '.bp-ticker__row' -%}
+          {%- when 'snapshot' -%}{%- assign bpbg = '.bp-snapcell' -%}
+          {%- when 'live-feed' -%}{%- assign bpbg = '.bp-live' -%}{%- assign bpcell = '.bp-live__item' -%}{%- assign bpbody = '.bp-live__item,.bp-live__meta' -%}
+          {%- when 'size-picker' -%}{%- assign bpbg = '.bp-size' -%}{%- assign bphead = '.bp-size__label' -%}{%- assign bpcell = '.bp-sz' -%}{%- assign bpbody = '.bp-size__hint,.bp-sz,.bp-linkbtn,.bp-openfit' -%}
+          {%- when 'bp-preorder' -%}{%- assign bpbg = '.bp-preo' -%}{%- assign bphead = '.bp-preo__t' -%}{%- assign bpcell = '.bp-preo' -%}{%- assign bpbody = '.bp-preo__s' -%}
+          {%- when 'fit-studio' -%}{%- assign bpbg = '.bp-fitstudio-btn' -%}{%- assign bpbody = '.bp-fitstudio-btn' -%}
+          {%- when 'bp-offers' -%}{%- assign bpbg = '.bp-offcard' -%}{%- assign bphead = '.bp-off__title' -%}
+          {%- when 'bp-volume' -%}{%- assign bpbg = '.bp-vol' -%}{%- assign bphead = '.bp-off__title' -%}{%- assign bpcell = '.bp-vol__list' -%}{%- assign bpbody = '.bp-vol__list,.bp-vol__save' -%}
+          {%- when 'bp-stock' -%}{%- assign bpbg = '.bp-inv' -%}{%- assign bphead = '.bp-inv__t' -%}{%- assign bpcell = '.bp-inv,.bp-pickup' -%}{%- assign bpbody = '.bp-inv__row,.bp-pickup__s,.bp-pickup__t' -%}
+          {%- when 'bp-qty' -%}{%- assign bpbg = '.bp-qty' -%}{%- assign bphead = '.bp-qty__lbl' -%}{%- assign bpcell = '.bp-qty__box' -%}{%- assign bpbody = '.bp-qty__in,.bp-qty__check' -%}
+          {%- when 'rewards' -%}{%- assign bpbg = '.bp-rew' -%}{%- assign bphead = '.bp-rew__head' -%}
+          {%- when 'price-transparency' -%}{%- assign bpbg = '.bp-card' -%}
+          {%- when 'difference' -%}{%- assign bpbg = '.bp-diff' -%}{%- assign bpcell = '.bp-diff__r' -%}{%- assign bpbody = '.bp-diff__t' -%}
+          {%- when 'fabric-dna' -%}{%- assign bpbg = '.bp-fab' -%}{%- assign bphead = '.bp-fab__title' -%}
+          {%- when 'wash-test' -%}{%- assign bpbg = '.bp-wcard' -%}
+          {%- when 'comparison' -%}{%- assign bpbg = '.bp-cmp__r.a,.bp-cmp__r.b' -%}
+          {%- when 'promise' -%}{%- assign bpbg = '.bp-promise' -%}
+          {%- when 'product-details' -%}{%- assign bpbg = '.bp-acc__i,.bp-spec__c' -%}
+          {%- when 'bp-policies' -%}{%- assign bpbg = '.bp-faq__i' -%}{%- assign bpbody = '.bp-faq__p,.bp-faq__b' -%}
+          {%- when 'reviews' -%}{%- assign bpbg = '.bp-rcard,.bp-revpane' -%}
+          {%- when 'social-proof' -%}{%- assign bpbg = '.bp-loved' -%}{%- assign bphead = '.bp-loved__h' -%}
+          {%- when 'bp-pairs' -%}{%- assign bpbg = '.bp-pairs__i' -%}{%- assign bpcell = '.bp-pairs__i' -%}{%- assign bpbody = '.bp-pairs__n,.bp-pairs__p' -%}
+          {%- when 'complete-look' -%}{%- assign bpbg = '.bp-card' -%}
+          {%- when 'gallery' -%}{%- assign bpbg = '.bp-gcard__img' -%}
+          {%- when 'lifestyle' -%}{%- assign bpbg = '.bp-lcard__cap' -%}
+          {%- when 'founder' -%}{%- assign bpbg = '.bp-founder' -%}{%- assign bphead = '.bp-founder__t' -%}
+          {%- when 'faq' -%}{%- assign bpbg = '.bp-faq__i' -%}
+          {%- when 'bp-share' -%}{%- assign bpbg = '.bp-share' -%}{%- assign bpcell = '.bp-share' -%}{%- assign bpbody = '.bp-share__l' -%}
+          {%- when 'bp-seal' -%}{%- assign bpbg = '.bp-seal' -%}{%- assign bphead = '.bp-seal__t' -%}{%- assign bpcell = '.bp-seal' -%}{%- assign bpbody = '.bp-seal__k,.bp-seal__y' -%}
+          {%- when 'sticky-bar' -%}{%- assign bpbg = '.bp-sbar' -%}{%- assign bphead = '.bp-wallet__h' -%}{%- assign bpcell = '.bp-wrow' -%}{%- assign bpbody = '.bp-sbar__meta,.bp-wrow,.bp-sbar__price' -%}
+        {%- endcase -%}
+        {%- if bpbg != blank -%}
+          {%- assign bs = block.settings -%}
+          {%- assign bpsc = '#bp-' | append: block.id -%}
+
+          {%- comment -%} the panel the background colour paints {%- endcomment -%}
+          {%- assign _plist = bpbg | split: ',' -%}{%- capture _pcsv -%}{%- for c in _plist -%}{%- assign c = c | strip -%}{%- if c != blank -%},{{ c }}{%- endif -%}{%- endfor -%}{%- endcapture -%}
+          {%- assign bppanels = _pcsv | remove_first: ',' | split: ',' -%}
+          {%- capture bgsel -%}{%- for c in bppanels -%},{{ bpsc }} {{ c }}{%- endfor -%}{%- endcapture -%}
+          {%- assign bgsel = bgsel | remove_first: ',' -%}
+
+          {%- comment -%}
+            Boxed cells take the cell colour and the inner padding. Whatever
+            this block already uses as its background panel is left out: some
+            panels (.bp-offcard, .bp-faq__i, .bp-rcard) are also on the shared
+            cell list, and with both rules !important at equal specificity the
+            later one won, so the cell colour swallowed the background colour.
+          {%- endcomment -%}
+          {%- assign bpcells = '.bp-snapcell,.bp-gcell,.bp-spec__c,.bp-acc__i,.bp-pr,.bp-wcard,.bp-offcard,.bp-stat,.bp-note,.bp-care__i,.bp-chip,.bp-faq__i,.bp-rcard,.bp-lcard__cap,.bp-cmp__r,.bp-card,.bp-guide__i,.bp-addon' -%}
+          {%- if bpcell != blank -%}{%- assign bpcells = bpcells | append: ',' | append: bpcell -%}{%- endif -%}
+          {%- assign _clist = bpcells | split: ',' -%}{%- capture cellsel -%}{%- for c in _clist -%}{%- assign c = c | strip -%}{%- if c != blank -%}{%- unless bppanels contains c -%},{{ bpsc }} {{ c }}{%- endunless -%}{%- endif -%}{%- endfor -%}{%- endcapture -%}
+          {%- assign cellsel = cellsel | remove_first: ',' -%}
+
+          {%- comment -%} running text takes the text-size control {%- endcomment -%}
+          {%- assign bpbodies = '.bp-sub,p,.bp-spec__v,.bp-spec__k,.bp-acc__s,.bp-acc__txt,.bp-gcell__t,.bp-gcell__s,.bp-pr__s,.bp-cmp__c1,.bp-cmp__c3,.bp-pt__r,.bp-diff__s,.bp-faq__p,.bp-rcard__tx,.bp-founder__q,.bp-care__t,.bp-care__s,.bp-note p,.bp-stat span,.bp-snapcell__k,.bp-chip,.bp-lcard__s' -%}
+          {%- if bpbody != blank -%}{%- assign bpbodies = bpbodies | append: ',' | append: bpbody -%}{%- endif -%}
+          {%- assign _blist = bpbodies | split: ',' -%}{%- capture bodysel -%}{%- for c in _blist -%}{%- assign c = c | strip -%}{%- if c != blank -%},{{ bpsc }} {{ c }}{%- endif -%}{%- endfor -%}{%- endcapture -%}
+          {%- assign bodysel = bodysel | remove_first: ',' -%}
+
+          {%- comment -%} .bp-h2 plus whatever this block calls its heading {%- endcomment -%}
+          {%- assign bpheads = '.bp-h2' -%}
+          {%- if bphead != blank -%}{%- assign bpheads = bpheads | append: ',' | append: bphead -%}{%- endif -%}
+          {%- assign _hlist = bpheads | split: ',' -%}{%- capture headsel -%}{%- for c in _hlist -%}{%- assign c = c | strip -%}{%- if c != blank -%},{{ bpsc }} {{ c }}{%- endif -%}{%- endfor -%}{%- endcapture -%}
+          {%- assign headsel = headsel | remove_first: ',' -%}
+<style>{{ bpsc }},{{ bpsc }} *{ {% if bs.c_bg != blank %}--card:{{ bs.c_bg }} !important;{% endif %}{% if bs.c_text != blank %}--ink:{{ bs.c_text }} !important;--ink2:{{ bs.c_text }} !important;--muted:{{ bs.c_text }} !important;--mut:{{ bs.c_text }} !important;--faint:{{ bs.c_text }} !important;{% endif %}{% if bs.c_dark != blank %}--nav:{{ bs.c_dark }} !important;{% endif %}{% if bs.c_accent != blank %}--gold:{{ bs.c_accent }} !important;--gold2:{{ bs.c_accent }} !important;--goldd:{{ bs.c_accent }} !important;--acc:{{ bs.c_accent }} !important;{% endif %}{% if bs.c_accent2 != blank %}--green:{{ bs.c_accent2 }} !important;--green2:{{ bs.c_accent2 }} !important;--acc2:{{ bs.c_accent2 }} !important;{% endif %}{% if bs.c_accent3 != blank %}--coral:{{ bs.c_accent3 }} !important;--coral2:{{ bs.c_accent3 }} !important;--rose:{{ bs.c_accent3 }} !important;--violet:{{ bs.c_accent3 }} !important;--sky:{{ bs.c_accent3 }} !important;--acc3:{{ bs.c_accent3 }} !important;{% endif %}{% if bs.c_border != blank %}--line:{{ bs.c_border }} !important;--line2:{{ bs.c_border }} !important;{% endif %} }{% if bs.c_bg != blank %}{{ bgsel }}{ background:{{ bs.c_bg }} !important; }{% endif %}{% if bs.c_dark != blank %}{{ headsel }}{ color:{{ bs.c_dark }} !important; }{% endif %}{% if bs.head_size > 0 %}{{ headsel }}{ font-size:{{ bs.head_size }}px !important; }{% endif %}{{ headsel }}{ font-weight:{{ bs.head_weight | default: 700 }} !important; }{% if bs.c_border != blank %}{{ bpsc }} *{ border-color:{{ bs.c_border }} !important; }{% endif %}{% if bs.c_cell != blank and cellsel != blank %}{{ cellsel }}{ background:{{ bs.c_cell }} !important; }{% endif %}{% if bs.cpad > 0 and cellsel != blank %}{{ cellsel }}{ padding:{{ bs.cpad }}px !important; }{% endif %}{% if bs.custom_fonts %}{{ bpsc }},{{ bpsc }} *{ font-family:{{ bs.f_body.family }},{{ bs.f_body.fallback_families }} !important; }{{ headsel }}{ font-family:{{ bs.f_head.family }},{{ bs.f_head.fallback_families }} !important; }{% endif %}{% if bs.body_size > 0 %}{{ bodysel }}{ font-size:{{ bs.body_size }}px !important; }{% endif %}{% if bs.custom_css != blank %}{{ bs.custom_css | replace: '&', bpsc }}{% endif %}</style>
+        {%- endif -%}
+
         {%- case block.type -%}
           {%- when '@app' -%}
             {%- render block -%}
@@ -635,7 +722,7 @@ no need to manually pass the section as it is globally available)
             </share-button>
 
           {%- when 'snapshot' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--snapshot" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-snapcell' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--snapshot" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-snap">
     {%- assign snaps = block.settings.snapshot | newline_to_br | split: '<br />' -%}
     {%- assign _odd = snaps.size | modulo: 2 -%}
@@ -652,7 +739,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'bp-offers' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--offers" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-offcard', head: '.bp-off__title' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--offers" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-off">
         <div class="bp-off__head">
           <span class="bp-off__star">★</span><span class="bp-off__title">AVAILABLE OFFERS</span>
@@ -691,7 +778,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'rewards' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--rewards" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-rew', head: '.bp-rew__head' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--rewards" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-rew" id="bp-offer-dash">
       <div class="bp-rew__head">
         <span>{{ block.settings.heading | default: 'Order with confidence' }}</span>
@@ -712,7 +799,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'price-transparency' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--price-transparency" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-card' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--price-transparency" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-mod bp-price-t">
   <span class="bp-eyebrow bp-eyebrow--coral">{{ block.settings.eyebrow }}</span>
   <h2 class="bp-h2">{{ block.settings.heading }}</h2>
@@ -737,7 +824,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'difference' -%}
-            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--difference" style="max-width:100%;{% if block.settings.pad >{% render 'bp-blockstyle', block: block, bg: '.bp-diff', cell: '.bp-diff__r', body: '.bp-diff__t' %} 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}{% if block.settings.custom_fonts %}--disp:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }};--body:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }};{% endif %}">
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--difference" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}{% if block.settings.custom_fonts %}--disp:{{ block.settings.f_head.family }},{{ block.settings.f_head.fallback_families }};--body:{{ block.settings.f_body.family }},{{ block.settings.f_body.fallback_families }};{% endif %}">
 <div class="bp-mod bp-diff">
   {%- if block.settings.eyebrow_show and block.settings.eyebrow != blank -%}
     <span class="bp-eyebrow bp-eyebrow--violet">{{ block.settings.eyebrow }}</span>
@@ -767,7 +854,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'fabric-dna' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--fabric-dna" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-fab', head: '.bp-fab__title' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--fabric-dna" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-mod bp-fab" data-bp-fab>
   <div class="bp-fab__head">
     <h2 class="bp-h2 bp-h2--tight">{{ block.settings.fab_title | default: 'Fabric DNA' }}</h2>
@@ -801,7 +888,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'wash-test' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--wash-test" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-wcard' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--wash-test" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-mod bp-wash">
   <span class="bp-eyebrow bp-eyebrow--coral">{{ block.settings.eyebrow }}</span>
   <h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2>
@@ -822,7 +909,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'comparison' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--comparison" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-cmp__r.a,.bp-cmp__r.b' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--comparison" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-mod bp-cmp">
   <span class="bp-eyebrow bp-eyebrow--coral">{{ block.settings.eyebrow }}</span>
   <h2 class="bp-h2">{{ block.settings.heading }}</h2>
@@ -836,7 +923,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'promise' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--promise" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-promise' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--promise" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-promise">
   <div class="bp-promise__in">
     <span class="bp-eyebrow bp-eyebrow--mint">{{ block.settings.eyebrow }}</span>
@@ -850,7 +937,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'product-details' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--product-details" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-acc__i,.bp-spec__c' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--product-details" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-mod bp-details" data-bp-acc>
   <span class="bp-eyebrow bp-eyebrow--violet">{{ block.settings.eyebrow }}</span>
   <h2 class="bp-h2">{{ block.settings.heading }}</h2>
@@ -908,7 +995,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'reviews' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--reviews" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-rcard,.bp-revpane' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--reviews" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 {%- assign _rid = product.id | default: 7 -%}{%- assign _rn = _rid | modulo: 10 | plus: 41 -%}{%- assign _rint = _rn | divided_by: 10 -%}{%- assign _rdec = _rn | modulo: 10 -%}{%- assign _rating = _rint | append: '.' | append: _rdec -%}{%- assign _count = _rid | modulo: 168 | plus: 27 -%}
 <div class="bp-mod bp-rev" id="bp-reviews" data-bp-rev data-bp-seed="{{ product.id }}">
   <div class="bp-rev__head"><h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2><span class="bp-rev__count">{% if section.settings.bp_auto_rating %}{{ _rating }} · {{ _count }}{% else %}{{ block.settings.rev_count | default: '4.9 · 2,140' }}{% endif %}</span></div>
@@ -948,7 +1035,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'social-proof' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--social-proof" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-loved', head: '.bp-loved__h' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--social-proof" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-loved">
   <div class="bp-loved__top">
     <span class="bp-eyebrow bp-eyebrow--violet">{{ block.settings.eyebrow }}</span>
@@ -968,7 +1055,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'complete-look' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--complete-look" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-card' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--complete-look" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-mod bp-look">
   <div class="bp-look__head">
     <div><span class="bp-eyebrow bp-eyebrow--coral">{{ block.settings.eyebrow }}</span><h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2></div>
@@ -992,7 +1079,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'gallery' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--gallery" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-gcard__img' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--gallery" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-mod bp-gal">
   <div class="bp-gal__head"><div><span class="bp-eyebrow bp-eyebrow--mint">{{ block.settings.eyebrow }}</span><h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2></div></div>
   <div class="bp-gal__grid">
@@ -1005,7 +1092,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'lifestyle' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--lifestyle" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-lcard__cap' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--lifestyle" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-mod bp-life">
   <h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2>
   <p class="bp-sub">{{ block.settings.life_sub }}</p>
@@ -1019,7 +1106,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'founder' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--founder" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-founder', head: '.bp-founder__t' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--founder" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-mod bp-founder">
   <div class="bp-founder__head"><div class="bp-founder__ph"{% if block.settings.founder_photo != blank %} style="background-image:url({{ block.settings.founder_photo | image_url: width: 160 }});background-size:cover;background-position:center"{% endif %}>{% if block.settings.founder_photo == blank %}photo{% endif %}</div><div><div class="bp-founder__t">{{ block.settings.founder_title | default: 'A note from our founder' }}</div><div class="bp-founder__by">{{ block.settings.founder_by | default: 'Kabir Mehra · Founder, Bluprint' }}</div></div></div>
   <p class="bp-founder__q">{{ block.settings.founder_quote }}</p>
@@ -1028,7 +1115,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'faq' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--faq" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-faq__i' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--faq" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-mod bp-faq" data-bp-acc>
   <h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2>
   <div class="bp-faq__list">
@@ -1039,14 +1126,14 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'fit-studio' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--fit-studio" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-fitstudio-btn', body: '.bp-fitstudio-btn' %}<style>#bp-{{ block.id }} .bp-modal[hidden]{display:none !important;}</style>
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--fit-studio" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }} .bp-modal[hidden]{display:none !important;}</style>
 <div class="bp-mod" style="margin-top:14px">
   <button type="button" class="bp-fitstudio-btn" data-bp-open-fit="recommend" style="width:100%;padding:14px;border-radius:14px;border:none;cursor:pointer;font-family:var(--disp),system-ui;font-weight:700;font-size:14px;background:{{ block.settings.btn_bg | default: '#38415F' }};color:{{ block.settings.btn_color | default: '#F6F2EB' }};display:flex;align-items:center;justify-content:center;gap:8px"><span class="bp-ai" style="width:20px;height:20px;font-size:9px">AI</span>{{ block.settings.button_label | default: 'Find my perfect size' }}</button>
 </div>
             </div>
 
           {%- when 'ticker' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--ticker" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-ticker', cell: '.bp-ticker__row', body: '.bp-ticker__row' %}<style>{% if block.settings.bar_bg != blank %}#bp-{{ block.id }} .bp-ticker{background:{{ block.settings.bar_bg }} !important;}{% endif %}{% if block.settings.text_color != blank %}#bp-{{ block.id }} .bp-ticker__row{color:{{ block.settings.text_color }} !important;}{% endif %}{% if block.settings.speed > 0 %}#bp-{{ block.id }} .bp-ticker__track{animation-duration:{{ block.settings.speed }}s !important;}{% endif %}</style>
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--ticker" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.bar_bg != blank %}#bp-{{ block.id }} .bp-ticker{background:{{ block.settings.bar_bg }} !important;}{% endif %}{% if block.settings.text_color != blank %}#bp-{{ block.id }} .bp-ticker__row{color:{{ block.settings.text_color }} !important;}{% endif %}{% if block.settings.speed > 0 %}#bp-{{ block.id }} .bp-ticker__track{animation-duration:{{ block.settings.speed }}s !important;}{% endif %}</style>
 <div class="bp-ticker">
   <div class="bp-ticker__track">
     {%- assign ticker = block.settings.ticker_text | split: '|' -%}
@@ -1056,7 +1143,7 @@ no need to manually pass the section as it is globally available)
             </div>
 
           {%- when 'live-feed' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--live-feed" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-live', cell: '.bp-live__item', body: '.bp-live__item,.bp-live__meta' %}<style>{% if block.settings.c_tag != blank %}#bp-{{ block.id }} .bp-live__tag{background:{{ block.settings.c_tag }} !important;color:#fff !important;}{% endif %}{% if block.settings.c_item != blank %}#bp-{{ block.id }} .bp-live__item{background:{{ block.settings.c_item }} !important;}{% endif %}</style>
+            {%- assign bpscope = "#bp-" | append: block.id -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--live-feed" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.c_tag != blank %}#bp-{{ block.id }} .bp-live__tag{background:{{ block.settings.c_tag }} !important;color:#fff !important;}{% endif %}{% if block.settings.c_item != blank %}#bp-{{ block.id }} .bp-live__item{background:{{ block.settings.c_item }} !important;}{% endif %}</style>
 {%- assign feed = block.settings.live_feed | newline_to_br | split: '<br />' -%}
 <div class="bp-live" data-bp-live>
   <div class="bp-live__l">
@@ -1073,7 +1160,7 @@ setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden
             </div>
 
           {%- when 'hero' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _disc = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _disc = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}{%- endif -%}{%- comment -%} The frame is a true ratio box: split the chosen shape so the CSS can cap the WIDTH off it and keep 4:5 (or whatever is picked) exactly, at every screen size. {%- endcomment -%}{%- assign _arp = block.settings.img_ratio | default: '4 / 5' | split: '/' -%}{%- assign _arw = _arp[0] | strip | plus: 0 -%}{%- assign _arh = _arp[1] | strip | plus: 0 -%}{%- if _arw <= 0 -%}{%- assign _arw = 4 -%}{%- endif -%}{%- if _arh <= 0 -%}{%- assign _arh = 5 -%}{%- endif -%}{%- assign _imax = block.settings.img_max | default: 460 -%}{%- assign _tw = block.settings.thumb_size | default: 56 -%}{%- assign _lim = block.settings.media_limit | default: 12 -%}{%- assign _zmax = block.settings.zoom_max | default: 5 -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--hero" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-hero__frame', cell: '.bp-thumb', body: '.bp-hero__hint,.bp-thumb span' %}<style>#bp-{{ block.id }} .bp-hero{--hero-arw:{{ _arw }};--hero-arh:{{ _arh }};--hero-ar:{{ _arw }} / {{ _arh }};--hero-max:{{ _imax }}px;--hero-fit:{{ block.settings.img_fit | default: "cover" }};--thumb-w:{{ _tw }}px;}</style>
+            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _disc = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _disc = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}{%- endif -%}{%- comment -%} The frame is a true ratio box: split the chosen shape so the CSS can cap the WIDTH off it and keep 4:5 (or whatever is picked) exactly, at every screen size. {%- endcomment -%}{%- assign _arp = block.settings.img_ratio | default: '4 / 5' | split: '/' -%}{%- assign _arw = _arp[0] | strip | plus: 0 -%}{%- assign _arh = _arp[1] | strip | plus: 0 -%}{%- if _arw <= 0 -%}{%- assign _arw = 4 -%}{%- endif -%}{%- if _arh <= 0 -%}{%- assign _arh = 5 -%}{%- endif -%}{%- assign _imax = block.settings.img_max | default: 460 -%}{%- assign _tw = block.settings.thumb_size | default: 56 -%}{%- assign _lim = block.settings.media_limit | default: 12 -%}{%- assign _zmax = block.settings.zoom_max | default: 5 -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--hero" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }} .bp-hero{--hero-arw:{{ _arw }};--hero-arh:{{ _arh }};--hero-ar:{{ _arw }} / {{ _arh }};--hero-max:{{ _imax }}px;--hero-fit:{{ block.settings.img_fit | default: "cover" }};--thumb-w:{{ _tw }}px;}</style>
 <div class="bp-hero" data-bp-hero>
   <div class="bp-hero__frame">
     {%- comment -%} One 4:5 window, the slides swipe through it sideways. {%- endcomment -%}
@@ -1422,7 +1509,7 @@ setInterval(function(){items[i].hidden=true;i=(i+1)%items.length;items[i].hidden
             </div>
 
           {%- when 'size-picker' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _sizeopt = null -%}{%- for opt in product.options_with_values -%}{%- assign _dn = opt.name | downcase -%}{%- if _dn contains 'size' -%}{%- assign _sizeopt = opt -%}{%- endif -%}{%- endfor -%}{%- unless _sizeopt -%}{%- assign _sizeopt = product.options_with_values.first -%}{%- endunless -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--size-picker" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-size', head: '.bp-size__label', cell: '.bp-sz', body: '.bp-size__hint,.bp-sz,.bp-linkbtn,.bp-openfit' %}
+            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _sizeopt = null -%}{%- for opt in product.options_with_values -%}{%- assign _dn = opt.name | downcase -%}{%- if _dn contains 'size' -%}{%- assign _sizeopt = opt -%}{%- endif -%}{%- endfor -%}{%- unless _sizeopt -%}{%- assign _sizeopt = product.options_with_values.first -%}{%- endunless -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--size-picker" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">
 <div class="bp-mod bp-size" data-bp-sizepicker>
   {%- comment -%} Colour swatches, when the product has a colour option. {%- endcomment -%}
   {%- assign _colopt = null -%}
@@ -1466,7 +1553,7 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
             </div>
 
           {%- when 'sticky-bar' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _save = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _save = product.compare_at_price | minus: product.price -%}{%- endif -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--sticky-bar" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-sbar', head: '.bp-wallet__h', cell: '.bp-wrow', body: '.bp-sbar__meta,.bp-wrow,.bp-sbar__price' %}<style>#bp-{{ block.id }} .bp-wallet[hidden]{display:none !important;}</style>
+            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _save = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _save = product.compare_at_price | minus: product.price -%}{%- endif -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--sticky-bar" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }} .bp-wallet[hidden]{display:none !important;}</style>
 <div class="bp-sticky">
   <div class="bp-wallet" data-bp-wallet hidden>
     <div class="bp-wallet__h">{{ block.settings.wallet_head | default: 'YOUR PERKS' }}</div>
@@ -1579,7 +1666,7 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
             </div>
 
           {%- when 'product-header' -%}
-            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _save = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _save = product.compare_at_price | minus: product.price -%}{%- endif -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--product-header" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-head', head: '.bp-head__title', cell: '.bp-head__badges span', body: '.bp-head__tax,.bp-head__rate,.bp-head__value,.bp-head__emi,.bp-head__sku' %}<style>{% if block.settings.price_size > 0 %}#bp-{{ block.id }} .bp-price{font-size:{{ block.settings.price_size }}px !important;}{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-head__title{color:{{ block.settings.c_dark }} !important;}{% endif %}{% if block.settings.c_price != blank %}#bp-{{ block.id }} .bp-price{color:{{ block.settings.c_price }} !important;}{% endif %}</style>
+            {%- assign bpscope = "#bp-" | append: block.id -%}{%- assign _save = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _save = product.compare_at_price | minus: product.price -%}{%- endif -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--product-header" style="max-width:100%;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>{% if block.settings.price_size > 0 %}#bp-{{ block.id }} .bp-price{font-size:{{ block.settings.price_size }}px !important;}{% endif %}{% if block.settings.c_dark != blank %}#bp-{{ block.id }} .bp-head__title{color:{{ block.settings.c_dark }} !important;}{% endif %}{% if block.settings.c_price != blank %}#bp-{{ block.id }} .bp-price{color:{{ block.settings.c_price }} !important;}{% endif %}</style>
 <div class="bp-head">
   {%- assign _rid = product.id | default: 7 -%}{%- assign _rn = _rid | modulo: 10 | plus: 41 -%}{%- assign _rint = _rn | divided_by: 10 -%}{%- assign _rdec = _rn | modulo: 10 -%}{%- assign _rating = _rint | append: '.' | append: _rdec -%}{%- assign _count = _rid | modulo: 168 | plus: 27 -%}
   {%- assign _pct = 0 -%}{%- if product.compare_at_price > product.price -%}{%- assign _pct = _save | times: 100 | divided_by: product.compare_at_price -%}{%- endif -%}
@@ -1648,7 +1735,7 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
             {%- comment -%} Token swap must happen in assign tags: a literal } inside {{ }} ends the tag early in Shopify Liquid. {%- endcomment -%}
             {%- assign _pmsg = block.settings.pre_text | default: 'This size ships in {days} days' -%}
             {%- assign _pmsg = _pmsg | replace: '{days}', _predays | replace: '[days]', _predays -%}
-            {%- if _pre != blank -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-preorder" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}">{% render 'bp-blockstyle', block: block, bg: '.bp-preo', head: '.bp-preo__t', cell: '.bp-preo', body: '.bp-preo__s' %}<style>#bp-{{ block.id }} .bp-preo{ display:none; align-items:center; gap:9px; margin-top:8px; padding:9px 11px; border-radius:10px; background:{{ block.settings.c_bg | default: '#FFF7E8' }}; border:1px solid {{ block.settings.c_border | default: 'rgba(190,135,25,.26)' }}; }#bp-{{ block.id }} .bp-preo.is-on{ display:flex; }#bp-{{ block.id }} .bp-preo__i{ flex:0 0 auto; font-size:15px; line-height:1; }#bp-{{ block.id }} .bp-preo__t{ font-family:var(--disp); font-weight:700; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:{{ block.settings.c_accent | default: '#8A6100' }}; }#bp-{{ block.id }} .bp-preo__s{ font-size:11.5px; color:{{ block.settings.c_text | default: '#6B6459' }}; margin-top:1px; line-height:1.35; }</style>
+            {%- if _pre != blank -%}<div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-preorder" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}{% if block.settings.blk_scale and block.settings.blk_scale != 100 %}zoom:{{ block.settings.blk_scale | divided_by: 100.0 }};{% if block.settings.blk_scale > 100 %}width:calc(100% / {{ block.settings.blk_scale | divided_by: 100.0 }});{% endif %}{% endif %}"><style>#bp-{{ block.id }} .bp-preo{ display:none; align-items:center; gap:9px; margin-top:8px; padding:9px 11px; border-radius:10px; background:{{ block.settings.c_bg | default: '#FFF7E8' }}; border:1px solid {{ block.settings.c_border | default: 'rgba(190,135,25,.26)' }}; }#bp-{{ block.id }} .bp-preo.is-on{ display:flex; }#bp-{{ block.id }} .bp-preo__i{ flex:0 0 auto; font-size:15px; line-height:1; }#bp-{{ block.id }} .bp-preo__t{ font-family:var(--disp); font-weight:700; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:{{ block.settings.c_accent | default: '#8A6100' }}; }#bp-{{ block.id }} .bp-preo__s{ font-size:11.5px; color:{{ block.settings.c_text | default: '#6B6459' }}; margin-top:1px; line-height:1.35; }</style>
 <div class="bp-preo" data-bp-preorder data-sizes="{{ _pre | escape }}">
   {%- if block.settings.pre_icon != blank -%}<span class="bp-preo__i">{{ block.settings.pre_icon }}</span>{%- endif -%}
   <div>
@@ -1686,7 +1773,7 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
           {%- comment -%} ---- Bluprint editorial blocks ------------------------------------- {%- endcomment -%}
 
           {%- when 'bp-topbar' -%}
-            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-topbar" style="max-width:100%;overflow-x:clip">{% render 'bp-blockstyle', block: block, bg: '.bp-top', head: '.bp-top__name', cell: '.bp-top', body: '.bp-top__live' %}
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-topbar" style="max-width:100%;overflow-x:clip">
               <div class="bp-top">
                 <span class="bp-top__name">{{ block.settings.brand | default: 'BLUPRINT' }}</span>
                 <span class="bp-top__live">{{ block.settings.meta }}</span>
@@ -1696,7 +1783,7 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
           {%- when 'bp-volume' -%}
             {%- assign _vrows = block.settings.vol_rows | newline_to_br | split: '<br />' -%}
             {%- if _vrows.size > 0 and block.settings.vol_rows != blank -%}
-            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-volume" style="max-width:100%;overflow-x:clip;{% if block.settings.pad >{% render 'bp-blockstyle', block: block, bg: '.bp-vol', head: '.bp-off__title', cell: '.bp-vol__list', body: '.bp-vol__list,.bp-vol__save' %} 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-volume" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
               <div class="bp-vol">
                 <span class="bp-off__title">{{ block.settings.heading | default: 'Buy more, pay less' }}</span>
                 <div class="bp-vol__list">
@@ -1722,7 +1809,7 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
             {%- assign _pctleft = 0 -%}
             {%- if _left > 0 and _cap > 0 -%}{%- assign _pctleft = _left | times: 100 | divided_by: _cap -%}{%- endif -%}
             {%- if _pctleft > 100 -%}{%- assign _pctleft = 100 -%}{%- endif -%}
-            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-stock" style="max-width:100%;overflow-x:clip;{% if block.settings.pad >{% render 'bp-blockstyle', block: block, bg: '.bp-inv', head: '.bp-inv__t', cell: '.bp-inv,.bp-pickup', body: '.bp-inv__row,.bp-pickup__s,.bp-pickup__t' %} 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-stock" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
               <div class="bp-inv">
                 {%- if block.settings.show_stock -%}
                   <div class="bp-inv__l">
@@ -1756,7 +1843,7 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
             </div>
 
           {%- when 'bp-qty' -%}
-            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-qty" style="max-width:100%;overflow-x:clip;{% if block.settings.pad >{% render 'bp-blockstyle', block: block, bg: '.bp-qty', head: '.bp-qty__lbl', cell: '.bp-qty__box', body: '.bp-qty__in,.bp-qty__check' %} 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-qty" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
               <div class="bp-qty" data-bp-qty>
                 {%- if block.settings.show_qty -%}
                   <div class="bp-qty__row">
@@ -1803,7 +1890,7 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
           {%- when 'bp-policies' -%}
             {%- assign _pol = block.settings.policy_items | newline_to_br | split: '<br />' -%}
             {%- if block.settings.policy_items != blank -%}
-            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-policies" style="max-width:100%;overflow-x:clip;{% if block.settings.pad >{% render 'bp-blockstyle', block: block, bg: '.bp-faq__i', body: '.bp-faq__p,.bp-faq__b' %} 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-policies" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
               <div class="bp-mod bp-faq" data-bp-acc style="margin-top:22px">
                 {%- if block.settings.heading != blank -%}<h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2>{%- endif -%}
                 <div class="bp-faq__list">
@@ -1826,7 +1913,7 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
             {%- assign _hasPairs = false -%}
             {%- for i in (1..4) -%}{%- assign _pk = 'pair_product_' | append: i -%}{%- if block.settings[_pk] != blank -%}{%- assign _hasPairs = true -%}{%- endif -%}{%- endfor -%}
             {%- if _hasPairs -%}
-            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-pairs" style="max-width:100%;overflow-x:clip;{% if block.settings.pad >{% render 'bp-blockstyle', block: block, bg: '.bp-pairs__i', cell: '.bp-pairs__i', body: '.bp-pairs__n,.bp-pairs__p' %} 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-pairs" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
               <div class="bp-pairs">
                 {%- if block.settings.heading != blank -%}<h2 class="bp-h2 bp-h2--tight">{{ block.settings.heading }}</h2>{%- endif -%}
                 <div class="bp-pairs__rail bp-scroll">
@@ -1855,7 +1942,7 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
           {%- when 'bp-share' -%}
             {%- assign _url = shop.url | append: product.url -%}
             {%- assign _msg = product.title | append: ' — ' | append: _url | url_encode -%}
-            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-share" style="max-width:100%;overflow-x:clip;{% if block.settings.pad >{% render 'bp-blockstyle', block: block, bg: '.bp-share', cell: '.bp-share', body: '.bp-share__l' %} 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-share" style="max-width:100%;overflow-x:clip;{% if block.settings.pad > 0 %}padding-block:{{ block.settings.pad }}px;{% endif %}">
               <div class="bp-share">
                 <span class="bp-share__l">{{ block.settings.label | default: 'Share' }}</span>
                 <a href="https://wa.me/?text={{ _msg }}" target="_blank" rel="noopener">WhatsApp</a>
@@ -1873,7 +1960,7 @@ wrap.querySelectorAll('[data-bp-openfit]').forEach(function(b){b.addEventListene
             </script>
 
           {%- when 'bp-seal' -%}
-            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-seal" style="max-width:100%;overflow-x:clip">{% render 'bp-blockstyle', block: block, bg: '.bp-seal', head: '.bp-seal__t', cell: '.bp-seal', body: '.bp-seal__k,.bp-seal__y' %}
+            <div id="bp-{{ block.id }}" class="bp-blk bp-blk--bp-seal" style="max-width:100%;overflow-x:clip">
               <div class="bp-seal">
                 {%- if block.settings.year != blank -%}
                   <div class="bp-seal__mark">
