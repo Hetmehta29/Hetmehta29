@@ -1929,8 +1929,7 @@ body.bp-zoom-open { overflow: hidden; }
   }
 {%- endstyle -%}
 
-{% schema %}
-{
+{% schema %}{
   "name": "t:sections.main_product.name",
   "class": "shopify-section--main-product",
   "tag": "section",
@@ -5371,6 +5370,115 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "f_body",
           "label": "Body font",
           "default": "assistant_n4"
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "range",
+          "id": "cpad",
+          "min": 0,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "label": "Inner padding of cells",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "head_size",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Heading size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "body_size",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Text size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "textarea",
+          "id": "custom_css",
+          "label": "Custom CSS (advanced)",
+          "info": "Use & for this block, e.g. & .bp-h2 { letter-spacing: 0 }"
         }
       ]
     },
@@ -7933,6 +8041,97 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "custom_css",
           "label": "Custom CSS (advanced)",
           "info": "Use & for this block."
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
         }
       ]
     },
@@ -8025,6 +8224,97 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "custom_css",
           "label": "Custom CSS (advanced)",
           "info": "Use & for this block."
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
         }
       ]
     },
@@ -8118,6 +8408,97 @@ body.bp-zoom-open { overflow: hidden; }
           "type": "text",
           "id": "live_meta",
           "label": "Right-hand meta (blank = off)"
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
         }
       ]
     },
@@ -8319,6 +8700,97 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "custom_css",
           "label": "Custom CSS (advanced)",
           "info": "Use & for this block."
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
         }
       ]
     },
@@ -8425,6 +8897,97 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "fit_label",
           "label": "Find-my-fit button label",
           "default": "Find my perfect size"
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
         }
       ]
     },
@@ -8535,6 +9098,97 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "custom_css",
           "label": "Custom CSS (advanced)",
           "info": "Use & for this block."
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
         }
       ]
     },
@@ -8762,6 +9416,76 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "custom_css",
           "label": "Custom CSS (advanced)",
           "info": "Use & for this block. Example: & .bp-preo { border-width:2px; }"
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
         }
       ]
     },
@@ -8939,6 +9663,92 @@ body.bp-zoom-open { overflow: hidden; }
           "type": "text",
           "id": "countdown",
           "label": "Countdown value (blank = off)"
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
         }
       ]
     },
@@ -8961,6 +9771,153 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "meta",
           "label": "Right-hand line",
           "default": "EST. 2021 · INDIA"
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "range",
+          "id": "blk_scale",
+          "min": 40,
+          "max": 130,
+          "step": 5,
+          "unit": "%",
+          "label": "Block size (scales everything)",
+          "default": 100
+        },
+        {
+          "type": "range",
+          "id": "pad",
+          "min": 0,
+          "max": 60,
+          "step": 2,
+          "unit": "px",
+          "label": "Space above & below",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "cpad",
+          "min": 0,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "label": "Inner padding of cells",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "head_size",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Heading size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "body_size",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Text size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
+        },
+        {
+          "type": "textarea",
+          "id": "custom_css",
+          "label": "Custom CSS (advanced)",
+          "info": "Use & for this block, e.g. & .bp-h2 { letter-spacing: 0 }"
         }
       ]
     },
@@ -9002,6 +9959,143 @@ body.bp-zoom-open { overflow: hidden; }
           "unit": "px",
           "label": "Extra top/bottom padding",
           "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "range",
+          "id": "blk_scale",
+          "min": 40,
+          "max": 130,
+          "step": 5,
+          "unit": "%",
+          "label": "Block size (scales everything)",
+          "default": 100
+        },
+        {
+          "type": "range",
+          "id": "cpad",
+          "min": 0,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "label": "Inner padding of cells",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "head_size",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Heading size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "body_size",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Text size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
+        },
+        {
+          "type": "textarea",
+          "id": "custom_css",
+          "label": "Custom CSS (advanced)",
+          "info": "Use & for this block, e.g. & .bp-h2 { letter-spacing: 0 }"
         }
       ]
     },
@@ -9085,6 +10179,143 @@ body.bp-zoom-open { overflow: hidden; }
           "unit": "px",
           "label": "Extra top/bottom padding",
           "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "range",
+          "id": "blk_scale",
+          "min": 40,
+          "max": 130,
+          "step": 5,
+          "unit": "%",
+          "label": "Block size (scales everything)",
+          "default": 100
+        },
+        {
+          "type": "range",
+          "id": "cpad",
+          "min": 0,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "label": "Inner padding of cells",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "head_size",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Heading size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "body_size",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Text size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
+        },
+        {
+          "type": "textarea",
+          "id": "custom_css",
+          "label": "Custom CSS (advanced)",
+          "info": "Use & for this block, e.g. & .bp-h2 { letter-spacing: 0 }"
         }
       ]
     },
@@ -9148,6 +10379,143 @@ body.bp-zoom-open { overflow: hidden; }
           "unit": "px",
           "label": "Extra top/bottom padding",
           "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "range",
+          "id": "blk_scale",
+          "min": 40,
+          "max": 130,
+          "step": 5,
+          "unit": "%",
+          "label": "Block size (scales everything)",
+          "default": 100
+        },
+        {
+          "type": "range",
+          "id": "cpad",
+          "min": 0,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "label": "Inner padding of cells",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "head_size",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Heading size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "body_size",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Text size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
+        },
+        {
+          "type": "textarea",
+          "id": "custom_css",
+          "label": "Custom CSS (advanced)",
+          "info": "Use & for this block, e.g. & .bp-h2 { letter-spacing: 0 }"
         }
       ]
     },
@@ -9181,6 +10549,143 @@ body.bp-zoom-open { overflow: hidden; }
           "unit": "px",
           "label": "Extra top/bottom padding",
           "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "range",
+          "id": "blk_scale",
+          "min": 40,
+          "max": 130,
+          "step": 5,
+          "unit": "%",
+          "label": "Block size (scales everything)",
+          "default": 100
+        },
+        {
+          "type": "range",
+          "id": "cpad",
+          "min": 0,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "label": "Inner padding of cells",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "head_size",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Heading size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "body_size",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Text size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
+        },
+        {
+          "type": "textarea",
+          "id": "custom_css",
+          "label": "Custom CSS (advanced)",
+          "info": "Use & for this block, e.g. & .bp-h2 { letter-spacing: 0 }"
         }
       ]
     },
@@ -9243,6 +10748,143 @@ body.bp-zoom-open { overflow: hidden; }
           "unit": "px",
           "label": "Extra top/bottom padding",
           "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "range",
+          "id": "blk_scale",
+          "min": 40,
+          "max": 130,
+          "step": 5,
+          "unit": "%",
+          "label": "Block size (scales everything)",
+          "default": 100
+        },
+        {
+          "type": "range",
+          "id": "cpad",
+          "min": 0,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "label": "Inner padding of cells",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "head_size",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Heading size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "body_size",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Text size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
+        },
+        {
+          "type": "textarea",
+          "id": "custom_css",
+          "label": "Custom CSS (advanced)",
+          "info": "Use & for this block, e.g. & .bp-h2 { letter-spacing: 0 }"
         }
       ]
     },
@@ -9265,6 +10907,143 @@ body.bp-zoom-open { overflow: hidden; }
           "unit": "px",
           "label": "Extra top/bottom padding",
           "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "range",
+          "id": "blk_scale",
+          "min": 40,
+          "max": 130,
+          "step": 5,
+          "unit": "%",
+          "label": "Block size (scales everything)",
+          "default": 100
+        },
+        {
+          "type": "range",
+          "id": "cpad",
+          "min": 0,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "label": "Inner padding of cells",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "head_size",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Heading size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "body_size",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Text size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
+        },
+        {
+          "type": "textarea",
+          "id": "custom_css",
+          "label": "Custom CSS (advanced)",
+          "info": "Use & for this block, e.g. & .bp-h2 { letter-spacing: 0 }"
         }
       ]
     },
@@ -9289,9 +11068,155 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "tagline",
           "label": "Tagline",
           "default": "BLUPRINT SHIRTMAKERS · MUMBAI"
+        },
+        {
+          "type": "header",
+          "content": "Style — this block only"
+        },
+        {
+          "type": "range",
+          "id": "blk_scale",
+          "min": 40,
+          "max": 130,
+          "step": 5,
+          "unit": "%",
+          "label": "Block size (scales everything)",
+          "default": 100
+        },
+        {
+          "type": "range",
+          "id": "pad",
+          "min": 0,
+          "max": 60,
+          "step": 2,
+          "unit": "px",
+          "label": "Space above & below",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "cpad",
+          "min": 0,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "label": "Inner padding of cells",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "head_size",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Heading size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "body_size",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Text size (0 = default)",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "head_weight",
+          "label": "Heading weight",
+          "default": "700",
+          "options": [
+            {
+              "value": "400",
+              "label": "Regular"
+            },
+            {
+              "value": "500",
+              "label": "Medium"
+            },
+            {
+              "value": "600",
+              "label": "Semibold"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            },
+            {
+              "value": "800",
+              "label": "Extra bold"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_bg",
+          "label": "Block background",
+          "info": "Blank = follow the page palette."
+        },
+        {
+          "type": "color",
+          "id": "c_text",
+          "label": "Text colour"
+        },
+        {
+          "type": "color",
+          "id": "c_dark",
+          "label": "Heading colour"
+        },
+        {
+          "type": "color",
+          "id": "c_border",
+          "label": "Border colour"
+        },
+        {
+          "type": "color",
+          "id": "c_cell",
+          "label": "Cell / tile background"
+        },
+        {
+          "type": "color",
+          "id": "c_accent",
+          "label": "Accent — primary"
+        },
+        {
+          "type": "color",
+          "id": "c_accent2",
+          "label": "Accent — positive"
+        },
+        {
+          "type": "color",
+          "id": "c_accent3",
+          "label": "Accent — tertiary"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_fonts",
+          "label": "Use different fonts for this block",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "f_head",
+          "label": "Heading font",
+          "default": "mono"
+        },
+        {
+          "type": "font_picker",
+          "id": "f_body",
+          "label": "Body font",
+          "default": "bricolage_grotesque_n4"
+        },
+        {
+          "type": "textarea",
+          "id": "custom_css",
+          "label": "Custom CSS (advanced)",
+          "info": "Use & for this block, e.g. & .bp-h2 { letter-spacing: 0 }"
         }
       ]
     }
   ]
-}
-{% endschema %}
+}{% endschema %}

@@ -1,0 +1,73 @@
+{%- doc -%}
+  Renders one BP block's styling suite as a <style> scoped to that block.
+
+  Every BP block carries the same eighteen controls — background, text, dark,
+  three accents, border, cell, heading size/weight, body size, inner padding,
+  two fonts and custom CSS. This used to be ~3.4KB of Liquid copy-pasted into
+  each branch, so only the blocks that happened to have been copied to could
+  be styled. One snippet, called with the block's own selectors, gives all of
+  them the same controls and keeps the next change in a single place.
+
+  @param {object} block - the block being rendered
+  @param {string} [bg] - selector(s) the background colour paints. Defaults to
+    .bp-card. Pass the block's own panel, e.g. '.bp-offcard'.
+  @param {string} [head] - the block's own heading selector(s), added to .bp-h2
+  @param {string} [cell] - extra boxed-cell selector(s), for cell colour and
+    inner padding, added to the shared list
+  @param {string} [body] - extra body-text selector(s), for text size, added to
+    the shared list
+
+  Block-specific CSS stays in its own <style> in the branch — a snippet cannot
+  take Liquid as a parameter, and those rules read settings this one knows
+  nothing about.
+{%- enddoc -%}
+{%- assign s = block.settings -%}
+{%- assign sc = '#bp-' | append: block.id -%}
+
+{%- comment -%} the panel the background colour paints {%- endcomment -%}
+{%- assign rawpanels = bg | default: '.bp-card' | split: ',' -%}
+{%- capture panelcsv -%}{%- for c in rawpanels -%}{%- assign c = c | strip -%}{%- if c != blank -%},{{ c }}{%- endif -%}{%- endfor -%}{%- endcapture -%}
+{%- assign panels = panelcsv | remove_first: ',' | split: ',' -%}
+{%- capture bgsel -%}{%- for c in panels -%},{{ sc }} {{ c }}{%- endfor -%}{%- endcapture -%}
+{%- assign bgsel = bgsel | remove_first: ',' -%}
+
+{%- comment -%}
+  Boxed cells: cell colour and inner padding land on these. Anything this
+  block already uses as its background panel is left out — several blocks
+  (offers, faq, reviews) have a panel that is also on the shared cell list,
+  and both rules are !important at equal specificity, so the later one won
+  and the cell colour silently swallowed the background colour.
+{%- endcomment -%}
+{%- assign cells = '.bp-snapcell,.bp-gcell,.bp-spec__c,.bp-acc__i,.bp-pr,.bp-wcard,.bp-offcard,.bp-stat,.bp-note,.bp-care__i,.bp-chip,.bp-faq__i,.bp-rcard,.bp-lcard__cap,.bp-cmp__r,.bp-card,.bp-guide__i,.bp-addon' -%}
+{%- if cell != blank -%}{%- assign cells = cells | append: ',' | append: cell -%}{%- endif -%}
+{%- assign cells = cells | split: ',' -%}
+{%- capture cellsel -%}{%- for c in cells -%}{%- assign c = c | strip -%}{%- if c != blank -%}{%- unless panels contains c -%},{{ sc }} {{ c }}{%- endunless -%}{%- endif -%}{%- endfor -%}{%- endcapture -%}
+{%- assign cellsel = cellsel | remove_first: ',' -%}
+
+{%- comment -%} running text: the text-size control lands on these {%- endcomment -%}
+{%- assign bodies = '.bp-sub,p,.bp-spec__v,.bp-spec__k,.bp-acc__s,.bp-acc__txt,.bp-gcell__t,.bp-gcell__s,.bp-pr__s,.bp-cmp__c1,.bp-cmp__c3,.bp-pt__r,.bp-diff__s,.bp-faq__p,.bp-rcard__tx,.bp-founder__q,.bp-care__t,.bp-care__s,.bp-note p,.bp-stat span,.bp-snapcell__k,.bp-chip,.bp-lcard__s' -%}
+{%- if body != blank -%}{%- assign bodies = bodies | append: ',' | append: body -%}{%- endif -%}
+{%- assign bodies = bodies | split: ',' -%}
+{%- capture bodysel -%}{%- for c in bodies -%}{%- assign c = c | strip -%}{%- if c != blank -%},{{ sc }} {{ c }}{%- endif -%}{%- endfor -%}{%- endcapture -%}
+{%- assign bodysel = bodysel | remove_first: ',' -%}
+
+{%- comment -%} headings: .bp-h2 plus whatever this block calls its own {%- endcomment -%}
+{%- assign heads = '.bp-h2' -%}
+{%- if head != blank -%}{%- assign heads = heads | append: ',' | append: head -%}{%- endif -%}
+{%- assign heads = heads | split: ',' -%}
+{%- capture headsel -%}{%- for c in heads -%}{%- assign c = c | strip -%}{%- if c != blank -%},{{ sc }} {{ c }}{%- endif -%}{%- endfor -%}{%- endcapture -%}
+{%- assign headsel = headsel | remove_first: ',' -%}
+
+<style>
+{{ sc }},{{ sc }} *{ {% if s.c_bg != blank %}--card:{{ s.c_bg }} !important;{% endif %}{% if s.c_text != blank %}--ink:{{ s.c_text }} !important;--ink2:{{ s.c_text }} !important;--muted:{{ s.c_text }} !important;--mut:{{ s.c_text }} !important;--faint:{{ s.c_text }} !important;{% endif %}{% if s.c_dark != blank %}--nav:{{ s.c_dark }} !important;{% endif %}{% if s.c_accent != blank %}--gold:{{ s.c_accent }} !important;--gold2:{{ s.c_accent }} !important;--goldd:{{ s.c_accent }} !important;--acc:{{ s.c_accent }} !important;{% endif %}{% if s.c_accent2 != blank %}--green:{{ s.c_accent2 }} !important;--green2:{{ s.c_accent2 }} !important;--acc2:{{ s.c_accent2 }} !important;{% endif %}{% if s.c_accent3 != blank %}--coral:{{ s.c_accent3 }} !important;--coral2:{{ s.c_accent3 }} !important;--rose:{{ s.c_accent3 }} !important;--violet:{{ s.c_accent3 }} !important;--sky:{{ s.c_accent3 }} !important;--acc3:{{ s.c_accent3 }} !important;{% endif %}{% if s.c_border != blank %}--line:{{ s.c_border }} !important;--line2:{{ s.c_border }} !important;{% endif %} }
+{%- if s.c_bg != blank %}{{ bgsel }}{ background:{{ s.c_bg }} !important; }{% endif %}
+{%- if s.c_dark != blank %}{{ headsel }}{ color:{{ s.c_dark }} !important; }{% endif %}
+{%- if s.head_size > 0 %}{{ headsel }}{ font-size:{{ s.head_size }}px !important; }{% endif %}
+{{ headsel }}{ font-weight:{{ s.head_weight | default: 700 }} !important; }
+{%- if s.c_border != blank %}{{ sc }} *{ border-color:{{ s.c_border }} !important; }{% endif %}
+{%- if s.c_cell != blank and cellsel != blank %}{{ cellsel }}{ background:{{ s.c_cell }} !important; }{% endif %}
+{%- if s.cpad > 0 and cellsel != blank %}{{ cellsel }}{ padding:{{ s.cpad }}px !important; }{% endif %}
+{%- if s.custom_fonts %}{{ sc }},{{ sc }} *{ font-family:{{ s.f_body.family }},{{ s.f_body.fallback_families }} !important; }{{ headsel }}{ font-family:{{ s.f_head.family }},{{ s.f_head.fallback_families }} !important; }{% endif %}
+{%- if s.body_size > 0 %}{{ bodysel }}{ font-size:{{ s.body_size }}px !important; }{% endif %}
+{%- if s.custom_css != blank %}{{ s.custom_css | replace: '&', sc }}{% endif %}
+</style>

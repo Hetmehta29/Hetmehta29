@@ -6,6 +6,7 @@ Three files, dropped into the Shopify theme at these paths:
 |---|---|
 | `sections/main-product.liquid` | `sections/main-product.liquid` |
 | `snippets/product-info.liquid` | `snippets/product-info.liquid` |
+| `snippets/bp-blockstyle.liquid` | `snippets/bp-blockstyle.liquid` **(new file)** |
 | `templates/product.json` | `templates/product.json` |
 
 `templates/product.json` now carries the settings from the live product
@@ -75,3 +76,30 @@ itself when there are more than fit, and never widens the page.
 | Deepest zoom | 5× | 2–8 |
 | Widest the gallery gets | 460px | was a *height* cap; height now follows the ratio |
 | How the main image fills the frame | Fill the frame | thumbnails and the viewer always show the whole photo |
+
+
+## Per-block styling
+
+Every BP block now carries the same eighteen controls, under **Style — this
+block only** in the theme editor:
+
+block size · space above & below · inner padding of cells · heading size ·
+text size · heading weight · block background · text colour · heading colour ·
+border colour · cell background · three accents · a heading font · a body font ·
+custom CSS
+
+Sixteen blocks had these already, because ~3.4KB of Liquid had been
+copy-pasted into each of their branches; the other seventeen had between
+nothing and six. That duplication is now one snippet,
+`snippets/bp-blockstyle.liquid`, called once per block with the selectors that
+block uses — so the controls behave identically everywhere and the next change
+happens in one place. `product-info.liquid` drops from 202KB to 128KB.
+
+Custom CSS takes `&` as the block, e.g. `& .bp-h2 { letter-spacing: 0 }`.
+
+One behaviour was corrected rather than carried over. Several blocks use a
+background panel that also sits on the shared cell list — `.bp-offcard`,
+`.bp-faq__i`, `.bp-rcard` among them — and both rules are `!important` at equal
+specificity, so the later one won and the cell colour silently swallowed the
+block background. The cell list now excludes whatever the block uses as its
+own panel, so the two controls do different things.
