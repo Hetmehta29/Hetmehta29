@@ -585,8 +585,8 @@ body.bp-zoom-open { overflow: hidden; }
 .bp-pt__r { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--ink2); }
 .bp-pt__rl { display: flex; justify-content: space-between; gap: 12px; }
 .bp-pt__r b { font-family: var(--body); font-weight: 400; font-size: 13px; }
-.bp-pt__t { height: 2px; background: var(--line); }
-.bp-pt__t i { display: block; height: 2px; background: var(--ink); }
+.bp-pt__t { height: 4px; background: var(--line2); border-radius: 4px; overflow: hidden; }
+.bp-pt__t i { display: block; height: 4px; background: var(--acc); border-radius: 4px; }
 .bp-pt__foot { display: block; margin-top: 14px; padding: 0; border-radius: 0; background: none;
   font-size: 12.5px; line-height: 1.6; color: var(--mut); }
 .bp-pt__foot b { color: var(--ink2); font-weight: 400; }
@@ -4109,6 +4109,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -4267,6 +4412,151 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "offers",
           "label": "Offers: Title | Condition | Discount (10% or 300) | Note | auto",
           "default": "EXTRA 10% OFF | UPI · ICICI | 10% | auto applied at checkout | auto\nFLAT ₹300 OFF | CART ₹2,000+ | 300 | add 1 more to unlock | manual"
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -4444,6 +4734,151 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "heading",
           "label": "Heading",
           "default": "Order with confidence"
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -4633,6 +5068,151 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "heading",
           "label": "Heading",
           "default": "The ₹4,000 shirt. Priced at ₹1,799."
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -5331,6 +5911,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -5536,6 +6261,151 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "fab_caption",
           "label": "Image caption",
           "default": "FABRIC MACRO SHOT · 16:9"
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -5746,6 +6616,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -5929,6 +6944,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -6103,6 +7263,151 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "heading",
           "label": "Heading",
           "default": "The risk is entirely on us."
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -6383,6 +7688,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -6594,6 +8044,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -6780,6 +8375,151 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "eyebrow",
           "label": "Eyebrow",
           "default": "LOVED ACROSS INDIA"
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -7021,6 +8761,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -7232,6 +9117,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -7438,6 +9468,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -7630,6 +9805,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -7798,6 +10118,151 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "heading",
           "label": "Heading",
           "default": "Still deciding? Quick answers."
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -7979,6 +10444,151 @@ body.bp-zoom-open { overflow: hidden; }
         {
           "type": "paragraph",
           "content": "The size chart & pairs content are edited once in Theme settings → Bluprint · Fit Studio (shared popup) — so the Size picker and this button always show the same data."
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -8167,6 +10777,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -8350,6 +11105,151 @@ body.bp-zoom-open { overflow: hidden; }
           "type": "text",
           "id": "live_meta",
           "label": "Right-hand meta (blank = off)"
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -8647,6 +11547,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -8843,6 +11888,151 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "fit_label",
           "label": "Find-my-fit button label",
           "default": "Find my perfect size"
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -9046,6 +12236,151 @@ body.bp-zoom-open { overflow: hidden; }
           "unit": "%",
           "label": "Progress meter",
           "default": 70
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -9345,6 +12680,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -9610,6 +13090,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -9778,6 +13403,151 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "meta",
           "label": "Right-hand line",
           "default": "EST. 2021 · INDIA"
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -9958,6 +13728,151 @@ body.bp-zoom-open { overflow: hidden; }
           "step": 1,
           "label": "Highlight row (0 = none)",
           "default": 2
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -10183,6 +14098,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -10385,6 +14445,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -10554,6 +14759,151 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "open_first",
           "label": "Open the first item",
           "default": true
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -10758,6 +15108,151 @@ body.bp-zoom-open { overflow: hidden; }
         },
         {
           "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
+        },
+        {
+          "type": "header",
           "content": "Style — this block only"
         },
         {
@@ -10916,6 +15411,151 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "label",
           "label": "Label",
           "default": "SHARE"
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",
@@ -11089,6 +15729,151 @@ body.bp-zoom-open { overflow: hidden; }
           "id": "tagline",
           "label": "Tagline",
           "default": "BLUPRINT SHIRTMAKERS · MUMBAI"
+        },
+        {
+          "type": "header",
+          "content": "Look — this block only"
+        },
+        {
+          "type": "select",
+          "id": "look_panel",
+          "label": "Panel around the block",
+          "default": "none",
+          "info": "Wraps the whole block. This is what makes a block read as one piece instead of loose rows.",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "tint",
+              "label": "Tint"
+            },
+            {
+              "value": "tintb",
+              "label": "Tint — green"
+            },
+            {
+              "value": "tintc",
+              "label": "Tint — violet"
+            },
+            {
+              "value": "card",
+              "label": "Card (filled + border)"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "dark",
+              "label": "Dark"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "c_panel",
+          "label": "Panel colour",
+          "info": "Overrides the panel style above."
+        },
+        {
+          "type": "select",
+          "id": "look_rows",
+          "label": "Rows",
+          "default": "plain",
+          "options": [
+            {
+              "value": "plain",
+              "label": "Plain (hairlines)"
+            },
+            {
+              "value": "card",
+              "label": "Cards"
+            },
+            {
+              "value": "outline",
+              "label": "Outlined"
+            },
+            {
+              "value": "stripe",
+              "label": "Striped"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_accent",
+          "label": "Accent edge on rows",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "left",
+              "label": "Left bar"
+            },
+            {
+              "value": "top",
+              "label": "Top bar"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "look_divider",
+          "label": "Dividers",
+          "default": "default",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "dotted",
+              "label": "Dotted"
+            },
+            {
+              "value": "dashed",
+              "label": "Dashed"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "label": "Corner radius",
+          "default": 0
+        },
+        {
+          "type": "select",
+          "id": "look_shadow",
+          "label": "Shadow",
+          "default": "none",
+          "options": [
+            {
+              "value": "none",
+              "label": "None"
+            },
+            {
+              "value": "soft",
+              "label": "Soft"
+            },
+            {
+              "value": "lift",
+              "label": "Lifted"
+            }
+          ]
         },
         {
           "type": "header",

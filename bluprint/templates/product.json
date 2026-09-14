@@ -16,7 +16,14 @@
           "type": "bp-topbar",
           "settings": {
             "brand": "BLUPRINT",
-            "meta": "EST. 2021 · INDIA"
+            "meta": "EST. 2021 · INDIA",
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 0,
+            "look_shadow": "none"
           }
         },
         "hero": {
@@ -39,7 +46,14 @@
             "custom_css": "",
             "thumb_size": 56,
             "media_limit": 12,
-            "zoom_max": 5
+            "zoom_max": 5,
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 0,
+            "look_shadow": "none"
           }
         },
         "product_header": {
@@ -67,7 +81,14 @@
             "c_dark": "",
             "c_price": "",
             "pad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 0,
+            "look_shadow": "none"
           }
         },
         "ticker": {
@@ -82,7 +103,14 @@
             "text_color": "",
             "speed": 22,
             "pad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 0,
+            "look_shadow": "none"
           }
         },
         "snapshot": {
@@ -94,7 +122,14 @@
             "body_size": 0,
             "snapshot": "Fabric | 100% Premium cotton\nFit | Modern Slim · TTS\nRating | 4.9 ★\nDelivery | 2–4 days\nExchange | 7-day\nCOD | Available\nOccasion | Office → Evening",
             "pad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "tint",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "live_feed": {
@@ -110,7 +145,14 @@
             "c_tag": "",
             "c_item": "",
             "pad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "size_picker": {
@@ -127,7 +169,14 @@
             "fit_label": "Find my perfect size",
             "hint": "not sure? Tap Find my fit",
             "pad": 12,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "kiwi_size_chart_recommender_kiwi_sizing_i9Rnxe": {
@@ -187,7 +236,14 @@
             "c_border": "",
             "c_accent": "",
             "c_text": "",
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "fit_studio": {
@@ -202,7 +258,14 @@
             "btn_bg": "#000f3f",
             "btn_color": "#f6f2eb",
             "pad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 0,
+            "look_shadow": "none"
           }
         },
         "offers": {
@@ -226,7 +289,14 @@
             "c_border": "",
             "c_cell": "",
             "cpad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "volume": {
@@ -236,7 +306,14 @@
             "heading": "Buy more, pay less",
             "vol_rows": "1 shirt|₹1,599 each|\n2 shirts|₹1,549 each|SAVE ₹100\n3 shirts|₹1,499 each|SAVE ₹300",
             "vol_highlight": 2,
-            "pad": 0
+            "pad": 0,
+            "look_panel": "tint",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "stock": {
@@ -251,7 +328,14 @@
             "restock_note": "",
             "pickup_title": "",
             "pickup_note": "",
-            "pad": 0
+            "pad": 0,
+            "look_panel": "tint",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "qty": {
@@ -264,7 +348,14 @@
             "initials_hint": "e.g. A.M. — embroidered on the cuff",
             "initials_max": 4,
             "gift_label": "",
-            "pad": 0
+            "pad": 0,
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           },
           "disabled": true
         },
@@ -307,7 +398,14 @@
             "c_border": "",
             "c_cell": "",
             "cpad": 4,
-            "custom_css": "& .bp-rew__head > span:first-child { \n  display: none !important; \n}"
+            "custom_css": "& .bp-rew__head > span:first-child { \n  display: none !important; \n}",
+            "look_panel": "tintb",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "price_transparency": {
@@ -335,7 +433,14 @@
             "c_border": "",
             "c_cell": "",
             "cpad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "card",
+            "c_panel": "",
+            "look_rows": "stripe",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "difference": {
@@ -368,7 +473,14 @@
             "row5_desc": "Reinforced seams, mother-of-pearl buttons, double-needle hems.",
             "row6_on": false,
             "blk_scale": 100,
-            "pad": 0
+            "pad": 0,
+            "look_panel": "tint",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "fabric_dna": {
@@ -398,7 +510,14 @@
             "c_border": "",
             "c_cell": "",
             "cpad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "tintb",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           },
           "disabled": true
         },
@@ -430,7 +549,14 @@
             "c_border": "",
             "c_cell": "",
             "cpad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "tint",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "comparison": {
@@ -457,7 +583,14 @@
             "c_border": "",
             "c_cell": "",
             "cpad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "card",
+            "c_panel": "",
+            "look_rows": "stripe",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "promise": {
@@ -483,7 +616,14 @@
             "c_border": "",
             "c_cell": "",
             "cpad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "tintc",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "product_details": {
@@ -526,7 +666,14 @@
             "c_border": "#d0cfcf",
             "c_cell": "",
             "cpad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "tint",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "policies": {
@@ -535,7 +682,14 @@
             "heading": "",
             "policy_items": "Shipping & delivery|Dispatched within 24 hours. Most orders are delivered in 2–4 business days depending on your location and the shipping option chosen. You'll receive tracking details as soon as your order ships.\nReturns & exchange|We take size exchange and return requests within 7 days of delivery, as per the courier tracking. Reach us on WhatsApp at +91 8141205048 or email info@bluprint.in.\nCare instructions|Machine wash cold on a gentle cycle, line dry away from direct sun, warm iron or steam. No bleach.",
             "open_first": true,
-            "pad": 0
+            "pad": 0,
+            "look_panel": "tint",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "reviews": {
@@ -566,7 +720,14 @@
             "c_border": "",
             "c_cell": "",
             "cpad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "tint",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "social_proof": {
@@ -594,7 +755,14 @@
             "c_border": "",
             "c_cell": "",
             "cpad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "pairs": {
@@ -608,7 +776,14 @@
             "foot_eyebrow": "ALSO IN THIS FABRIC",
             "foot_label": "",
             "foot_link": "",
-            "pad": 0
+            "pad": 0,
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "complete_look": {
@@ -620,7 +795,14 @@
             "look_save": "Bundle price",
             "look_cta": "Add all 3",
             "blk_scale": 100,
-            "pad": 0
+            "pad": 0,
+            "look_panel": "tint",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "gallery": {
@@ -631,7 +813,14 @@
             "heading": "3,000 men, one shirt",
             "gal_items": "150|@arjun.m|\n112|@rohit.k|\n132|@nikhil.r|\n112|@aman.s|\n150|@k.dsz|\n130|@dev.p|",
             "blk_scale": 100,
-            "pad": 0
+            "pad": 0,
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "lifestyle": {
@@ -642,7 +831,14 @@
             "life_sub": "One shirt, styled for your whole week.",
             "life_cards": "Office|Tucked, sleeves down\nAirport|Untucked, rolled cuffs\nDate|Open collar, denim\nCoffee|Under a jacket\nWedding|With a bandhgala",
             "blk_scale": 100,
-            "pad": 0
+            "pad": 0,
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "founder": {
@@ -670,7 +866,14 @@
             "c_border": "",
             "c_cell": "",
             "cpad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "tintc",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "faq": {
@@ -695,14 +898,28 @@
             "c_border": "",
             "c_cell": "",
             "cpad": 0,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "tint",
+            "c_panel": "",
+            "look_rows": "card",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "share": {
           "type": "bp-share",
           "settings": {
             "label": "SHARE",
-            "pad": 0
+            "pad": 0,
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 0,
+            "look_shadow": "none"
           }
         },
         "seal": {
@@ -710,7 +927,14 @@
           "settings": {
             "year_label": "SINCE",
             "year": "2021",
-            "tagline": "BLUPRINT SHIRTMAKERS · MUMBAI"
+            "tagline": "BLUPRINT SHIRTMAKERS · MUMBAI",
+            "look_panel": "tint",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 10,
+            "look_shadow": "none"
           }
         },
         "sticky_bar": {
@@ -725,7 +949,14 @@
             "wallet_head": "YOUR PERKS",
             "wallet_items": "Free express shipping|₹0|#17C27F\n7-day easy return-exchange|FREE|#FFFFF0\nExtra 10% on prepaid|SAVE|#FF5C33",
             "meter": 85,
-            "custom_css": ""
+            "custom_css": "",
+            "look_panel": "none",
+            "c_panel": "",
+            "look_rows": "plain",
+            "look_accent": "none",
+            "look_divider": "default",
+            "radius": 0,
+            "look_shadow": "none"
           }
         }
       },

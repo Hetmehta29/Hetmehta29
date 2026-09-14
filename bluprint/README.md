@@ -105,3 +105,37 @@ background panel that also sits on the shared cell list — `.bp-offcard`,
 specificity, so the later one won and the cell colour silently swallowed the
 block background. The cell list now excludes whatever the block uses as its
 own panel, so the two controls do different things.
+
+
+## Look — structure, not just colour
+
+The base CSS is flat by design: `border-radius: 0`, no shadows, cells
+transparent, rows separated by a hairline. That reads well on a block that
+brings its own panel and cards (social proof) and reads like a bare table on
+one that does not (product details, honest pricing) — which is why parts of
+the page looked unfinished next to each other.
+
+Seven controls, on every block, under **Look — this block only**:
+
+| Control | Does |
+|---|---|
+| Panel around the block | None / Tint / Tint-green / Tint-violet / Card / Outlined / Dark |
+| Panel colour | overrides the panel style |
+| Rows | Plain (hairlines) / Cards / Outlined / Striped |
+| Accent edge on rows | None / Left bar / Top bar — uses the block's accent |
+| Dividers | Default / None / Dotted / Dashed |
+| Corner radius | 0–20px |
+| Shadow | None / Soft / Lifted |
+
+**Panel** is the one that matters most: it wraps the block so it reads as one
+piece instead of loose rows. **Dark** flips the text tokens with it, so the
+block stays readable.
+
+Every block ships with a look already set, alternating tint / plain / filled
+down the page so sections separate without all of them shouting. Blocks that
+are already self-contained — hero, ticker, sticky bar, social proof — are left
+alone.
+
+The price-share bars were solid ink, which rendered as heavy black stubs under
+each label; they now use the block's accent colour and are rounded, so they
+read as a chart.
